@@ -1,0 +1,199 @@
+/*--Initial------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+:root{
+    --page-size:min(70vh,calc((100vw - 20vh) / 2));
+}
+body{
+    background-color:rgb(50, 50, 50);
+    font-family:"Inter";
+    user-select:none;
+    overflow:hidden;
+    height:100%;
+    padding:0px;
+    margin:0px;
+}
+
+@font-face{
+    font-family:"Inter";
+    src:url("../assets/fonts/Inter Variable.ttf");
+}
+@keyframes fade-in{
+    from {opacity:0;}
+    to   {opacity:1;}
+}
+
+/*--Page Head----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.page-head{
+    background-image:radial-gradient(circle at 20% 50%, rgb(15, 15, 15), rgb(0, 0, 0));
+    background-color:rgb(0, 0, 0);
+    color:rgb(255, 255, 255);
+    position:absolute;
+    height:5vh;
+    width:100%;
+    left:0px;
+    top:0px;
+}
+.page-head-buttons{
+    transform:translate(-50%);
+    position:absolute;
+    height:100%;
+    left:50%;
+
+    justify-content:center;
+    align-items:center;
+    display:flex;
+}
+input[type=text]{
+    background-color:rgba(0, 0, 0, 0);
+    color:rgb(255, 255, 255);
+    font-size:2vh;
+    height:4vh;
+    width:10em;
+
+    justify-content:center;
+    font-family:"Inter";
+    align-items:center;
+    text-align:center;
+    font-weight:bold;
+    display:flex;
+    outline:none;
+    border:none;
+}
+
+.catalog-head-button{
+    transform:translateY(0px);
+    margin-right:1em;
+    margin-left:1em;
+    height:5vh;
+    width:5vh;
+
+    transition:ease-in-out 0.1s;
+    position:relative;
+    cursor:pointer;
+}
+.catalog-head-button:hover .catalog-head-button-icon{
+    background-size:100%;
+}
+.catalog-head-button:active .catalog-head-button-icon{
+    background-size:90%;
+}
+.catalog-head-button-icon{
+    transform:translate(-50%, -50%);
+    position:absolute;
+    height:100%;
+    width:100%;
+    left:50%;
+    top:50%;
+
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-size:80%;
+}
+
+.first-page-icon{
+    background-image:url("../assets/icons/catalog\ arrow\ double.png");
+}
+.prev-page-icon{
+    background-image:url("../assets/icons/catalog\ arrow.png");
+}
+.next-page-icon{
+    background-image:url("../assets/icons/catalog\ arrow.png");
+    transform:translate(-50%, -50%) scaleX(-1);
+}
+.last-page-icon{
+    background-image:url("../assets/icons/catalog\ arrow\ double.png");
+    transform:translate(-50%, -50%) scaleX(-1);
+}
+.full-screen-icon{
+    background-image:url("../assets/icons/catalog\ maximize.png");
+}
+.exit-full-screen-icon{
+    background-image:url("../assets/icons/catalog\ minimize.png");
+}
+#full-screen{
+    position:absolute;
+    left:calc(50% + 5em + 10vh + 2em + 5vh);
+}
+
+/*--Page Body----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.page-body{
+    background-image:radial-gradient(circle at 50% 50%, rgb(50, 50, 50), rgb(25, 25, 25));
+    background-color:rgb(50, 50, 50);
+    color:rgb(255, 255, 255);
+    position:absolute;
+    display:none;
+    height:95vh;
+    width:100%;
+    left:0px;
+    top:5vh;
+}
+.logo{
+    background-image:url("../assets/logo.png");
+    background-position:left center;
+    background-repeat:no-repeat;
+    background-size:contain;
+
+    position:absolute;
+    height:3vh;
+    width:15vh;
+    left:1vh;
+    top:1vh;
+}
+.catalog-button{
+    background-color:rgb(0, 0, 0);
+    transform:translateY(-50%);
+    border-radius:100%;
+    position:absolute;
+    cursor:pointer;
+    height:6vh;
+    width:6vh;
+    top:50%;
+
+    background-image:url("../assets/icons/catalog\ arrow.png");
+    background-position:30% center;
+    background-repeat:no-repeat;
+    background-size:80%;
+}
+.catalog-button:hover{
+    transform:translateY(calc(-50% - 1px));
+}
+.catalog-button:active{
+    transform:translateY(calc(-50% + 1px));
+}
+#body-prev-page{
+    left:2vh;
+}
+#body-next-page{
+    transform:translateY(-50%) scaleX(-1);
+    right:2vh;
+}
+#body-next-page:hover{
+    transform:translateY(calc(-50% - 1px)) scaleX(-1);
+}
+#body-next-page:active{
+    transform:translateY(calc(-50% + 1px)) scaleX(-1);
+}
+
+/*--Flipbook-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.flipbook-holder{
+    transform:translate(-50%, -50%);
+    position:absolute;
+    left:50%;
+    top:50%;
+
+    justify-content:center;
+    align-items:center;
+    display:flex;
+}
+.flipbook{
+    height:var(--page-size);
+    width:calc(var(--page-size) * 2);
+}
+.page{
+    background-color:rgb(255, 255, 255);
+    height:var(--page-size);
+    width:var(--page-size);
+}
+img{
+    height:100%;
+    width:100%; 
+}

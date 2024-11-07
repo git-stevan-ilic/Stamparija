@@ -1,0 +1,100 @@
+/*--Initial------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+:root{
+    --side-bar-width:17em;
+    --side-bar-extension-height:calc(19 * 4.5vh + 2px);
+    --side-bar-compression-height:calc(12 * 4.5vh + 2px);
+}
+body{
+    font-family:"Inter";
+    user-select:none;
+    overflow:hidden;
+
+    font-size:2vh;
+    padding:0px;
+    margin:0px;
+}
+input[type=text]{
+    background-color:rgb(50, 50, 50);
+    color:rgb(255, 255, 255);
+    max-width:40vw;
+    font-size:2vh;
+    padding:0px;
+    width:25em;
+
+    font-family:"Inter";
+    outline:none;
+    border:none;
+}
+button{
+    font-family:"Inter";
+    cursor:pointer;
+    outline:none;
+    border:none;
+
+    border-radius:0px;
+    font-size:2vh;
+}
+a{
+    text-decoration:none;
+}
+
+/*--Fonts--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+@font-face{
+    font-family:"Inter";
+    src:url("../assets/fonts/Inter Variable.ttf");
+}
+
+/*--Page Body----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.page-body{
+    position:absolute;
+    height:90%;
+    width:100%;
+    left:0px;
+    top:10%;
+}
+.page-body-main{
+    position:absolute;
+    height:calc(95% - 1px);
+    top:calc(5% + 1px);
+    width:100%;
+    left:0px;
+
+    justify-content:flex-start;
+    align-items:flex-start;
+    display:flex;
+}
+.page-body-content{
+    background-color:rgb(255, 255, 255);
+    background-image:radial-gradient(circle at 20% 20%, rgb(255, 255, 255) 1%, rgb(245, 245, 245));
+    position:relative;
+    height:100%;
+    width:100%;
+    z-index:1;
+}
+.path-holder{
+    position:absolute;
+    font-size:1.5vh;
+    z-index:2;
+    left:1vh;
+    top:0.5vh;
+}
+.path-link{
+    color:rgb(50, 50, 50);
+    cursor:pointer;
+}
+.path-link:hover{
+    color:rgb(100, 100, 100);
+}
+.path-link:active{
+    color:rgb(150, 150, 150);
+}
+
+/*--Animations---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+@keyframes fade-in{
+    from {opacity:0;}
+    to   {opacity:1;}
+}
+@keyframes fade-out{
+    from {opacity:1;}
+    to   {opacity:0;}
+}

@@ -1,0 +1,98 @@
+/*--Nav Bar------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.page-nav-bar{
+    background-color:rgb(255, 255, 255);
+    background-image:radial-gradient(circle at 10% 50%, rgb(255, 255, 255) 1%, rgb(245, 245, 245));
+    border-bottom:1px solid rgb(200, 200, 200);
+   
+    position:absolute;
+    width:100%;
+    height:5%;
+    left:0px;
+    top:0px;
+    z-index:3;
+}
+.nav-bar-item-holder{
+    left:var(--side-bar-width);
+    height:100%;
+    top:0px;
+
+    justify-content:flex-start;
+    align-items:center;
+    position:absolute;
+    display:flex;
+}
+.nav-bar-item{
+    justify-content:center;
+    align-items:center;
+    white-space:nowrap;
+    font-weight:bold;
+    cursor:pointer;
+    display:flex;
+    
+    color:rgb(50, 50, 50);
+    padding-right:1em;
+    padding-left:1em;
+    font-size:2vh;
+    height:100%;
+}
+.nav-bar-item:hover{
+    background-image:radial-gradient(circle at 20% 50%, rgb(225, 225, 225), rgb(215, 215, 215));
+    animation:nav-bar-item-anim ease-in-out 0.25s;
+    background-repeat:no-repeat;
+    color:rgb(0, 0, 0);
+    background-size:300%;
+}
+
+/*--Category Button----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.category{
+    width:calc(var(--side-bar-width) + 1px);
+    color:rgb(50, 50, 50);
+    font-size:2vh;
+    height:100%;
+
+    justify-content:flex-start;
+    align-items:center;
+    cursor:pointer;
+    display:flex;
+}
+.category:hover{
+    background-image:radial-gradient(circle at 20% 50%, rgb(225, 225, 225), rgb(215, 215, 215));
+    animation:nav-bar-item-anim ease-in-out 0.5s;
+    background-repeat:no-repeat;
+    color:rgb(0, 0, 0);
+    background-size:300%;
+}
+.category:hover .category-icon{
+    transition:ease-in-out 0.1s;
+    background-size:60%;
+    opacity:1;
+}
+.category-icon{
+    background-image:url("../assets/icons/category.png");
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-size:50%;
+
+    aspect-ratio:1;
+    flex-shrink:0;
+    height:100%;
+    opacity:0.8;
+}
+.category-text{
+    justify-content:flex-start;
+    flex-shrink:initial;
+    align-items:center;
+    font-weight:bold;
+    overflow:hidden;
+    display:flex;
+
+    font-size:2vh;
+    height:100%;
+    width:100%;
+}
+
+/*--Animations---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+@keyframes nav-bar-item-anim{
+    from {background-size:0%;}
+    to {background-size:300%;}
+}

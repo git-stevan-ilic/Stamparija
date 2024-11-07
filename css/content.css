@@ -1,0 +1,125 @@
+/*--Home Page----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.video-holder{
+    position:relative;
+    height:100%;
+    width:100%;
+}
+.video-mask{
+    position:absolute;
+    height:100%;
+    width:100%;
+    right:0px;
+    bottom:0px;
+}
+.video-focus{
+    box-shadow:0.5vh 0.5vh 0.5vh rgba(0,0,0,0.2);
+    background-color:rgb(255,255,255);
+    transform:translateY(0px);
+    border-radius:1vh;
+    font-size:2vh;
+    height:4vh;
+    bottom:2vh;
+    width:8em;
+    right:2vh;
+
+    justify-content:center;
+    align-items:center;
+    position:absolute;
+    cursor:pointer;
+    display:flex;
+}
+.video-focus:hover{
+    transform:translateY(-1px);
+}
+.video-focus:active{
+    transform:translateY(1px);
+}
+.home-page-video-blur{
+    filter:blur(10px);
+    opacity:0.5;
+}
+
+/*--About Us Page------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.text-page{
+    margin-left:5%;
+    margin-top:3%;
+    width:90%;
+}
+h2{
+    justify-content:center;
+    align-items:center;
+    display:flex;
+    width:100%;
+}
+
+/*--Contact Page-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+#contact-map{
+    border:1px solid rgb(200, 200, 200);
+    margin-top:5vh;
+    height:50vh;
+    width:75vh;
+}
+.contact-text{
+    left:calc(6vh + 600px);
+    user-select:text;
+    top:2vh;
+}
+.contact-text-row{
+    justify-content:flex-start;
+    align-items:center;
+    display:flex;
+
+    font-size:2vh;
+    min-height:3vh;
+    width:100%;
+}
+.contact-text-field-name{
+    color:rgb(100, 100, 100);
+    font-weight:bold;
+    flex-shrink:0;
+    width:4.5em;
+}
+.contact-text-field-value{
+    white-space:nowrap;
+}
+h1{
+    justify-content:flex-start;
+    align-items:center;
+    display:flex;
+}
+
+/*--Catalog Page-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.catalog-holder{
+    padding:0px;
+    height:50vh;
+    width:50vh;
+}
+.catalog-page{
+    background-image:url("../assets/katalog/katalog\ Bleki-ONLINE-00.jpg");
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-size:cover;
+    cursor:pointer;
+    display:block;
+
+    box-shadow:0px 0px 1vh rgba(50, 50, 50, 0.3);
+    transform:translateY(0px);
+    height:50vh;
+    width:50vh;
+}
+.catalog-page:hover{
+    transform:translateY(-1px);
+}
+.catalog-page:active{
+    transform:translateY(1px);
+}
+
+/*--Animations---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+@keyframes video-focus-in{
+    from {filter:blur(10px); opacity:0.5;}
+    to   {filter:blur(0px); opacity:1;}
+}
+@keyframes video-focus-out{
+    from {filter:blur(0px); opacity:1;}
+    to   {filter:blur(10px); opacity:0.5;}
+}

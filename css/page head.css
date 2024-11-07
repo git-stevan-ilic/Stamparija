@@ -1,0 +1,174 @@
+/*--Page Head----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.page-head{
+    background-image:radial-gradient(circle at 20% 50%, rgb(15, 15, 15), rgb(0, 0, 0));
+    background-color:rgb(0, 0, 0);
+    color:rgb(255, 255, 255);
+    position:absolute;
+    height:10%;
+    width:100%;
+    left:0px;
+    top:0px;
+    z-index:4;
+}
+.logo{
+    background-image:url("../assets/logo.png");
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-size:contain;
+    position:absolute;
+    aspect-ratio:4.3;
+    height:50%;
+    left:2vh;
+    top:25%;
+}
+
+/*--Search Bar---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.search-holder{
+    background-color:rgb(50, 50, 50);
+    transform:translateY(-50%);
+    max-width:calc(40vw + 5vh);
+    width:calc(25em + 5vh);
+    height:3vh;
+    right:2vh;
+    top:50%;
+
+    justify-content:flex-end;
+    align-items:center;
+    position:absolute;
+    display:flex;
+}
+.search-button{
+    background-image:url("../assets/icons/search.png");
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-size:contain;
+    
+    background-color:rgb(50, 50, 50);
+    transition:ease-in-out 0.1s;
+    margin-left:1vh;
+    height:3vh;
+    width:3vh;
+}
+.search-button:hover{
+    background-color:rgb(75, 75, 75);
+}
+.search-button:active{
+    background-color:rgb(100, 100, 100);
+}
+
+/*--Search Item--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.search-drop-down{
+    background-color:rgb(255, 255, 255);
+    border:1px solid rgb(150, 150, 150);
+    transform:translateY(100%);
+    width:calc(100% - 2px);
+    position:absolute;
+    min-height:4vh;
+    display:none;
+    bottom:0px;
+    left:0px;
+}
+.search-item{
+    border-bottom:1px solid rgb(200, 200, 200);
+    background-color:rgb(255, 255, 255);
+    color:rgb(50, 50, 50);
+    width:calc(100% - 2em);
+    padding-right:1em;
+    padding-left:1em;
+    font-size:2vh;
+
+    justify-content:flex-start;
+    text-decoration:none;
+    align-items:center;
+    overflow:hidden;
+    cursor:pointer;
+    display:flex;
+}
+.search-item:hover{
+    background-color:rgb(230, 230, 230);
+}
+.search-item-small{
+    white-space:nowrap;
+    font-weight:bold;
+    height:4vh;
+}
+.search-item-big{
+    height:10vh;
+}
+.search-item-icon{
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-size:contain;
+    aspect-ratio:1;
+    flex-shrink:0;
+    height:80%;
+}
+.search-item-body{
+    padding-right:1em;
+    padding-left:1em;
+    height:80%;
+    width:100%;
+}
+.search-item-title{
+    justify-content:flex-start;
+    align-items:center;
+    font-weight:bold;
+    display:flex;
+
+    font-size:2.5vh;
+    height:50%;
+    width:100%;
+}
+.search-item-code{
+    justify-content:flex-start;
+    align-items:flex-start;
+    display:flex;
+
+    font-size:1.5vh;
+    width:100%;
+}
+.search-item-price{
+    justify-content:center;
+    align-items:center;
+    font-weight:bold;
+    display:flex;
+
+    font-size:2.5vh;
+    aspect-ratio:1;
+    flex-shrink:0;
+    height:80%;
+}
+.search-item-more{
+    justify-content:center;
+    align-items:center;
+    cursor:default;
+    display:flex;
+    height:5vh;
+}
+.search-item-more:hover{
+    background-color:rgb(255, 255, 255);
+}
+
+.more-button{
+    border:1px solid rgb(150, 150, 150);
+    background-color:rgb(255, 255, 255);
+    background-color:rgb(245, 245, 245);
+    transform:translateY(0px);
+    padding:0.5vh;
+    width:10em;
+}
+.more-button:hover{
+    transform:translateY(-1px);
+}
+.more-button:active{
+    transform:translateY(1px);
+}
+
+/*--Animations---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+@keyframes search-pop-down{
+    from {height:0px; opacity:0; transform:translateY(50%) scale(0);}
+    to {opacity:1; transform:translateY(100%) scale(1);}
+}
+@keyframes search-pop-up{
+    to {height:0px; opacity:0; transform:translateY(50%) scale(0);}
+}

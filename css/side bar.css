@@ -1,0 +1,146 @@
+/*--Side Bar-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.side-bar{
+    background-color:rgb(255, 255, 255);
+    background-image:radial-gradient(circle at 20% 20%, rgb(255, 255, 255) 1%, rgb(245, 245, 245));
+    border-right:1px solid rgb(200, 200, 200);
+    width:var(--side-bar-width);
+    position:relative;
+    flex-shrink:0;
+    height:100%;
+    z-index:2;
+}
+.side-bar-item-holder{
+    height:calc(var(--side-bar-compression-height));
+    width:calc(var(--side-bar-width) * 2);
+    left:0px;
+    top:0px;
+    overflow-y:hidden;
+    pointer-events:none;
+}
+
+/*--Side Bar Item------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.side-bar-item{
+    justify-content:flex-start;
+    pointer-events:auto;
+    align-items:center;
+    white-space:nowrap;
+    position:relative;
+    cursor:pointer;
+    display:flex;
+
+    width:calc(var(--side-bar-width) * 0.95);
+    color:rgb(50, 50, 50);
+    padding-left:2.55%;
+    height:4.5vh;
+}
+.side-bar-item:hover{
+    background-image:radial-gradient(circle at 20% 50%, rgb(225, 225, 225), rgb(215, 215, 215));
+    animation:nav-bar-item-anim ease-in-out 0.25s;
+    background-repeat:no-repeat;
+    color:rgb(0, 0, 0);
+    background-size:400%;
+}
+.side-bar-item:hover .side-bar-item-arrow{
+    transition:ease-in-out 0.1s;
+    background-size:90%;
+    opacity:1;
+}
+.side-bar-item-elements{
+    justify-content:flex-start;
+    align-items:center;
+    white-space:nowrap;
+    overflow:hidden;
+    display:flex;
+
+    height:100%;
+    width:100%;
+}
+.side-bar-item-text{
+    justify-content:flex-start;
+    flex-shrink:initial;
+    align-items:center;
+    overflow:hidden;
+    display:flex;
+    font-weight:bold;
+
+    font-size:2vh;
+    height:100%;
+    width:100%;
+    font-size:1.5vh;
+}
+.side-bar-item-arrow{
+    background-image:url("../assets/icons/arrow.png");
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-size:50%;
+    aspect-ratio:1;
+    flex-shrink:0;
+    height:100%;
+    opacity:0.5;
+}
+.side-bar-extension-item{
+    border-bottom:1px solid rgb(200, 200, 200);
+    border-top:1px solid rgb(200, 200, 200);
+}
+
+/*--Side Bar Popup-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.side-bar-popup{
+    border:1px solid rgb(200, 200, 200);
+    background-color:rgb(255, 255, 255);
+    transform:translate(100%);
+    position:absolute;
+    min-height:4.5vh;
+    min-width:10em;
+    display:none;
+    right:0px;
+    top:0px;
+}
+.side-bar-popup-item{
+    color:rgb(50, 50, 50);
+    padding-right:1em;
+    padding-left:0.5em;
+    font-size:1.5vh;
+    height:4.5vh;
+
+    justify-content:flex-start;
+    text-decoration:none;
+    align-items:center;
+    font-weight:bold;
+    display:flex;
+}
+.side-bar-popup-item:hover{
+    background-image:radial-gradient(circle at 20% 50%, rgb(225, 225, 225), rgb(215, 215, 215));
+    animation:nav-bar-item-anim ease-in-out 0.25s;
+    background-repeat:no-repeat;
+    color:rgb(0, 0, 0);
+    background-size:400%;
+}
+.first-pop-up{
+    border-top:none;
+}
+
+/*--Animations---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+@keyframes side-bar-slide-out{
+    0%   {overflow:hidden; width:var(--side-bar-width);}
+    100% {overflow:hidden; width:0em;}
+}
+@keyframes side-bar-slide-in{
+    0%   {overflow:hidden; width:0em;}
+    100% {overflow:hidden; width:var(--side-bar-width);}
+}
+@keyframes popup-in{
+    from {opacity:0; transform:translate(50%) scale(0, 0.5);}
+    to {opacity:1; transform:translate(100%) scale(1, 1);}
+}
+@keyframes popup-out{
+    from {opacity:1; transform:translate(100%) scaleX(1, 1);}
+    to {opacity:0; transform:translate(50%) scaleX(0, 0.5);}
+}
+@keyframes extension-down{
+    from {height:var(--side-bar-compression-height)}
+    to   {height:var(--side-bar-extension-height)}
+}
+@keyframes extension-up{
+    from {height:var(--side-bar-extension-height)}
+    to   {height:var(--side-bar-compression-height)}
+}
