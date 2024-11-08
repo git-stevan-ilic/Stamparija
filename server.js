@@ -23,6 +23,7 @@ server.listen(process.env.PORT, ()=>{console.log("Running at port "+process.env.
 
 /*--Input/Output-----------------------------------------------------------------------------------------------------------------------------------*/
 io.on("connection", (client)=>{
+    client.emit("aaa", aaa)
     client.emit("all-product-data", allProducts);
     client.on("search", (searchQuery)=>{
         let searchResults = [];
@@ -106,12 +107,65 @@ io.on("connection", (client)=>{
                             break;
                         }
                     }
-                    client.emit("sub-category-received", subCategoryData);
+                    let productsDone = [];
+                    for(let m = 0; m < subCategoryData.products.length; m++){
+                        let colors = [];
+                        for(let n = 0; n < subCategoryData.products[m].versions.length; n++){
+                            let product = subCategoryData.products[m].versions[n];
+                            loginAPI().then(token => {
+                                if(!token) console.log("Token Invalid: ", token);
+                                else{
+                                    getProductsAPI(token, product.Id).then(productData => {
+                                        colors.push(productData.Shade.HtmlColor);
+                                        subCategoryData.products[m].img = productData.Model.Image;
+                                        subCategoryData.products[m].versions[n].HtmlColor = productData.Shade.HtmlColor;
+                                        if(colors.length === subCategoryData.products[m].versions.length){
+                                            productsDone.push(1);
+                                            if(productsDone.length === subCategoryData.products.length){
+                                                client.emit("sub-category-received", subCategoryData);
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
                     break;
                 }
             }
         });
     });
+    client.on("product-id", (id)=>{
+        loginAPI().then(token => {
+            if(!token) console.log("Token Invalid: ", token);
+            else{
+                getProductsAPI(token, id).then(productData => {
+                    let currID = id.slice(0, 5), productFound = false;
+                    for(let i = 0; i < allProducts.length; i++){
+                        for(let j = 0; j < allProducts[i].products.length; j++){
+                            if(currID === allProducts[i].products[j].id){
+                                productFound = true;
+                                let versionData = [];
+                                for(let k = 0; k < allProducts[i].products[j].versions.length; k++){
+                                    loginAPI().then(token => {
+                                        if(!token) console.log("Token Invalid: ", token);
+                                        else getProductsAPI(token, allProducts[i].products[j].versions[k].Id).then(data => {
+                                            versionData.push(data);
+                                            if(versionData.length === allProducts[i].products[j].versions.length){
+                                                client.emit("product-received", productData, versionData, allProducts);
+                                            }
+                                        });
+                                    });
+                                }
+                                break;
+                            }
+                        }
+                        if(productFound) break;
+                    }
+                });
+            }
+        });
+    })
 });
 async function loginAPI(){
     const username = process.env.LOGIN_USERNAME;
@@ -144,12 +198,14 @@ async function getProductsAPI(accessToken, productID){
 
 
 /*--Products---------------------------------------------------------------------------------------------------------------------------------------*/
-let allProducts = [];
-function getProduct(productID){
+let allProducts = [], aaa;
+function getProduct(){
     loginAPI().then(token => {
         if(!token) console.log("Token Invalid: ", token);
         else{
-            getProductsAPI(token, productID).then(data => {
+            getProductsAPI(token, null).then(data => {
+                aaa = data;
+                fs.writeFile("./json/backup.json",JSON.stringify(aaa,null,4),()=>{});
                 fs.readFile(process.env.API_PRODUCT_IDS, (error, jsonData)=>{
                     if(error) console.log("Error reading JSON");
                     else{
@@ -180,7 +236,9 @@ function generateUsedProducts(data, apiIDs){
                 if(!categoryFound){
                     productIndex = allUsedProducts.length;
                     allUsedProducts.push({
-                        SubCategory:data[i].SubCategory,
+                        SubCategory:apiIDs[j].SubCategory,
+                        CategoryName:apiIDs[j].CategoryName,
+                        Category:apiIDs[j].Category,
                         name:apiIDs[j].name,
                         products:[]
                     });
@@ -208,6 +266,20 @@ function generateUsedProducts(data, apiIDs){
                         }
                     }
                 }
+                for(let m = 0; m < allUsedProducts[productIndex].products.length; m++){
+                    let product = allUsedProducts[productIndex].products[m];
+                    for(let n = 0; n < product.versions.length; n++){
+                        loginAPI().then(token => {
+                            if(!token) console.log("Token Invalid: ", token);
+                            else{
+                                getProductsAPI(token, product.versions[n].Id).then(productData => {
+                                    product.img = productData.Model.Image;
+                                    product.versions[n].HtmlColor = productData.Shade.HtmlColor;
+                                });
+                            }
+                        })
+                    }
+                }
                 break;
             }
         }
@@ -220,8 +292,73 @@ getProduct(null);
 
 
 
+
+
 /*
 
+
+
+{
+    "all":false,
+    "name":"ID Trakice",
+    "Category":"PT",
+    "SubCategory":"PT - 02",
+    "CategoryName":"Trakice ID Kartice / Nosač",
+    "IDs":["35026", "35025", "35143", "34244", "35146", "35145"]
+},
+{
+    "all":false,
+    "name":"ID Nosaci",
+    "Category":"PT",
+    "SubCategory":"PT - 02",
+    "CategoryName":"Trakice ID Kartice / Nosač",
+    "IDs":["34676", "34675", "34674", "35144", "34645", "35138", "35133", "35131", "34360", "34073", "34015"]
+},
+{
+    "all":false,
+    "name":"Podloga za mis",
+    "Category": "KA",
+    "SubCategory":"KA - 02",
+    "CategoryName":"Podloga za mis",
+    "IDs":["37361"]
+},
+
+
+
+
+*/
+
+
+
+/*
+let productsDone = [];
+for(let m = 0; m < subCategoryData.products.length; m++){
+    let colors = [];
+    for(let n = 0; n < subCategoryData.products[m].versions.length; n++){
+        let product = subCategoryData.products[m].versions[n];
+        loginAPI().then(token => {
+            if(!token) console.log("Token Invalid: ", token);
+            else{
+                getProductsAPI(token, product.Id).then(productData => {
+                    colors.push(productData.Shade.HtmlColor);
+                    subCategoryData.products[m].img = productData.Model.Image;
+                    subCategoryData.products[m].versions[n].HtmlColor = productData.Shade.HtmlColor;
+                    if(colors.length === subCategoryData.products[m].versions.length){
+                        productsDone.push(1);
+                        if(productsDone.length === subCategoryData.products.length){
+                            client.emit("sub-category-received", subCategoryData);
+                        }
+                    }
+                });
+            }
+        });
+    }
+}*/
+
+
+
+
+/*
 ,
     {
         "all":false,
@@ -248,47 +385,3 @@ getProduct(null);
         "IDs":["41164", "41162", "41158", "41108", "41165", "41163"]
     }
     */
-
-
-
-
-
-
-
-
-
-
-
-/*const token = await fetch(url, {
-        method:"POST",
-        headers:{"Content-Type":"application/x-www-form-urlencoded"},
-        body:formData
-    })
-    .then(response => {
-        if(!response.ok) console.log("Bad Response: ", response);
-        else response.json();
-    })
-    .then(data => {
-        if(!data) console.log("Login Data Invalid: ", data);
-        else return data.token_type + " " + data.access_token;
-    })
-    .catch(error => console.log("Token Error: ", error));
-    return token;*/
-
-/*let product = await fetch(url, {
-        method:"GET",
-        headers:{
-            "Authorization":accessToken,
-            "Content-Type":"application/json"
-        }
-    })
-    .then(response => {
-        if(response.status !== 200) console.log("Bad Response: ", response);
-        else response.json();
-    })
-    .then(data => {
-        if(!data) console.log("Product Data Invalid: ", data);
-        else return data;
-    })
-    .catch(error => console.log("Product Error: ", error));
-    return product;*/

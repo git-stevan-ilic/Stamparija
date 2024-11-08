@@ -247,6 +247,107 @@ h1{
     width:100%;
 }
 
+/*--Product Display Page-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.product-display-holder{
+    margin-left:4vh;
+    margin-top:5vh;
+    height:75vh;
+    width:calc(100% - 6vh);
+    
+    justify-content:flex-start;
+    align-items:flex-start;
+    display:flex;
+}
+.product-display-image-holder{
+    flex-shrink:0;
+    height:100%;
+    width:50vh;
+}
+.product-display-image{
+    aspect-ratio:1;
+    width:100%;
+}
+.product-display-all-images{
+    justify-content:center;
+    align-items:center;
+    display:flex;
+    height:10vh;
+    width:100%;
+}
+.product-display-small-image{
+    margin-right:0.5vh;
+    margin-left:0.5vh;
+    flex-shrink:0;
+    height:7vh;
+    width:7vh;
+}
+.product-display-data-holder{
+    width:calc(90vw - 50vh);
+    padding-left:2vh;
+    flex-shrink:0;
+    height:100%;
+}
+.product-display-name{
+    justify-content:flex-start;
+    align-items:center;
+    font-weight:bold;
+    display:flex;
+
+    font-size:4vh;
+    width:75%;
+}
+.product-display-code{
+    justify-content:flex-start;
+    align-items:center;
+    display:flex;
+
+    margin-top:1vh;
+    font-size:2vh;
+    width:100%;
+}
+.product-display-price{
+    justify-content:flex-start;
+    align-items:center;
+    font-weight:bold;
+    display:flex;
+
+    margin-top:4vh;
+    font-size:4vh;
+    width:100%;
+}
+.product-display-color-holder{
+    justify-content:flex-start;
+    align-items:center;
+    flex-wrap:wrap;
+    display:flex;
+
+    height:min-content;
+    margin-bottom:5vh;
+    margin-top:4vh;
+    width:100%;
+}
+.product-display-color{
+    border:1px solid rgb(0, 0, 0);
+    margin-bottom:1vh;
+    margin-right:1vh;
+    display:block;
+    height:5vh;
+    width:5vh;
+}
+.product-display-desc{
+    color:rgb(100, 100, 100);
+    font-size:2vh;
+    width:100%;
+
+    justify-content:flex-start;
+    align-items:center;
+    flex-wrap:wrap;
+    display:flex;
+}
+#desc{
+    margin-bottom:5vh;
+}
+
 /*--Animations---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 @keyframes video-focus-in{
     from {filter:blur(10px); opacity:0.5;}

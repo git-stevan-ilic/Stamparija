@@ -190,7 +190,7 @@ function initLoad(){
                     resultElement.target = "_self";
                     let dot1 = results[i].code.indexOf(".");
                     let dot2 = results[i].code.lastIndexOf(".");
-                    let id = results[i].code.slice(0, dot1) + results[i].code.slice(dot1+1, dot2);
+                    let id = results[i].code.slice(0, dot1) + results[i].code.slice(dot1+1, dot2) + results[i].code.slice(dot2+1);
                     resultElement.href = "../pages/product.html?side=0&id="+id;
                 }
                 searchDropDown.appendChild(resultElement);   
@@ -246,4 +246,5 @@ function initLoad(){
         searchBar.oninput = inputSearch;
         document.querySelector(".search-button").onclick = inputSearch;
     });
+    client.on("aaa", (aaa)=>{console.log(aaa)})
 }
