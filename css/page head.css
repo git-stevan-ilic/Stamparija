@@ -153,9 +153,15 @@
     border:1px solid rgb(150, 150, 150);
     background-color:rgb(255, 255, 255);
     background-color:rgb(245, 245, 245);
+    color:rgb(50, 50, 50);
     transform:translateY(0px);
     padding:0.5vh;
     width:10em;
+
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+    display:flex;
 }
 .more-button:hover{
     transform:translateY(-1px);

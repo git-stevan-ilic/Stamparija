@@ -1,9 +1,10 @@
 window.onload = initLoad;
 
 function initLoad(){
+    const params = new URLSearchParams(location.search);
     const style = getComputedStyle(document.body);
     const client = io();
-
+   
     /*--Side Bar Logic-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
     const sideBarItemHolder = document.querySelector(".side-bar-item-holder");
     const contractSideBar = document.getElementById("contract-side-bar");
@@ -46,7 +47,17 @@ function initLoad(){
         }
     }
 
+    let showSide = params.getAll("side")[0];
+    if(showSide) showSide = parseInt(showSide);
     let showSideBar = true;
+    if(showSide !== undefined){
+        if(showSide === 0){
+            sideBar.style.overflow = "hidden";
+            sideBar.style.width = "0em";
+            showSideBar = false;
+        }
+    }
+
     category.onclick = ()=>{
         if(showSideBar){
             showSideBar = false;
@@ -76,6 +87,7 @@ function initLoad(){
         }
     }
     function sideBarAnim(direction){
+        const pathHolder = document.querySelector(".path-holder");
         for(let i = 0; i < sideBarItems.length; i++){
             sideBarItems[i].style.animation = "none";
             sideBarItems[i].style.animation = "side-bar-content-"+direction+" ease-in-out 0.35s";
@@ -86,6 +98,7 @@ function initLoad(){
         }
         sideBar.style.animation = "none";
         sideBar.style.animation = "side-bar-slide-"+direction+" ease-in-out 0.35s";
+        if(direction === "out") pathHolder.style.display = "block";
         sideBar.onanimationend = ()=>{
             sideBar.style.animation = "none";
             sideBar.onanimationend = null;
@@ -96,6 +109,7 @@ function initLoad(){
             else{
                 sideBar.style.width = style.getPropertyValue("--side-bar-width");
                 sideBar.style.overflow = "visible";
+                pathHolder.style.display = "none";
             }
         }
     }
@@ -141,7 +155,7 @@ function initLoad(){
             ) searchAnimUp();
         }
     }
-    function generateSearchResult(results){
+    function generateSearchResult(results, searchQuery){
         const searchDropDown = document.querySelector(".search-drop-down");
         while(searchDropDown.children.length > 0) searchDropDown.removeChild(searchDropDown.lastChild);
         if(results.length === 0) searchAnimUp();
@@ -165,20 +179,26 @@ function initLoad(){
 
                     searchItemTitle.innerHTML = results[i].name;
                     searchItemCode.innerHTML  = results[i].code;
-                    searchItemPrice.innerHTML = results[i].price;
+                    searchItemPrice.innerHTML = results[i].price+"€";
 
                     searchItemBody.appendChild(searchItemTitle);
                     searchItemBody.appendChild(searchItemCode);
                     resultElement.appendChild(searchItemIcon);
                     resultElement.appendChild(searchItemBody);
                     resultElement.appendChild(searchItemPrice);
+
+                    resultElement.target = "_self";
+                    let dot1 = results[i].code.indexOf(".");
+                    let dot2 = results[i].code.lastIndexOf(".");
+                    let id = results[i].code.slice(0, dot1) + results[i].code.slice(dot1+1, dot2);
+                    resultElement.href = "../pages/product.html?side=0&id="+id;
                 }
-                searchDropDown.appendChild(resultElement);
+                searchDropDown.appendChild(resultElement);   
             }
         }
         if(results.length > 5){
-            const buttonHolder = document.createElement("a");
-            const moreButton   = document.createElement("button");
+            const buttonHolder = document.createElement("div");
+            const moreButton   = document.createElement("a");
             buttonHolder.className = "search-item search-item-more";
             moreButton.className = "more-button";
             moreButton.innerHTML = "Vidi više";
@@ -186,33 +206,41 @@ function initLoad(){
             buttonHolder.appendChild(moreButton);
             searchDropDown.appendChild(buttonHolder);
 
-            moreButton.onclick = ()=>{
-
-            }
+            moreButton.target = "_self";
+            moreButton.href = "/pages/product-list.html?side=0&search="+searchQuery;
         }
     }
 
     client.on("all-product-data", (data)=>{
-        console.log(data)
+        console.log("all product data:", data)
         function inputSearch(){
             let searchQuery = searchBar.value.toLowerCase();
-            let searchResults = [];
-            for(let i = 0; i < data.length; i++){
-                if(data[i].name.toLowerCase().indexOf(searchQuery) !== -1){
-                    searchResults.push({type:0, name:data[i].name});
-                }
-                for(let j = 0; j < data[i].products.length; j++){
-                    let currProduct = data[i].products[j];
-                    if(currProduct.Name.toLowerCase().indexOf(searchQuery) !== -1 || currProduct.Model.toLowerCase().indexOf(searchQuery) !== -1){
-                        searchResults.push({type:1, name:currProduct.Model, code:currProduct.ProductIdView, price:currProduct.Price});
+            if(searchQuery.length <= 1) searchAnimUp();
+            else{
+                let searchResults = [];
+                for(let i = 0; i < data.length; i++){
+                    if(data[i].name.toLowerCase().indexOf(searchQuery) !== -1){
+                        searchResults.push({type:0, name:data[i].name});
+                    }
+                    for(let j = 0; j < data[i].products.length; j++){
+                        for(let k = 0; k < data[i].products[j].versions.length; k++){
+                            let currProduct = data[i].products[j].versions[k];
+                            let nameIndex = currProduct.Name.toLowerCase().indexOf(searchQuery);
+                            let modelIndex = currProduct.Model.toLowerCase().indexOf(searchQuery);
+                            if(
+                                (nameIndex !== -1 && (nameIndex === 0 || currProduct.Name[nameIndex-1] === " ")) || 
+                                (modelIndex !== -1 && (modelIndex === 0 || currProduct.Model[modelIndex-1] === " "))
+                            ) searchResults.push({type:1, name:currProduct.Model, code:currProduct.ProductIdView, price:currProduct.Price});
+                        }
                     }
                 }
+                console.log("search result head:", searchResults)
+                generateSearchResult(searchResults, searchQuery);
+                if(searchDropDown.style.display !== "block"){
+                    if(searchResults.length > 0) searchAnimDown();
+                }
+                if(searchBar.value === "") searchAnimUp();
             }
-            generateSearchResult(searchResults);
-            if(searchDropDown.style.display !== "block"){
-                if(searchResults.length > 0) searchAnimDown();
-            }
-            else if(searchBar.value === "") searchAnimUp();
         }
         
         searchBar.oninput = inputSearch;
