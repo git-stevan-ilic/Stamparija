@@ -45,16 +45,12 @@ io.on("connection", (client)=>{
                             searchResults[i].img = productData.Images[0].Image;
                             counter++;
                             if(counter === maxCounter) client.emit("receive-search-images", searchResults, searchQuery);
-                        }).catch(error => console.log("Product API Error:", error));
-                    }).catch(error => console.log("Login Error:", error));
+                        }).catch(error => console.log("\n\n\nProduct API Error:\n\n", error));
+                    }).catch(error => console.log("\n\n\nLogin Error:\n\n", error));
                 }
             }    
         }
     });
-
-
-
-
     client.on("product-id", (id)=>{
         loginAPI().then(token => {
             getProductsAPI(token, id).then(productData => {
@@ -62,17 +58,33 @@ io.on("connection", (client)=>{
                 for(let i = 0; i < allProducts.length; i++){
                     for(let j = 0; j < allProducts[i].Products.length; j++){
                         if(allProducts[i].Products[j].ID === currID){
-                            client.emit("product-received", productData, allProducts[i].Products[j].versions);
+                            const versions = allProducts[i].Products[j].versions;
+                            client.emit("product-received", productData, allProducts[i].CategoryName, allProducts[i].SubCategoryName);
                             productFound = true;
+                            let versionCount = 0;
+                            for(let k = 0; k < versions.length; k++){
+                                let versionID = versions[k].ProductIdView.replaceAll(".", "");
+                                loginAPI().then(token => {
+                                    getProductsAPI(token, versionID).then(versionData => {
+                                        versions[k].Color = versionData.Shade.HtmlColor;
+                                        versionCount++;
+                                        if(versionCount === versions.length){
+                                            client.emit("color-received", productData, versions);
+                                        }
+                                    }).catch(error => console.log("\n\n\nProduct API Error:\n\n", error));
+                                }).catch(error => console.log("\n\n\nLogin Error:\n\n", error));
+                            }
                             break;
                         }
                     }
                     if(productFound) break;
                 }
-            }).catch(error => console.log("Product API Error:", error));
-        }).catch(error => console.log("Login Error:", error));
+            }).catch(error => console.log("\n\n\nProduct API Error:\n\n", error));
+        }).catch(error => console.log("\n\n\nLogin Error:\n\n", error));
     });
 });
+
+/*--Products-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 async function loginAPI(){
     const username = process.env.LOGIN_USERNAME;
     const password = process.env.LOGIN_PASSWORD;
@@ -85,7 +97,7 @@ async function loginAPI(){
 
     const token = await axios.post(url, formData)
     .then(response => {return response.data.token_type + " " + response.data.access_token})
-    .catch(error => console.error("Login Error: ", error));
+    .catch(error => console.error("\n\n\nLogin Error:\n\n", error));
     return token;
 }
 async function getProductsAPI(accessToken, productID){
@@ -98,31 +110,29 @@ async function getProductsAPI(accessToken, productID){
 
     const product = await axios.get(url, header)
     .then(response => {return response.data})
-    .catch(error => console.error("Product Error: ", error));
+    .catch(error => console.error("\n\n\nProduct Error:\n\n", error));
     return product;
 }
 
-
-/*--Products-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 let allProducts = [];
 function getProduct(){
     loginAPI().then((token)=>{
         getProductsAPI(token, null).then((data)=>{
             fs.readFile(process.env.API_PRODUCT_IDS, (error, jsonData)=>{
-                if(error) console.log("Error reading JSON:", error);
+                if(error) console.log("\n\n\nError reading JSON:\n\n", error);
                 else{
                     let apiIDs = JSON.parse(jsonData);
                     generateUsedProducts(data, apiIDs);
                 }
             });
             fs.writeFile("./json/backup.json", JSON.stringify(data, null, 4), (error)=>{
-                if(error) console.log("Backup Write Error:", error);
+                if(error) console.log("\n\n\nBackup Write Error:\n\n", error);
             });
-        }).catch(error => console.log("Product API Error:", error));
-    }).catch(error => console.log("Login Error:", error));
+        }).catch(error => console.log("\n\n\nProduct API Error:\n\n", error));
+    }).catch(error => console.log("\n\n\nLogin Error:\n\n", error));
 }
 function generateUsedProducts(data, apiIDs){
-    console.log("Generating Product Data...");
+    console.log("\nGenerating Product Data...");
     let allUsedProducts = [];
 
     for(let i = 0; i < data.length; i++){
@@ -161,16 +171,13 @@ function generateUsedProducts(data, apiIDs){
     
     allProducts = allUsedProducts;
     eventEmitter.emit("updated-all-products");
-    console.log("Generating Product Data Complete");
+    console.log("Generating Product Data Complete\n");
 }
 
 getProduct();
 eventEmitter.on("updated-all-products", ()=>{
     io.emit("all-product-data", allProducts);
 });
-
-
-
 
 
 

@@ -270,27 +270,47 @@ h1{
     display:flex;
 }
 .product-display-image-holder{
+    position:relative;
     flex-shrink:0;
     height:100%;
     width:50vh;
 }
+.product-display-images{
+    position:relative;
+    aspect-ratio:1;
+    width:50vh;
+}
 .product-display-image{
+    position:absolute;
+    display:none;
     aspect-ratio:1;
     width:100%;
+    left:0px;
+    top:0px;
 }
 .product-display-all-images{
     justify-content:center;
     align-items:center;
     display:flex;
+
+    margin-top:3vh;
     height:10vh;
     width:100%;
 }
 .product-display-small-image{
+    border:1px solid rgb(200, 200, 200);
+    outline:1px solid rgba(0, 0, 0, 0);
     margin-right:0.5vh;
     margin-left:0.5vh;
     flex-shrink:0;
+    padding:0.5vh;
     height:7vh;
     width:7vh;
+    cursor:pointer;
+}
+.product-display-small-image-selected{
+    border:2px solid rgb(150, 150, 150);
+    outline:0px;
 }
 .product-display-data-holder{
     width:calc(90vw - 50vh);
@@ -357,6 +377,22 @@ h1{
 }
 #desc{
     margin-bottom:5vh;
+}
+#your-logo{
+    border:1px solid rgb(150, 150, 150);
+    background-color:rgb(255, 255, 255);
+    transform:translate(-50%);
+    border-radius:0.5vh;
+    margin-left:50%;
+    margin-top:2vh;
+    padding:0.5vh;
+    width:10em;
+}
+#your-logo:hover{
+    background-color:rgb(245, 245, 245);
+}
+#your-logo:active{
+    background-color:rgb(235, 235, 235);
 }
 
 /*--Animations---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
