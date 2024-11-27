@@ -177,6 +177,7 @@ function initLoad(){
                     const searchItemCode  = document.createElement("div"); searchItemCode.className  = "search-item-code";
                     const searchItemPrice = document.createElement("div"); searchItemPrice.className = "search-item-price";
 
+                    searchItemIcon.style.backgroundImage = "url('"+results[i].img+"')";
                     searchItemTitle.innerHTML = results[i].name;
                     searchItemCode.innerHTML  = results[i].code;
                     searchItemPrice.innerHTML = results[i].price+"€";
@@ -212,19 +213,22 @@ function initLoad(){
     }
 
     client.on("all-product-data", (data)=>{
-        console.log("all product data:", data)
+        console.log("all product data:", data);
         function inputSearch(){
             let searchQuery = searchBar.value.toLowerCase();
             if(searchQuery.length <= 1) searchAnimUp();
             else{
                 let searchResults = [];
                 for(let i = 0; i < data.length; i++){
-                    if(data[i].name.toLowerCase().indexOf(searchQuery) !== -1){
-                        searchResults.push({type:0, name:data[i].name});
+                    if(data[i].CategoryName.toLowerCase().indexOf(searchQuery) !== -1){
+                        searchResults.push({type:0, name:data[i].CategoryName});
                     }
-                    for(let j = 0; j < data[i].products.length; j++){
-                        for(let k = 0; k < data[i].products[j].versions.length; k++){
-                            let currProduct = data[i].products[j].versions[k];
+                    if(data[i].SubCategoryName.toLowerCase().indexOf(searchQuery) !== -1){
+                        searchResults.push({type:0, name:data[i].SubCategoryName});
+                    }
+                    for(let j = 0; j < data[i].Products.length; j++){
+                        for(let k = 0; k < data[i].Products[j].versions.length; k++){
+                            let currProduct = data[i].Products[j].versions[k];
                             let nameIndex = currProduct.Name.toLowerCase().indexOf(searchQuery);
                             let modelIndex = currProduct.Model.toLowerCase().indexOf(searchQuery);
                             if(
@@ -234,17 +238,22 @@ function initLoad(){
                         }
                     }
                 }
-                console.log("search result head:", searchResults)
-                generateSearchResult(searchResults, searchQuery);
-                if(searchDropDown.style.display !== "block"){
-                    if(searchResults.length > 0) searchAnimDown();
-                }
-                if(searchBar.value === "") searchAnimUp();
+                searchResults = searchResults.filter((o, index, arr) =>
+                    arr.findIndex(item => JSON.stringify(item) === JSON.stringify(o)) === index
+                );
+                console.log("search result head:", searchResults);
+                client.emit("get-search-images", searchResults, searchQuery);
             }
         }
         
         searchBar.oninput = inputSearch;
         document.querySelector(".search-button").onclick = inputSearch;
     });
-    client.on("aaa", (aaa)=>{console.log(aaa)})
+    client.on("receive-search-images", (searchResults, searchQuery)=>{
+        generateSearchResult(searchResults, searchQuery);
+        if(searchDropDown.style.display !== "block"){
+            if(searchResults.length > 0) searchAnimDown();
+        }
+        if(searchBar.value === "") searchAnimUp();
+    })
 }

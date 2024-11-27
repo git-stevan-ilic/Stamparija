@@ -133,6 +133,8 @@ input[type=text]{
     background-size:contain;
 
     position:absolute;
+    cursor:pointer;
+    display:block;
     height:3vh;
     width:15vh;
     left:1vh;

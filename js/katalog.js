@@ -30,9 +30,30 @@ window.onload = ()=>{
         }
     }
 
+    const params = new URLSearchParams(location.search);
+    let katalogID = JSON.parse(params.getAll("v")[0]);
+    let katalogData = [
+        {pages:14,  lastPage:true},
+        {pages:306, lastPage:false},
+        {pages:76,  lastPage:false}
+    ];
+    let currKatalogData = katalogData[(katalogID-1)];
+
+    const flipbook = document.querySelector(".flipbook");
+    for(let i = 0; i < currKatalogData.pages; i++){
+        let imgNum = JSON.stringify(i+1).padStart(3, "0");
+        const div = document.createElement("div");
+        const img = document.createElement("img");
+        img.src = "../assets/katalozi/katalog "+katalogID+"/"+katalogID+"-"+imgNum+".png";
+        div.appendChild(img);
+        flipbook.appendChild(div);
+    }
+    if(currKatalogData.lastPage) flipbook.appendChild(document.createElement("div"));
+    console.log(currKatalogData)
+
     $(".flipbook").turn();
     document.querySelector("#first-page").onclick = ()=>{$(".flipbook").turn("page", 1)}
-    document.querySelector("#last-page").onclick = ()=>{$(".flipbook").turn("page", 14)}
+    document.querySelector("#last-page").onclick = ()=>{$(".flipbook").turn("page", currKatalogData.pages)}
     document.querySelector("#next-page").onclick = ()=>{$(".flipbook").turn("next")}
     document.querySelector("#prev-page").onclick = ()=>{$(".flipbook").turn("previous")}
     document.querySelector("#body-next-page").onclick = ()=>{$(".flipbook").turn("next")}
@@ -41,14 +62,15 @@ window.onload = ()=>{
     const goToPage = document.querySelector("#go-to-page");
     goToPage.onchange = ()=>{
         let currPage = parseInt(goToPage.value);
-        if(currPage !== NaN && currPage >= 1 && currPage <= 14) $(".flipbook").turn("page", currPage);
+        if(currPage !== NaN && currPage >= 1 && currPage <= currKatalogData.pages) $(".flipbook").turn("page", currPage);
     }
 
     $(".flipbook").bind("turning",
         (event, page, obj)=>{
             let displayValue = "";
             if(obj[0] === 0) displayValue = "1";
-            else if(obj[1] === 15) displayValue = "14";
+            else if(obj[0] === currKatalogData.pages)
+                displayValue = JSON.stringify(currKatalogData.pages);
             else displayValue = obj[0]+"-"+obj[1]
 
             goToPage.value = "";

@@ -112,6 +112,7 @@
 .search-item-title{
     justify-content:flex-start;
     align-items:center;
+    white-space:nowrap;
     font-weight:bold;
     display:flex;
 

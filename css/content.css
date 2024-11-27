@@ -90,28 +90,39 @@ h1{
 
 /*--Catalog Page-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 .catalog-holder{
-    padding:0px;
-    height:50vh;
-    width:50vh;
+    justify-content:flex-start;
+    align-items:flex-start;
+    display:flex;
 }
 .catalog-page{
-    background-image:url("../assets/katalog/katalog\ Bleki-ONLINE-00.jpg");
     background-position:center center;
     background-repeat:no-repeat;
     background-size:cover;
+    flex-wrap:wrap;
     cursor:pointer;
     display:block;
 
     box-shadow:0px 0px 1vh rgba(50, 50, 50, 0.3);
     transform:translateY(0px);
-    height:50vh;
-    width:50vh;
+    height:min(45vh, 45vw);
+    flex-shrink:0;
+    margin-left:1em;
+    aspect-ratio:1;
 }
 .catalog-page:hover{
     transform:translateY(-1px);
 }
 .catalog-page:active{
     transform:translateY(1px);
+}
+#catalog-1{
+    background-image:url("../assets/katalozi/katalog 1/1-001.png");
+}
+#catalog-2{
+    background-image:url("../assets/katalozi/katalog 2/2-001.png");
+}
+#catalog-3{
+    background-image:url("../assets/katalozi/katalog 3/3-001.png");
 }
 
 /*--Product List Page--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
