@@ -198,7 +198,8 @@ function initLoad(){
                 if(results[i].type === 0){
                     resultElement.className = "search-item search-item-small";
                     resultElement.innerHTML = results[i].name;
-                    resultElement.href = "";
+                    if(results[i].cat) resultElement.href = "../pages/product-list.html?cat="+results[i].cat;
+                    if(results[i].subCat) resultElement.href = "../pages/product-list.html?subcat="+results[i].subCat;
                 }
                 else{
                     resultElement.className = "search-item search-item-big";
@@ -252,10 +253,10 @@ function initLoad(){
                 let searchResults = [];
                 for(let i = 0; i < data.length; i++){
                     if(data[i].CategoryName.toLowerCase().indexOf(searchQuery) !== -1){
-                        searchResults.push({type:0, name:data[i].CategoryName});
+                        searchResults.push({type:0, name:data[i].CategoryName, cat:data[i].Category});
                     }
                     if(data[i].SubCategoryName.toLowerCase().indexOf(searchQuery) !== -1){
-                        searchResults.push({type:0, name:data[i].SubCategoryName});
+                        searchResults.push({type:0, name:data[i].SubCategoryName, subCat:data[i].SubCategory});
                     }
                     for(let j = 0; j < data[i].Products.length; j++){
                         for(let k = 0; k < data[i].Products[j].versions.length; k++){
@@ -265,7 +266,14 @@ function initLoad(){
                             if(
                                 (nameIndex !== -1 && (nameIndex === 0 || currProduct.Name[nameIndex-1] === " ")) || 
                                 (modelIndex !== -1 && (modelIndex === 0 || currProduct.Model[modelIndex-1] === " "))
-                            ) searchResults.push({type:1, name:currProduct.Model, code:currProduct.ProductIdView, price:currProduct.Price});
+                            )
+                            searchResults.push({
+                                code:currProduct.ProductIdView,
+                                price:currProduct.Price,
+                                name:currProduct.Model,
+                                img:currProduct.Img,
+                                type:1,
+                            });
                         }
                     }
                 }
@@ -273,18 +281,15 @@ function initLoad(){
                     arr.findIndex(item => JSON.stringify(item) === JSON.stringify(o)) === index
                 );
                 console.log("search result head:", searchResults);
-                client.emit("get-search-images", searchResults, searchQuery);
+                generateSearchResult(searchResults, searchQuery);
+                if(searchDropDown.style.display !== "block"){
+                    if(searchResults.length > 0) searchAnimDown();
+                }
+                if(searchBar.value === "") searchAnimUp();
             }
         }
         
         searchBar.oninput = inputSearch;
         document.querySelector(".search-button").onclick = inputSearch;
     });
-    client.on("receive-search-images", (searchResults, searchQuery)=>{
-        generateSearchResult(searchResults, searchQuery);
-        if(searchDropDown.style.display !== "block"){
-            if(searchResults.length > 0) searchAnimDown();
-        }
-        if(searchBar.value === "") searchAnimUp();
-    })
 }

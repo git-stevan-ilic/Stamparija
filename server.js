@@ -28,31 +28,8 @@ server.listen(process.env.PORT, ()=>{console.log("Running at port "+process.env.
 io.on("connection", (client)=>{
     if(allProducts.length !== 0) client.emit("all-product-data", allProducts);
 
-    client.on("get-search-images", (searchResults, searchQuery)=>{
-        /*let counter = 0, maxCounter = 0, listLength = searchResults.length;
-        if(searchResults.length > 5) listLength = 5;
-        for(let i = 0; i < listLength; i++){
-            if(searchResults[i].type === 1) maxCounter++;
-        }
-        if(maxCounter === 0)
-            client.emit("receive-search-images", searchResults, searchQuery);
-        else{
-            for(let i = 0; i < listLength; i++){
-                if(searchResults[i].type === 1){
-                    let id = searchResults[i].code.replaceAll(".", "");
-                    loginAPI().then(token => {
-                        getProductsAPI(token, id).then((productData)=>{
-                            searchResults[i].img = productData.Images[0].Image;
-                            counter++;
-                            if(counter === maxCounter) client.emit("receive-search-images", searchResults, searchQuery);
-                        }).catch(error => console.log("\n\n\nProduct API Error:\n\n", error));
-                    }).catch(error => console.log("\n\n\nLogin Error:\n\n", error));
-                }
-            }    
-        }*/
-    });
     client.on("search", (searchQuery)=>{
-        /*let searchResults = [];
+        let searchResults = [];
         for(let i = 0; i < allProducts.length; i++){
             if(allProducts[i].SubCategoryName.toLowerCase().indexOf(searchQuery) !== -1){
                 searchResults.push({type:0, SubCategoryName:allProducts[i].SubCategoryName, SubCategory:allProducts[i].SubCategory});
@@ -79,7 +56,6 @@ io.on("connection", (client)=>{
             }
         }
         client.emit("search-result-receive", searchQuery, searchResults);
-        getProductImgAndColor(searchResults, client);*/
     });
     client.on("category", (catQuery)=>{
         let categoryData = {
@@ -93,7 +69,6 @@ io.on("connection", (client)=>{
         for(let i = 0; i < allProducts.length; i++){
             if(allProducts[i].Category === catQuery){
                 categoryData.Found = true;
-                categoryData.Img = allProducts[i].Img;
                 categoryData.CategoryName = allProducts[i].CategoryName;
                 categoryData.SubCategories.push({
                     SubCategory:allProducts[i].SubCategory,
@@ -104,65 +79,57 @@ io.on("connection", (client)=>{
             }
         }
         for(let i = 0; i < categoryData.SubCategories.length; i++) categoryData.SubCategories[i].type = 0;
-        for(let i = 0; i < categoryData.Products.length; i++) categoryData.Products[i].type = 1;
+        for(let i = 0; i < categoryData.Products.length; i++){
+            if(allProducts[i].Img) categoryData.Products[i].Img = allProducts[i].Img;
+            categoryData.Products[i].type = 1;
+        }
         client.emit("category-received", categoryData);
     });
     client.on("sub-category", (subcatQuery)=>{
-        /*fs.readFile(process.env.API_PRODUCT_IDS, (error, jsonData)=>{
-            if(error) console.log("Error reading JSON");
-            let apiIDs = JSON.parse(jsonData);
-
-            let subCatFound = false;
-            for(let i = 0; i < apiIDs.length; i++){
-                if(apiIDs[i].SubCategory === subcatQuery){
-                    subCatFound = true;
-                    let subCategoryData = {
-                        subCategoryName:apiIDs[i].SubCategoryName,
-                        categoryName:apiIDs[i].CategoryName,
-                        subCategory:apiIDs[i].SubCategory,
-                        category:apiIDs[i].Category,
-                        products:[],
-                        found:true
+        let subCatFound = false;
+        for(let i = 0; i < allProducts.length; i++){
+            if(allProducts[i].SubCategory === subcatQuery){
+                subCatFound = true;
+                let subCategoryData = {
+                    SubCategoryName:allProducts[i].SubCategoryName,
+                    CategoryName:allProducts[i].CategoryName,
+                    SubCategory:allProducts[i].SubCategory,
+                    Category:allProducts[i].Category,
+                    Products:[],
+                    Found:true
+                }
+                let currProducts = allProducts[i].Products;
+                subCategoryData.Products = subCategoryData.Products.concat(currProducts);
+                for(let j = 0; j < subCategoryData.Products.length; j++) subCategoryData.Products[j].type = 1;
+                client.emit("sub-category-received", subCategoryData);
+                break;
+            }
+        }
+        if(!subCatFound) client.emit("sub-category-received", {Found:subCatFound});
+    });
+    client.on("product-id", (id)=>{
+        let currID = id.slice(0, 5), productFound = false;
+        for(let i = 0; i < allProducts.length; i++){
+            for(let j = 0; j < allProducts[i].Products.length; j++){
+                if(allProducts[i].Products[j].ID === currID){
+                    productFound = true;
+                    //const versions = allProducts[i].Products[j].versions;
+                    let dataToSend = {
+                        productData:allProducts[i].Products[j],
+                        CategoryName:allProducts[i].CategoryName,
+                        SubCategoryName:allProducts[i].SubCategoryName,
+                        SubCategory:allProducts[i].SubCategory,
+                        Category:allProducts[i].Category,
+                        Model:allProducts[i].Model,
+                        Found:productFound
                     }
-                    for(let j = 0; j < allProducts.length; j++){
-                        if(allProducts[j].SubCategory === subcatQuery){
-                            subCategoryData.products = allProducts[j].Products;
-                            client.emit("sub-category-received", subCategoryData);
-
-                            let productCount = 0, imgAndColorData = [];
-                            for(let m = 0; m < allProducts[j].Products.length; m++){
-                                imgAndColorData.push({versions:[], img:"", ID:allProducts[j].Products[m].ID});
-                                let versionCount = 0;
-
-                                for(let n = 0; n < allProducts[j].Products[m].versions.length; n++){
-                                    imgAndColorData[m].versions.push({HTMLColor:""});
-                                    let versionID = allProducts[j].Products[m].versions[n].ID;
-                                    loginAPI().then(token => {
-                                        getProductsAPI(token, versionID).then(versionData => {
-                                            imgAndColorData[m].versions[n].HTMLColor = versionData.Shade.HtmlColor;
-                                            imgAndColorData[m].img = versionData.Model.Image;
-
-                                            versionCount++;
-                                            if(versionCount === allProducts[j].Products[m].versions.length){
-                                                productCount++;
-                                                if(productCount === allProducts[j].Products.length)
-                                                    client.emit("images-and-colors-received", imgAndColorData);
-                                            }
-
-                                        }).catch(error => console.log("\n\n\nProduct API Error:\n\n", error));
-                                    }).catch(error => console.log("\n\n\nLogin Error:\n\n", error));
-                                }
-                            }
-                            break;
-                        }
-                    }
+                    client.emit("product-received", dataToSend);
                     break;
                 }
             }
-            if(!subCatFound) client.emit("sub-category-received", {found:false});
-        });*/
-    });
-    client.on("product-id", (id)=>{
+            if(productFound) break;
+        }
+        if(!productFound) client.emit("product-received", {Found:productFound});
         /*loginAPI().then(token => {
             getProductsAPI(token, id).then(productData => {
                 let currID = id.slice(0, 5), productFound = false;
@@ -323,7 +290,7 @@ function generateUsedProducts(data, apiIDs){
             subCategoryNum++;
             let percent = Math.round(subCategoryNum / 34 * 100);
             let subCategoryNumDisplay = JSON.stringify(subCategoryNum).padStart(2, "0");
-            console.log("Category Completed: "+subCategoryNumDisplay+" Progress: "+percent+"%");
+            console.log("Category Completed: "+subCategoryNumDisplay+"/34 Progress: "+percent+"%");
         }
         for(let j = 0; j < generatedProducts[i].Products.length; j++){
             let versionNum = 0;
@@ -337,8 +304,8 @@ function generateUsedProducts(data, apiIDs){
                         getProductsAPI(token, currVersionID).then(productData => {
                             if(productData){
                                 if(productData.Images.length > 0) currVersion.Img = productData.Images[0].Image;
+                                generatedProducts[i].Products[j].Img = productData.Model.Image;
                                 currVersion.HTMLColor = productData.Shade.HtmlColor;
-                                generatedProducts[i].Img = productData.Model.Image;
                             }
                             versionNum++;
                             if(versionNum >= generatedProducts[i].Products[j].versions.length){
@@ -347,7 +314,7 @@ function generateUsedProducts(data, apiIDs){
                                     subCategoryNum++;
                                     let percent = Math.round(subCategoryNum / 34 * 100);
                                     let subCategoryNumDisplay = JSON.stringify(subCategoryNum).padStart(2, "0");
-                                    console.log("Category Completed: "+subCategoryNumDisplay+" Progress: "+percent+"%");
+                                    console.log("Category Completed: "+subCategoryNumDisplay+"/34 Progress: "+percent+"%");
                                     if(subCategoryNum === 34){
                                         allProducts = generatedProducts;
                                         eventEmitter.emit("updated-all-products");
@@ -363,34 +330,6 @@ function generateUsedProducts(data, apiIDs){
                     }).catch(error => console.log("\n\n\nLogin Error:\n\n", error));
                 }, i*1100);
             }
-        }
-    }
-}
-function getProductImgAndColor(list, client){
-    let productCount = 0, imgAndColorData = [];
-    for(let m = 0; m < list.length; m++){
-        imgAndColorData.push({versions:[], img:"", ID:list[m].ID});
-        
-        let versionCount = 0;
-        for(let n = 0; n < list[m].versions.length; n++){
-            imgAndColorData[m].versions.push({HTMLColor:""});
-            let versionID = list[m].versions[n].ID;
-
-            loginAPI().then(token => {
-                getProductsAPI(token, versionID).then(versionData => {
-                    if(versionData){
-                        imgAndColorData[m].versions[n].HTMLColor = versionData.Shade.HtmlColor;
-                        imgAndColorData[m].img = versionData.Model.Image;
-    
-                        versionCount++;
-                        if(versionCount === list[m].versions.length){
-                            productCount++;
-                            if(productCount === list.length)
-                                client.emit("images-and-colors-received", imgAndColorData);
-                        }
-                    }
-                }).catch(error => console.log("\n\n\nProduct API Error:\n\n", error));
-            }).catch(error => console.log("\n\n\nLogin Error:\n\n", error));
         }
     }
 }
@@ -414,80 +353,3 @@ getProduct();
 eventEmitter.on("updated-all-products", ()=>{
     io.emit("all-product-data", allProducts);
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        /*fs.readFile(process.env.API_PRODUCT_IDS, (error, jsonData)=>{
-            if(error) console.log("Error reading JSON");
-            let apiIDs = JSON.parse(jsonData);
-
-            let categoryData = {
-                category:catQuery,
-                categoryName:"",
-                subCategories:[],
-                products:[],
-                found:false
-            }
-            for(let i = 0; i < apiIDs.length; i++){
-                if(apiIDs[i].Category === catQuery){
-                    categoryData.found = true;
-                    categoryData.categoryName = apiIDs[i].CategoryName;
-                    categoryData.subCategories.push({
-                        SubCategory:apiIDs[i].SubCategory,
-                        SubCategoryName:apiIDs[i].SubCategoryName
-                    });
-                    let currProducts;
-                    for(let j = 0; j < allProducts.length; j++){
-                        if(allProducts[j].SubCategory === apiIDs[i].SubCategory){
-                            currProducts = allProducts[j].Products;
-                            break;
-                        }
-                    }
-                    categoryData.products = categoryData.products.concat(currProducts);
-                }
-            }
-            for(let i = 0; i < categoryData.subCategories.length; i++) categoryData.subCategories[i].type = 0;
-            for(let i = 0; i < categoryData.products.length; i++) categoryData.products[i].type = 1;
-            client.emit("category-received", categoryData);
-
-
-            let productCount = 0, imgAndColorData = [];
-            for(let m = 0; m < categoryData.products.length; m++){
-                imgAndColorData.push({versions:[], img:"", ID:categoryData.products[m].ID});
-                let versionCount = 0;
-
-                for(let n = 0; n < categoryData.products[m].versions.length; n++){
-                    imgAndColorData[m].versions.push({HTMLColor:""});
-                    let versionID = categoryData.products[m].versions[n].ID;
-
-                    loginAPI().then(token => {
-                        getProductsAPI(token, versionID).then(versionData => {
-                            imgAndColorData[m].versions[n].HTMLColor = versionData.Shade.HtmlColor;
-                            imgAndColorData[m].img = versionData.Model.Image;
-
-                            versionCount++;
-                            if(versionCount === categoryData.products[m].versions.length){
-                                productCount++;
-                                if(productCount === categoryData.products.length)
-                                    client.emit("images-and-colors-received", imgAndColorData);
-                            }
-
-                        }).catch(error => console.log("\n\n\nProduct API Error:\n\n", error));
-                    }).catch(error => console.log("\n\n\nLogin Error:\n\n", error));
-                }
-            }
-        });*/

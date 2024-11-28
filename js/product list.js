@@ -28,7 +28,7 @@ function loadProductListLogic(){
         productPageTitle.innerHTML = 'Pretraga: "'+searchQuery+'"';
         pathHolder.style.display = "none";
         generateSearchResultBody(productHolder, data);
-        console.log("search result body:", data)
+        console.log("search result body:", data);
     });
     client.on("category-received", (data)=>{
         if(!data.Found) productPageTitle.innerText = "Proizvodi nisu nađeni";
@@ -43,13 +43,13 @@ function loadProductListLogic(){
         }
     });
     client.on("sub-category-received", (data)=>{
-        if(!data.found) productPageTitle.innerText = "Proizvodi nisu nađeni";
+        if(!data.Found) productPageTitle.innerText = "Proizvodi nisu nađeni";
         else{
-            productPageTitle.innerHTML = data.subCategoryName;
-            generateSearchResultBody(productHolder, data.products);
+            productPageTitle.innerHTML = data.SubCategoryName;
+            generateSearchResultBody(productHolder, data.Products);
             pathHolder.innerHTML = "<a class='path-link' target='_self' href='../'>Početna ></a> ";
-            pathHolder.innerHTML += "<a class='path-link' target='_self' href='../pages/product-list.html?cat="+data.category+"'>"+data.categoryName+" ></a> ";
-            pathHolder.innerHTML += data.subCategoryName;
+            pathHolder.innerHTML += "<a class='path-link' target='_self' href='../pages/product-list.html?cat="+data.Category+"'>"+data.CategoryName+" ></a> ";
+            pathHolder.innerHTML += data.SubCategoryName;
             pathHolder.style.display = "none";
             console.log("sub category data:", data);
         }
@@ -90,7 +90,7 @@ function generateSearchResultBody(holder, list){
             productID.innerText = productList[i].ID;
             productName.innerText = productList[i].versions[0].Model;
             productPrice.innerText = productList[i].versions[0].Price+"€";
-            //productImg.style.backgroundImage = "url('"+productList[i].Img+"')";
+            productImg.style.backgroundImage = "url('"+productList[i].Img+"')";
     
             let listLoop = productList[i].versions.length;
             if(productList[i].versions.length > 5) listLoop = 4;
@@ -119,4 +119,5 @@ function generateSearchResultBody(holder, list){
             product.href = "../pages/product.html?id="+productList[i].versions[0].ID;
         }
     }
+    if(productList.length === 0) holder.innerHTML = "<div style='margin-left:1vh'>Nema rezultata</div>";
 }

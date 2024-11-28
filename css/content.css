@@ -194,6 +194,7 @@ h1{
     justify-content:flex-start;
     flex-direction:column;
     align-items:center;
+    user-select:text;
     cursor:pointer;
     display:flex;
 }
