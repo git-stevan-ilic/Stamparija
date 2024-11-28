@@ -17,9 +17,10 @@
     background-size:contain;
     position:absolute;
     display:block;
+    
     aspect-ratio:4.3;
     height:50%;
-    left:2vh;
+    left:0vh;
     top:25%;
 }
 

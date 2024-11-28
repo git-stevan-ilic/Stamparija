@@ -9,7 +9,7 @@
     height:5%;
     left:0px;
     top:0px;
-    z-index:3;
+    z-index:2;
 }
 .nav-bar-item-holder{
     left:var(--side-bar-width);
@@ -45,8 +45,11 @@
 
 /*--Category Button----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 .category{
-    width:calc(var(--side-bar-width) + 1px);
-    color:rgb(50, 50, 50);
+    background-image:radial-gradient(circle at 20% 20%, rgb(255, 175, 0) 1%, rgb(245, 165, 0));
+    border-right:1px solid rgb(200, 100, 0);
+    background-color:rgb(255, 175, 0);
+    width:var(--side-bar-width);
+    color:rgb(75, 25, 0);
     font-size:2vh;
     height:100%;
 
@@ -54,13 +57,15 @@
     align-items:center;
     cursor:pointer;
     display:flex;
+    transition:ease-in-out 0.35s;
 }
 .category:hover{
-    background-image:radial-gradient(circle at 20% 50%, rgb(225, 225, 225), rgb(215, 215, 215));
+    background-image:radial-gradient(circle at 20% 50%, rgb(225, 145, 0), rgb(225, 135, 0));
     animation:nav-bar-item-anim ease-in-out 0.5s;
     background-repeat:no-repeat;
     color:rgb(0, 0, 0);
     background-size:300%;
+    transition:ease-in-out 0.35s;
 }
 .category:hover .category-icon{
     transition:ease-in-out 0.1s;
@@ -91,8 +96,51 @@
     width:100%;
 }
 
+.category-white{
+    width:calc(var(--side-bar-width) + 1px);
+    color:rgb(50, 50, 50);
+    font-size:2vh;
+    height:100%;
+
+    justify-content:flex-start;
+    align-items:center;
+    cursor:pointer;
+    display:flex;
+    transition:ease-in-out 0.35s;
+}
+.category-white:hover{
+    background-image:radial-gradient(circle at 20% 50%, rgb(225, 225, 225), rgb(215, 215, 215));
+    animation:nav-bar-item-anim ease-in-out 0.5s;
+    background-repeat:no-repeat;
+    color:rgb(0, 0, 0);
+    background-size:300%;
+    transition:ease-in-out 0.35s;
+}
+.category-white:hover .category-icon{
+    transition:ease-in-out 0.1s;
+    background-size:60%;
+    opacity:1;
+}
+
+.category-mask{
+    width:calc(var(--side-bar-width) + 1px);
+    position:absolute;
+    height:100%;
+    z-index:3;
+    left:0px;
+    top:0px;
+}
+
 /*--Animations---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 @keyframes nav-bar-item-anim{
     from {background-size:0%;}
     to {background-size:300%;}
+}
+@keyframes category-turn-white{
+    from { background-size:0% 100%;}
+    to { background-size:100% 100%;}
+}
+@keyframes category-turn-orange{
+    from { background-size:0% 100%;}
+    to { background-size:100% 100%;}
 }

@@ -59,6 +59,11 @@ function initLoad(){
     }
 
     category.onclick = ()=>{
+        const pageNavBar = document.querySelector(".page-nav-bar");
+        const categoryMask = document.createElement("div");
+        categoryMask.className = "category-mask";
+        pageNavBar.appendChild(categoryMask);
+
         if(showSideBar){
             showSideBar = false;
             sideBarAnim("out");
@@ -88,6 +93,32 @@ function initLoad(){
     }
     function sideBarAnim(direction){
         const pathHolder = document.querySelector(".path-holder");
+        const category = document.querySelector("#category");
+        if(direction === "out"){
+            category.classList.remove("category");
+            category.classList.add("category-white");
+
+            category.style.animation = "category-turn-white ease-in-out 0.35s";
+            category.onanimationend = ()=>{
+                category.style.animation = "none";
+                category.onanimationend = null;
+                const categoryMask = document.querySelector(".category-mask");
+                if(categoryMask) categoryMask.remove();
+            }
+        }
+        else{
+            category.classList.remove("category-white");
+            category.classList.add("category");
+
+            category.style.animation = "category-turn-orange ease-in-out 0.35s";
+            category.onanimationend = ()=>{
+                category.style.animation = "none";
+                category.onanimationend = null;
+                const categoryMask = document.querySelector(".category-mask");
+                if(categoryMask) categoryMask.remove();
+            }
+        }
+
         for(let i = 0; i < sideBarItems.length; i++){
             sideBarItems[i].style.animation = "none";
             sideBarItems[i].style.animation = "side-bar-content-"+direction+" ease-in-out 0.35s";
@@ -98,7 +129,7 @@ function initLoad(){
         }
         sideBar.style.animation = "none";
         sideBar.style.animation = "side-bar-slide-"+direction+" ease-in-out 0.35s";
-        if(direction === "out") pathHolder.style.display = "block";
+        if(direction === "out" && pathHolder) pathHolder.style.display = "block";
         sideBar.onanimationend = ()=>{
             sideBar.style.animation = "none";
             sideBar.onanimationend = null;
@@ -109,7 +140,7 @@ function initLoad(){
             else{
                 sideBar.style.width = style.getPropertyValue("--side-bar-width");
                 sideBar.style.overflow = "visible";
-                pathHolder.style.display = "none";
+                if(pathHolder) pathHolder.style.display = "none";
             }
         }
     }
@@ -192,7 +223,7 @@ function initLoad(){
                     let dot1 = results[i].code.indexOf(".");
                     let dot2 = results[i].code.lastIndexOf(".");
                     let id = results[i].code.slice(0, dot1) + results[i].code.slice(dot1+1, dot2) + results[i].code.slice(dot2+1);
-                    resultElement.href = "../pages/product.html?side=0&id="+id;
+                    resultElement.href = "../pages/product.html?id="+id;
                 }
                 searchDropDown.appendChild(resultElement);   
             }
@@ -208,7 +239,7 @@ function initLoad(){
             searchDropDown.appendChild(buttonHolder);
 
             moreButton.target = "_self";
-            moreButton.href = "/pages/product-list.html?side=0&search="+searchQuery;
+            moreButton.href = "/pages/product-list.html?search="+searchQuery;
         }
     }
 

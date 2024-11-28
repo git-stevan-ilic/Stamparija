@@ -13,7 +13,7 @@ function loadProductListLogic(){
     if(searchQuery) client.emit("search", searchQuery);
     else{
         let catQuery = params.getAll("cat")[0];
-        if(catQuery) client.emit("category", catQuery);
+        if(catQuery) client.emit("category", catQuery); 
         else{
             let subcatQuery = params.getAll("subcat")[0];
             if(subcatQuery) client.emit("sub-category", subcatQuery);
@@ -26,41 +26,50 @@ function loadProductListLogic(){
 
     client.on("search-result-receive", (searchQuery, data)=>{
         productPageTitle.innerHTML = 'Pretraga: "'+searchQuery+'"';
+        pathHolder.style.display = "none";
         generateSearchResultBody(productHolder, data);
         console.log("search result body:", data)
     });
     client.on("category-received", (data)=>{
-        productPageTitle.innerHTML = data.categoryName;
-        let dataArray = data.subCategories.concat(data.products);
-        generateSearchResultBody(productHolder, dataArray);
-        pathHolder.innerHTML = "<a class='path-link' target='_self' href='../'>Početna ></a> ";
-        pathHolder.innerHTML += data.categoryName;
-        console.log("cat data:", data);
+        if(!data.Found) productPageTitle.innerText = "Proizvodi nisu nađeni";
+        else{
+            productPageTitle.innerHTML = data.CategoryName;
+            let dataArray = data.SubCategories.concat(data.Products);
+            generateSearchResultBody(productHolder, dataArray);
+            pathHolder.innerHTML = "<a class='path-link' target='_self' href='../'>Početna ></a> ";
+            pathHolder.innerHTML += data.CategoryName;
+            pathHolder.style.display = "none";
+            console.log("category data:", data);
+        }
     });
     client.on("sub-category-received", (data)=>{
-        productPageTitle.innerHTML = data.subCategoryName;
-        generateSearchResultBody(productHolder, data.products);
-        pathHolder.innerHTML = "<a class='path-link' target='_self' href='../'>Početna ></a> ";
-        pathHolder.innerHTML += "<a class='path-link' target='_self' href='../pages/product-list.html?side=0&cat="+data.category+"'>"+data.categoryName+" ></a> ";
-        pathHolder.innerHTML += data.subCategoryName;
-        console.log("sub cat data:", data)
+        if(!data.found) productPageTitle.innerText = "Proizvodi nisu nađeni";
+        else{
+            productPageTitle.innerHTML = data.subCategoryName;
+            generateSearchResultBody(productHolder, data.products);
+            pathHolder.innerHTML = "<a class='path-link' target='_self' href='../'>Početna ></a> ";
+            pathHolder.innerHTML += "<a class='path-link' target='_self' href='../pages/product-list.html?cat="+data.category+"'>"+data.categoryName+" ></a> ";
+            pathHolder.innerHTML += data.subCategoryName;
+            pathHolder.style.display = "none";
+            console.log("sub category data:", data);
+        }
     });
 }
 function generateSearchResultBody(holder, list){
     let categoryList = [];
     let productList = [];
     for(let i = 0; i < list.length; i++){
-        if(list[i].type === 0) categoryList.push(list[i]);
-        else productList.push(list[i]);
+        if(list[i].type === 1) productList.push(list[i]);
+        else if(list[i].SubCategoryName !== "") categoryList.push(list[i]);
     }
 
     for(let i = 0; i < categoryList.length; i++){
         const category = document.createElement("a");
-        category.innerHTML = categoryList[i].name;
+        category.innerText = categoryList[i].SubCategoryName;
         category.className = "search-category";
         holder.appendChild(category);
         category.target = "_self";
-        category.href = "../pages/product-list.html?side=0&subcat="+categoryList[i].SubCategory;
+        category.href = "../pages/product-list.html?subcat="+categoryList[i].SubCategory;
     }
 
     if(categoryList.length > 0 && productList.length > 0){
@@ -78,10 +87,10 @@ function generateSearchResultBody(holder, list){
             const productID     = document.createElement("div"); productID.className     = "product-id";
             const productPrice  = document.createElement("div"); productPrice.className  = "product-price";
     
-            productID.innerHTML = productList[i].id;
-            productName.innerHTML = productList[i].versions[0].Model;
-            productPrice.innerHTML = productList[i].versions[0].Price+"€";
-            productImg.style.backgroundImage = "url('"+productList[i].img+"')";
+            productID.innerText = productList[i].ID;
+            productName.innerText = productList[i].versions[0].Model;
+            productPrice.innerText = productList[i].versions[0].Price+"€";
+            //productImg.style.backgroundImage = "url('"+productList[i].Img+"')";
     
             let listLoop = productList[i].versions.length;
             if(productList[i].versions.length > 5) listLoop = 4;
@@ -89,14 +98,14 @@ function generateSearchResultBody(holder, list){
                 const color = document.createElement("div");
                 color.className = "product-color";
                 productColorH.appendChild(color);
-                color.style.backgroundColor = productList[i].versions[j].HtmlColor;
-                
+                color.style.backgroundColor = productList[i].versions[j].HTMLColor;
+                if(productList[i].versions[j].HTMLColor === "") color.innerText = "N/A";
             }
             if(productList[i].versions.length > 5){
                 const colorNum = document.createElement("div");
                 colorNum.className = "product-color";
                 productColorH.appendChild(colorNum);
-                colorNum.innerHTML = "+"+(productList[i].versions.length-4);
+                colorNum.innerText = "+"+(productList[i].versions.length-4);
             }
            
             product.appendChild(productImg);
@@ -107,7 +116,7 @@ function generateSearchResultBody(holder, list){
             holder.appendChild(product);
 
             product.target = "_self";
-            product.href = "../pages/product.html?side=0&id="+productList[i].versions[0].Id;
+            product.href = "../pages/product.html?id="+productList[i].versions[0].ID;
         }
     }
 }

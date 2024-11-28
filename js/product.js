@@ -6,8 +6,14 @@ function loadProductLogic(){
     let productID = params.getAll("id")[0];
     if(productID) client.emit("product-id", productID);
 
-    client.on("product-received", (productData, CategoryName, SubCategoryName)=>{
-        console.log("product:", productData, CategoryName, SubCategoryName);
+    client.on("product-received", (data)=>{
+        let productData = data.productData;
+        let SubCategoryName = data.SubCategoryName;
+        let CategoryName = data.CategoryName;
+        let SubCategory = data.SubCategory;
+        let Category = data.Category;
+        console.log("product:", data);
+
         if(productData){
             document.querySelector(".product-display-name").innerHTML  = productData.Name;
             document.querySelector(".product-display-code").innerHTML  = "Širfa: "+productData.Id;
@@ -49,15 +55,12 @@ function loadProductLogic(){
                 }
             }
 
-            //document.querySelector(".product-display-image").src = productData.Images[0].Image;
-    
-    
-            /*const pathHolder = document.querySelector(".path-holder");
+            const pathHolder = document.querySelector(".path-holder");
             pathHolder.innerHTML = "<a class='path-link' target='_self' href='../'>Početna ></a> ";
-            pathHolder.innerHTML += "<a class='path-link' target='_self' href='../pages/product-list.html?cat="+categoryCode+"'>"+categoryName+" ></a> ";
-            pathHolder.innerHTML += "<a class='path-link' target='_self' href='../pages/product-list.html?subcat="+subCategoryCode+"'>"+subCategoryName+" ></a> ";
+            pathHolder.innerHTML += "<a class='path-link' target='_self' href='../pages/product-list.html?cat="+Category+"'>"+CategoryName+" ></a> ";
+            pathHolder.innerHTML += "<a class='path-link' target='_self' href='../pages/product-list.html?subcat="+SubCategory+"'>"+SubCategoryName+" ></a> ";
             pathHolder.innerHTML += productData.Id;
-            pathHolder.style.display = "none";*/
+            pathHolder.style.display = "none";
         }
         else{
             const productDisplayHolder = document.querySelector(".product-display-holder");
@@ -66,13 +69,15 @@ function loadProductLogic(){
         }        
     });
     client.on("color-received", (productData, versionsData)=>{
-        if(productData){
+        if(productData && versionsData){
+            console.log("color data:", versionsData);
             const colorHolder = document.querySelector(".product-display-color-holder");
             for(let i = 0; i < versionsData.length; i++){
                 if(versionsData[i].Color !== productData.Shade.HtmlColor){
                     const color = document.createElement("a");
                     color.className = "product-display-color";
                     color.style.backgroundColor = versionsData[i].Color;
+                    if(versionsData[i].Color === "") color.innerText = "N/A";
                     color.target = "_self";
                     color.href = "../pages/product.html?id="+versionsData[i].ID;
                     colorHolder.appendChild(color);

@@ -291,10 +291,11 @@ h1{
 .product-display-all-images{
     justify-content:center;
     align-items:center;
+    flex-wrap:wrap;
     display:flex;
 
+    height:min-content;
     margin-top:3vh;
-    height:10vh;
     width:100%;
 }
 .product-display-small-image{
@@ -313,10 +314,14 @@ h1{
     outline:0px;
 }
 .product-display-data-holder{
-    width:calc(90vw - 50vh);
+    width:calc(100% - 54vh);
+    padding-right:2vh;
     padding-left:2vh;
     flex-shrink:0;
     height:100%;
+    user-select:text;
+    overflow-x:hidden;
+    overflow-y:auto;
 }
 .product-display-name{
     justify-content:flex-start;
@@ -364,6 +369,10 @@ h1{
     display:block;
     height:5vh;
     width:5vh;
+
+    justify-content:center;
+    align-items:center;
+    display:flex;
 }
 .product-display-desc{
     color:rgb(100, 100, 100);
