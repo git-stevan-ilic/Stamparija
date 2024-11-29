@@ -3,6 +3,9 @@
     --side-bar-width:17em;
     --side-bar-extension-height:calc(19 * 4.5vh + 2px);
     --side-bar-compression-height:calc(12 * 4.5vh + 2px);
+    
+    --category-width-small:8.5em;
+    --category-width:17em;
 }
 body{
     font-family:"Inter";
@@ -37,6 +40,15 @@ button{
 a{
     text-decoration:none;
     color:rgb(0, 0, 0);
+}
+.loading-screen{
+    background-color:rgb(255, 255, 255);
+    position:absolute;
+    height:100%;
+    width:100%;
+    z-index:10;
+    left:0px;
+    top:0px;
 }
 
 /*--Fonts--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/

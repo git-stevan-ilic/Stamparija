@@ -2,9 +2,11 @@ window.addEventListener("load", loadProductLogic);
 function loadProductLogic(){
     const client = io();
 
+    const pageBodyContent = document.querySelector(".page-body-content");
     const params = new URLSearchParams(location.search);
     let productID = params.getAll("id")[0];
     if(productID) client.emit("product-id", productID);
+    else pageBodyContent.innerHTML = "<div style='margin-left:3vh;margin-top:3vh;'>Proizvod nije nađen";   
 
     client.on("product-received", (data)=>{
         const productDisplayHolder = document.querySelector(".product-display-holder");
@@ -107,6 +109,6 @@ function loadProductLogic(){
         }
 
         const logoButton = document.querySelector("#your-logo");
-        logoButton.onclick = ()=>{window.open("../pages/studio.html?id="+data.ID)}
+        logoButton.onclick = ()=>{window.open("../pages/studio.html?id="+data.ID.slice(0, 5))}
     });
 }

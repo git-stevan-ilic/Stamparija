@@ -1,0 +1,178 @@
+/*--Initial------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+#studio-background{
+    background-image:radial-gradient(circle, rgb(225, 225, 225), rgb(215, 215, 215));
+}
+.content-page{
+    position:absolute;
+    overflow:auto;
+    height:100%;
+    width:100%;
+    left:0px;
+    top:0px;
+}
+#front{
+    pointer-events:none;
+}
+.studio-canvas-holder{
+    box-shadow:0px 0px 2vh rgba(0, 0, 0, 0.1);
+    background-color:rgb(255, 255, 255);
+    border:1px solid rgb(200, 200, 200);
+    transform:translate(-50%, -50%);
+    position:absolute;
+    aspect-ratio:1;
+    overflow:auto;
+    height:82vh;
+    left:50%;
+    top:50%;
+}
+canvas{
+    position:absolute;
+    left:0px;
+    top:0px;
+}
+.studio-button{
+    box-shadow:0px 0px 1vh rgba(0, 0, 0, 0.05);
+    border:1px solid rgb(200, 200, 200);
+    background-color:rgb(255, 255, 255);
+    transform:translateY(0px);
+    border-radius:1vh;
+    position:absolute;
+    padding:0.5vh;
+    width:10em;
+    pointer-events:all;
+}
+.studio-button:hover{
+    transform:translateY(-1px);
+}
+.studio-button:active{
+    transform:translateY(1px);
+}
+#download{
+    position:absolute;
+    bottom:calc(5vh + 2px);
+    right:1vh;
+}
+#send{
+    position:absolute;
+    bottom:1vh;
+    right:1vh;
+}
+
+/*--Images-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.studio-image-holder{
+    transform:translateY(-50%);
+    position:absolute;
+    left:2vh;
+    top:50%;
+    
+    height:calc(100% - 16vh);
+    width:calc(8.5vh + 2px);
+    pointer-events:all;
+    overflow-x:hidden;
+    overflow-y:auto;
+
+    justify-content:center;
+    flex-direction:column;
+    align-items:center;
+    display:flex;
+}
+.studio-image{
+    box-shadow:0px 0px 1vh rgba(0, 0, 0, 0.05);
+    border:1px solid rgb(200, 200, 200);
+    background-color:rgb(255, 255, 255);
+    margin-bottom:calc(0.25vh + 1px);
+    margin-top:calc(0.25vh + 1px);
+    padding:0.25vh;
+    cursor:pointer;
+    flex-shrink:0;
+    width:6.5vh;
+}
+.studio-image:hover{
+    transform:scale(1.1);
+    transition:ease-in-out 0.1s;
+}
+.studio-image-selected{
+    border:2px solid rgb(150, 150, 150);
+    margin-bottom:0.25vh;
+    margin-top:0.25vh;
+}
+
+/*--Colors-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.studio-color-holder{
+    height:calc(4vh + 2px);
+    bottom:2vh;
+    left:2vh;
+
+    justify-content:flex-end;
+    pointer-events:all;
+    align-items:center;
+    position:absolute;
+    width:min-content;
+    display:flex;
+}
+.studio-color{
+    box-shadow:0px 0px 1vh rgba(0, 0, 0, 0.05);
+    border:1px solid rgb(0, 0, 0);
+    margin-right:1vh;
+    cursor:pointer;
+    flex-shrink:0;
+    display:block;
+    height:4vh;
+    width:4vh;
+}
+.studio-color:hover{
+    transform:scale(1.1);
+    transition:ease-in-out 0.1s;
+}
+.studio-color:active{
+    transform:scale(0.9);
+    transition:ease-in-out 0.1s;
+}
+
+/*--Zoom---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.zoom-window{
+    box-shadow:0px 0px 1vh rgba(0, 0, 0, 0.05);
+    border:1px solid rgb(200, 200, 200);
+    background-color:rgb(255, 255, 255);
+    pointer-events:all;
+    position:absolute;
+    padding:0.5vh;
+    height:5vh;
+    width:8em;
+    left:2vh;
+    top:2vh;
+
+    justify-content:space-evenly;
+    align-items:center;
+    display:flex;
+}
+.zoom-button{
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-size:50%;
+    cursor:pointer;
+    flex-shrink:0;
+    height:4vh;
+    width:4vh;
+}
+.zoom-button:hover{
+    transform:scale(1.1);
+}
+.zoom-button:active{
+    transform:scale(0.9);
+}
+.minus{
+    background-image:url("../assets/icons/minus.png");
+}
+.plus{
+    background-image:url("../assets/icons/plus.png");
+}
+.zoom-display{
+    height:100%;
+    width:100%;
+}
+.zoom-text{
+    justify-content:center;
+    align-items:center;
+    display:flex;
+}

@@ -9,12 +9,13 @@
     <link rel="stylesheet" type="text/css" href="../css/side bar.css">
     <link rel="stylesheet" type="text/css" href="../css/content.css">
     <link rel="stylesheet" type="text/css" href="../css/nav bar.css">
+    <link rel="stylesheet" type="text/css" href="../css/studio.css">
     <link rel="stylesheet" type="text/css" href="../css/index.css">
 
     <script type="text/javascript" src="../js/socket.io.min.js"></script>
-    <script type="text/javascript" src="../js/product.js"></script>
+    <script type="text/javascript" src="../js/studio.js"></script>
     <script type="text/javascript" src="../js/index.js"></script>
-    <title>Štamparija Bleki</title>
+    <title>Logo Studio</title>
 </head>
 <body>
     <div class="loading-screen"></div>
@@ -215,24 +216,25 @@
                     </div>
                 </div>
             </div>
-            <div class="page-body-content">
-                <div class="product-display-holder">
-                    <div class="product-display-image-holder">
-                        <div class="product-display-images"></div>
-                        <div class="product-display-all-images"></div>
-                        <button id="your-logo">Logo Studio</button>
+            <div class="page-body-content" id="studio-background">
+                <div class="content-page" id="back">
+                    <div class="studio-canvas-holder">
+                        <canvas id="main"></canvas>
                     </div>
-                    <div class="product-display-data-holder">
-                        <div class="product-display-name"></div>
-                        <div class="product-display-code"></div>
-                        <div class="product-display-price"></div>
-                        <div class="product-display-color-holder"></div>
-                        <div class="product-display-desc" id="desc"></div>
-                        <div class="product-display-desc" id="dimensions"></div>
-                        <div class="product-display-desc" id="weight"></div>
-                        <div class="product-display-desc" id="package"></div>
-                        <div class="product-display-desc" id="sizes"></div>
+                </div>
+                <div class="content-page" id="front">
+                    <div class="studio-color-holder"></div>
+                    <div class="studio-image-holder"></div>
+                    <div class="zoom-window">
+                        <div class="zoom-button minus"></div>
+                        <div class="zoom-display">
+                            <div class="zoom-text">Zoom</div>
+                            <div class="zoom-text" id="zoom-value">100%</div>
+                        </div>
+                        <div class="zoom-button plus"></div>
                     </div>
+                    <button id="download" class="studio-button">Preuzmi sliku</button>
+                    <button id="send" class="studio-button">Pošalji nam sliku</button>
                 </div>
             </div>
         </div>

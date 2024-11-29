@@ -52,7 +52,11 @@ function initLoad(){
     let showSideBar = true;
     if(showSide !== undefined){
         if(showSide === 0){
+            const category = document.querySelector("#category");
+            category.style.width = "var(--category-width-small)";
+            category.className = "category-white";
             sideBar.style.overflow = "hidden";
+            sideBar.style.display = "none";
             sideBar.style.width = "0em";
             showSideBar = false;
         }
@@ -99,6 +103,7 @@ function initLoad(){
             category.classList.add("category-white");
 
             category.style.animation = "category-turn-white ease-in-out 0.35s";
+            category.style.width = "var(--category-width-small)";
             category.onanimationend = ()=>{
                 category.style.animation = "none";
                 category.onanimationend = null;
@@ -111,6 +116,7 @@ function initLoad(){
             category.classList.add("category");
 
             category.style.animation = "category-turn-orange ease-in-out 0.35s";
+            category.style.width = "var(--category-width)";
             category.onanimationend = ()=>{
                 category.style.animation = "none";
                 category.onanimationend = null;
@@ -118,15 +124,8 @@ function initLoad(){
                 if(categoryMask) categoryMask.remove();
             }
         }
-
-        for(let i = 0; i < sideBarItems.length; i++){
-            sideBarItems[i].style.animation = "none";
-            sideBarItems[i].style.animation = "side-bar-content-"+direction+" ease-in-out 0.35s";
-            sideBarItems[i].onanimationend = ()=>{
-                sideBarItems[i].style.animation = "none";
-                sideBarItems[i].onanimationend = null;
-            }
-        }
+        
+        sideBar.style.display = "block";
         sideBar.style.animation = "none";
         sideBar.style.animation = "side-bar-slide-"+direction+" ease-in-out 0.35s";
         if(direction === "out" && pathHolder) pathHolder.style.display = "block";
@@ -135,6 +134,7 @@ function initLoad(){
             sideBar.onanimationend = null;
             if(direction === "out"){
                 sideBar.style.overflow = "hidden";
+                sideBar.style.display = "none";
                 sideBar.style.width = "0px";
             }
             else{
@@ -292,4 +292,14 @@ function initLoad(){
         searchBar.oninput = inputSearch;
         document.querySelector(".search-button").onclick = inputSearch;
     });
+
+    setTimeout(()=>{
+        const loadingScreen = document.querySelector(".loading-screen");
+        loadingScreen.style.animation = "fade-out ease-in-out 0.2s";
+        loadingScreen.onanimationend = ()=>{
+            loadingScreen.style.animation = "none";
+            loadingScreen.style.display = "none";
+            loadingScreen.onanimationend = null;
+        }
+    }, 350);
 }

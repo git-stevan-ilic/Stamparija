@@ -126,6 +126,20 @@ io.on("connection", (client)=>{
         }
         if(!productFound) client.emit("product-received", {Found:productFound});
     });
+    client.on("studio-id", (id)=>{
+        let productFound = false;
+        for(let i = 0; i < allProducts.length; i++){
+            for(let j = 0; j < allProducts[i].Products.length; j++){
+                if(allProducts[i].Products[j].ID === id){
+                    productFound = true;
+                    let dataToSend = {Found:productFound, versions:allProducts[i].Products[j].versions}
+                    client.emit("studio-received", dataToSend);
+                }
+            }
+            if(productFound) break;
+        }
+        if(!productFound) client.emit("studio-received", {Found:productFound});
+    })
 });
 
 /*--Products-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/

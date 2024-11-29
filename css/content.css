@@ -288,10 +288,11 @@ h1{
 .product-display-image{
     position:absolute;
     display:none;
-    aspect-ratio:1;
+
+    transform:translate(-50%, -50%);
     width:100%;
-    left:0px;
-    top:0px;
+    left:50%;
+    top:50%;
 }
 .product-display-all-images{
     justify-content:center;
@@ -308,11 +309,10 @@ h1{
 .product-display-small-image{
     border:1px solid rgb(200, 200, 200);
     margin:calc(0.5vh + 1px);
+    cursor:pointer;
     flex-shrink:0;
     padding:0.5vh;
-    height:7vh;
     width:7vh;
-    cursor:pointer;
 }
 .product-display-small-image-selected{
     border:2px solid rgb(150, 150, 150);
