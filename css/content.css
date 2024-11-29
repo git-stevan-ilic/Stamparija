@@ -92,6 +92,7 @@ h1{
 .catalog-holder{
     justify-content:flex-start;
     align-items:flex-start;
+    flex-wrap:wrap;
     display:flex;
 }
 .catalog-page{
@@ -106,7 +107,8 @@ h1{
     transform:translateY(0px);
     height:min(45vh, 45vw);
     flex-shrink:0;
-    margin-left:1em;
+    margin-bottom:2vh;
+    margin-left:2vh;
     aspect-ratio:1;
 }
 .catalog-page:hover{
@@ -215,11 +217,13 @@ h1{
 .product-name{
     justify-content:center;
     align-items:center;
+    text-align:center;
     font-weight:bold;
     user-select:text;
     display:flex;
 
-    height:4vh;
+    font-size:2vh;
+    height:5vh;
     width:100%;
 }
 .product-color-holder{
@@ -294,16 +298,16 @@ h1{
     align-items:center;
     flex-wrap:wrap;
     display:flex;
-
     height:min-content;
+
+    transform:translate(-50%);
+    margin-left:50%;
     margin-top:3vh;
     width:100%;
 }
 .product-display-small-image{
     border:1px solid rgb(200, 200, 200);
-    outline:1px solid rgba(0, 0, 0, 0);
-    margin-right:0.5vh;
-    margin-left:0.5vh;
+    margin:calc(0.5vh + 1px);
     flex-shrink:0;
     padding:0.5vh;
     height:7vh;
@@ -312,7 +316,7 @@ h1{
 }
 .product-display-small-image-selected{
     border:2px solid rgb(150, 150, 150);
-    outline:0px;
+    margin:0.5vh;
 }
 .product-display-data-holder{
     width:calc(100% - 54vh);

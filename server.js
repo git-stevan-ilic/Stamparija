@@ -23,7 +23,6 @@ app.use(express.static(__dirname));
 app.get("/", (req, res)=>{res.sendFile(__dirname+"/index.html")});
 server.listen(process.env.PORT, ()=>{console.log("Running at port "+process.env.PORT)});
 
-
 /*--Input/Output-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 io.on("connection", (client)=>{
     if(allProducts.length !== 0) client.emit("all-product-data", allProducts);
@@ -79,10 +78,7 @@ io.on("connection", (client)=>{
             }
         }
         for(let i = 0; i < categoryData.SubCategories.length; i++) categoryData.SubCategories[i].type = 0;
-        for(let i = 0; i < categoryData.Products.length; i++){
-            if(allProducts[i].Img) categoryData.Products[i].Img = allProducts[i].Img;
-            categoryData.Products[i].type = 1;
-        }
+        for(let i = 0; i < categoryData.Products.length; i++) categoryData.Products[i].type = 1
         client.emit("category-received", categoryData);
     });
     client.on("sub-category", (subcatQuery)=>{
@@ -113,15 +109,14 @@ io.on("connection", (client)=>{
             for(let j = 0; j < allProducts[i].Products.length; j++){
                 if(allProducts[i].Products[j].ID === currID){
                     productFound = true;
-                    //const versions = allProducts[i].Products[j].versions;
                     let dataToSend = {
                         productData:allProducts[i].Products[j],
                         CategoryName:allProducts[i].CategoryName,
                         SubCategoryName:allProducts[i].SubCategoryName,
                         SubCategory:allProducts[i].SubCategory,
                         Category:allProducts[i].Category,
-                        Model:allProducts[i].Model,
-                        Found:productFound
+                        Found:productFound,
+                        ID:id
                     }
                     client.emit("product-received", dataToSend);
                     break;
@@ -130,42 +125,6 @@ io.on("connection", (client)=>{
             if(productFound) break;
         }
         if(!productFound) client.emit("product-received", {Found:productFound});
-        /*loginAPI().then(token => {
-            getProductsAPI(token, id).then(productData => {
-                let currID = id.slice(0, 5), productFound = false;
-                for(let i = 0; i < allProducts.length; i++){
-                    for(let j = 0; j < allProducts[i].Products.length; j++){
-                        if(allProducts[i].Products[j].ID === currID){
-                            const versions = allProducts[i].Products[j].versions;
-                            let dataToSend = {
-                                productData:productData,
-                                CategoryName:allProducts[i].CategoryName,
-                                SubCategoryName:allProducts[i].SubCategoryName,
-                                Category:allProducts[i].Category,
-                                SubCategory:allProducts[i].SubCategory
-                            }
-                            client.emit("product-received", dataToSend);
-                            productFound = true;
-                            let versionCount = 0;
-                            for(let k = 0; k < versions.length; k++){
-                                let versionID = versions[k].ProductIdView.replaceAll(".", "");
-                                loginAPI().then(token => {
-                                    getProductsAPI(token, versionID).then(versionData => {
-                                        versions[k].Color = versionData.Shade.HtmlColor;
-                                        versionCount++;
-                                        if(versionCount === versions.length){
-                                            client.emit("color-received", productData, versions);
-                                        }
-                                    }).catch(error => console.log("\n\n\nProduct API Error:\n\n", error));
-                                }).catch(error => console.log("\n\n\nLogin Error:\n\n", error));
-                            }
-                            break;
-                        }
-                    }
-                    if(productFound) break;
-                }
-            }).catch(error => console.log("\n\n\nProduct API Error:\n\n", error));
-        }).catch(error => console.log("\n\n\nLogin Error:\n\n", error));*/
     });
 });
 
@@ -251,7 +210,17 @@ function generateUsedProducts(data, apiIDs){
                         Model:data[i].Model,
                         Name:data[i].Name,
                         Sizes:allSizes,
-                        ID:ID
+                        Images:[],
+                        ID:ID,
+
+                        Package:data[i].Package,
+                        WMSHeight:data[i].WMSHeight,
+                        HtmlColor:data[i].Shade.HtmlColor,
+                        WMSWidth:data[i].WMSWidth,
+                        WMSDepth:data[i].WMSDepth,
+                        WMSDimUM:data[i].WMSDimUM,
+                        WeightUM:data[i].WeightUM,
+                        Weight:data[i].Weight
                     }
                     let productIndex = generatedProducts[j].Products.findIndex(e => e.ID === currProductID);
                     if(productIndex === -1){
@@ -303,8 +272,14 @@ function generateUsedProducts(data, apiIDs){
                     loginAPI().then(token => {
                         getProductsAPI(token, currVersionID).then(productData => {
                             if(productData){
-                                if(productData.Images.length > 0) currVersion.Img = productData.Images[0].Image;
+                                if(productData.Images.length > 0){
+                                    currVersion.Img = productData.Images[0].Image;
+                                    currVersion.Images = productData.Images;
+                                }
                                 generatedProducts[i].Products[j].Img = productData.Model.Image;
+                                currVersion.Description = productData.Model.Description;
+                                if(productData.Model.Description2.length > productData.Model.Description.length)
+                                    currVersion.Description = productData.Model.Description2;
                                 currVersion.HTMLColor = productData.Shade.HtmlColor;
                             }
                             versionNum++;
@@ -328,7 +303,7 @@ function generateUsedProducts(data, apiIDs){
                             }
                         }).catch(error => console.log("\n\n\nProduct API Error:\n\n", error));
                     }).catch(error => console.log("\n\n\nLogin Error:\n\n", error));
-                }, i*1100);
+                }, i*1250);
             }
         }
     }
