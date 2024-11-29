@@ -30,42 +30,15 @@ canvas{
     left:0px;
     top:0px;
 }
-.studio-button{
-    box-shadow:0px 0px 1vh rgba(0, 0, 0, 0.05);
-    border:1px solid rgb(200, 200, 200);
-    background-color:rgb(255, 255, 255);
-    transform:translateY(0px);
-    border-radius:1vh;
-    position:absolute;
-    padding:0.5vh;
-    width:10em;
-    pointer-events:all;
-}
-.studio-button:hover{
-    transform:translateY(-1px);
-}
-.studio-button:active{
-    transform:translateY(1px);
-}
-#download{
-    position:absolute;
-    bottom:calc(5vh + 2px);
-    right:1vh;
-}
-#send{
-    position:absolute;
-    bottom:1vh;
-    right:1vh;
-}
 
 /*--Images-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 .studio-image-holder{
     transform:translateY(-50%);
     position:absolute;
-    left:2vh;
+    left:1vh;
     top:50%;
     
-    height:calc(100% - 16vh);
+    height:calc(100% - 14vh);
     width:calc(8.5vh + 2px);
     pointer-events:all;
     overflow-x:hidden;
@@ -100,8 +73,8 @@ canvas{
 /*--Colors-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 .studio-color-holder{
     height:calc(4vh + 2px);
-    bottom:2vh;
-    left:2vh;
+    bottom:1vh;
+    left:1vh;
 
     justify-content:flex-end;
     pointer-events:all;
@@ -134,13 +107,14 @@ canvas{
     box-shadow:0px 0px 1vh rgba(0, 0, 0, 0.05);
     border:1px solid rgb(200, 200, 200);
     background-color:rgb(255, 255, 255);
+    color:rgb(50, 50, 50);
     pointer-events:all;
     position:absolute;
     padding:0.5vh;
     height:5vh;
     width:8em;
-    left:2vh;
-    top:2vh;
+    left:1vh;
+    top:1vh;
 
     justify-content:space-evenly;
     align-items:center;
@@ -175,4 +149,86 @@ canvas{
     justify-content:center;
     align-items:center;
     display:flex;
+}
+
+/*--Buttons------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.studio-button{
+    box-shadow:0px 0px 1vh rgba(0, 0, 0, 0.05);
+    border:1px solid rgb(200, 200, 200);
+    background-color:rgb(255, 255, 255);
+    transform:translateY(0px);
+    color:rgb(50, 50, 50);
+    pointer-events:all;
+    border-radius:1vh;
+    position:absolute;
+    padding:0.5vh;
+    width:10em;
+}
+.studio-button:hover{
+    transform:translateY(-1px);
+}
+.studio-button:active{
+    transform:translateY(1px);
+}
+#download{
+    position:absolute;
+    bottom:calc(5vh + 2px);
+    right:1vh;
+}
+#send{
+    position:absolute;
+    bottom:1vh;
+    right:1vh;
+}
+
+.studio-input{
+    box-shadow:0px 0px 1vh rgba(0, 0, 0, 0.05);
+    border:1px solid rgb(200, 200, 200);
+    background-color:rgb(255, 255, 255);
+    transition:ease-in-out 0.05s;
+    pointer-events:all;
+    border-radius:1vh;
+    position:absolute;
+    cursor:pointer;
+    aspect-ratio:1;
+    padding:0.5vh;
+    height:6vh;
+}
+.studio-input:hover{
+    transform:scale(1.05);
+}
+.studio-input:active{
+    transform:scale(0.95);
+}
+.studio-input-img{
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-size:contain;
+
+    height:4vh;
+    width:100%;
+}
+.studio-input-text{
+    justify-content:center;
+    align-items:center;
+    display:flex;
+
+    color:rgb(50, 50, 50);
+    font-size:1.7vh;
+    height:2vh;
+    width:100%;
+}
+#input-image-img{
+    background-image:url("../assets/icons/add image.png");
+}
+#input-text-img{
+    background-image:url("../assets/icons/add text.png");
+}
+#input-text{
+    right:1vh;
+    top:1vh;
+}
+#input-image{
+    right:9vh;
+    top:1vh;
 }

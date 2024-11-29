@@ -186,4 +186,3 @@ function drawCanvases(imageData){
         ctx.drawImage(imageData[i].image, imgL, imgT, imgW, imgH);
     }
 }
-
