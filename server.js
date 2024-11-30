@@ -21,7 +21,13 @@ const io = new Server(server);
 /*--Start Server-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 app.use(express.static(__dirname));
 app.get("/", (req, res)=>{res.sendFile(__dirname+"/index.html")});
-server.listen(process.env.PORT, ()=>{console.log("Running at port "+process.env.PORT)});
+server.listen(process.env.PORT, ()=>{
+    console.log("Running at port "+process.env.PORT)
+    const apiRootUrl = process.env.ROOT_URL;
+    const apiLoginEndpoint = process.env.LOGIN_ENDPOINT;
+    const url = apiRootUrl + apiLoginEndpoint;
+    console.log(url)
+});
 
 /*--Input/Output-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 io.on("connection", (client)=>{
