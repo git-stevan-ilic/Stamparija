@@ -302,6 +302,7 @@ h1{
     height:min-content;
 
     transform:translate(-50%);
+    margin-bottom:2vh;
     margin-left:50%;
     margin-top:3vh;
     width:100%;
@@ -393,12 +394,12 @@ h1{
     margin-bottom:5vh;
 }
 #your-logo{
+    all:unset;
     border:1px solid rgb(150, 150, 150);
     background-color:rgb(255, 255, 255);
-    transform:translate(-50%);
+    margin-left:calc(50% - 3em);
     border-radius:0.5vh;
-    margin-left:50%;
-    margin-top:2vh;
+    cursor:pointer;
     padding:0.5vh;
     width:10em;
 }

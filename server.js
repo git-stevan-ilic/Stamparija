@@ -139,7 +139,25 @@ io.on("connection", (client)=>{
             if(productFound) break;
         }
         if(!productFound) client.emit("studio-received", {Found:productFound});
-    })
+    });
+    /*client.on("request-final-images", (imgData, sendMail)=>{
+        let images = [];
+        for(let i = 0; i < imgData.length; i++){
+            let src = imgData[i].rawData;
+            if(i > 0) src = Buffer.from(imgData[i].rawData);
+            loadImage(src).then((img)=>{
+                images.push(img);
+                if(images.length >= imgData.length){
+                    generateFinalImage(client, images);
+                }
+            });
+        }
+    });*/
+
+    /*ss(client).on("request-final-images", (stream, data)=>{
+        let filename = path.basename(data.name);
+        stream.pipe(fs.createWriteStream(filename));
+    });*/
 });
 
 /*--Products-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -342,3 +360,14 @@ getProduct();
 eventEmitter.on("updated-all-products", ()=>{
     io.emit("all-product-data", allProducts);
 });
+
+function generateFinalImage(client, images){
+    /*const canvas = createCanvas(1080, 1080);
+    const ctx = canvas.getContext("2d");
+
+    for(let i = 0; i < images.length; i++){
+        ctx.drawImage(images[i], 0, 0, canvas.width, canvas.height);
+    }
+
+    client.emit("receive-final-image", images, canvas.toDataURL());*/
+}

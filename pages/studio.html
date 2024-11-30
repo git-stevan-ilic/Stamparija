@@ -217,32 +217,41 @@
                 </div>
             </div>
             <div class="page-body-content" id="studio-background">
+                <input type="file" class="file-input" accept="image/png, image/jpeg">
                 <div class="content-page" id="back">
                     <div class="studio-canvas-holder">
-                        <canvas id="main"></canvas>
+                        <canvas id="canvas-main"></canvas>
                     </div>
+                    <div class="studio-outline-holder"></div>
                 </div>
                 <div class="content-page" id="front">
                     <div class="studio-color-holder"></div>
                     <div class="studio-image-holder"></div>
                     <div class="zoom-window">
-                        <div class="zoom-button minus"></div>
+                        <div class="zoom-button minus" title="zoom out"></div>
                         <div class="zoom-display">
                             <div class="zoom-text">Zoom</div>
                             <div class="zoom-text" id="zoom-value">100%</div>
                         </div>
-                        <div class="zoom-button plus"></div>
+                        <div class="zoom-button plus" title="zoom in"></div>
                     </div>
-                    <button id="download" class="studio-button">Preuzmite sliku</button>
-                    <button id="send" class="studio-button">Pošaljite nam sliku</button>
+                    <!--<button id="download" class="studio-button">Preuzmite sliku</button>
+                    <button id="send" class="studio-button">Pošaljite nam sliku</button>-->
 
-                    <div class="studio-input" id="input-image">
+                    <div class="studio-input" id="input-image" style="right:1vh;">
                         <div class="studio-input-img" id="input-image-img"></div>
                         <div class="studio-input-text">Slika</div>
                     </div>
-                    <div class="studio-input" id="input-text">
+                    <!--<div class="studio-input" id="input-text">
                         <div class="studio-input-img" id="input-text-img"></div>
                         <div class="studio-input-text">Tekst</div>
+                    </div>-->
+                    <div class="side-button-holder">
+                        <!--<div class="side-button" id="duplicate" title="napravite duplikat"></div>
+                        <div class="side-button" id="bringFront" title="gurnite na vrh"></div>
+                        <div class="side-button" id="flipH" title="obrnite horizontalno"></div>
+                        <div class="side-button" id="flipV" title="obrnite vertikalno"></div>
+                        <div class="side-button" id="delete" title="obrisite"></div>-->
                     </div>
                 </div>
             </div>

@@ -109,6 +109,7 @@ function loadProductLogic(){
         }
 
         const logoButton = document.querySelector("#your-logo");
-        logoButton.onclick = ()=>{window.open("../pages/studio.html?id="+data.ID.slice(0, 5))}
+        logoButton.href = "../pages/studio.html?id="+data.ID.slice(0, 5);
+        //logoButton.onclick = ()=>{window.open("../pages/studio.html?id="+data.ID.slice(0, 5))}
     });
 }
