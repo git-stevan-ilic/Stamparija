@@ -92,11 +92,11 @@ a{
     top:0.5vh;
 }
 .path-link{
-    color:rgb(50, 50, 50);
+    color:rgb(100, 100, 100);
     cursor:pointer;
 }
 .path-link:hover{
-    color:rgb(100, 100, 100);
+    color:rgb(50, 50, 50);
 }
 .path-link:active{
     color:rgb(150, 150, 150);

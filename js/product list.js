@@ -89,8 +89,9 @@ function generateSearchResultBody(holder, list){
     
             productID.innerText = productList[i].ID;
             productName.innerText = productList[i].versions[0].Model;
-            productPrice.innerText = productList[i].versions[0].Price+"€";
             productImg.style.backgroundImage = "url('"+productList[i].Img+"')";
+            productPrice.innerText = productList[i].versions[0].Price+"€";
+            if(productList[i].versions[0].Price === 0) productPrice.innerText = "Cena na upit";
     
             let listLoop = productList[i].versions.length;
             if(productList[i].versions.length > 5) listLoop = 4;
@@ -98,8 +99,16 @@ function generateSearchResultBody(holder, list){
                 const color = document.createElement("div");
                 color.className = "product-color";
                 productColorH.appendChild(color);
-                color.style.backgroundColor = productList[i].versions[j].HTMLColor;
-                if(productList[i].versions[j].HTMLColor === "") color.innerText = "N/A";
+
+                if(productList[i].versions[j].ColorImage !== "") color.style.backgroundImage = "url('"+productList[i].versions[j].ColorImage+"')";
+                else if(productList[i].versions[j].HTMLColor !== "") color.style.backgroundColor = productList[i].versions[j].HTMLColor;
+                else{
+                    color.style.backgroundColor = "rgb(255, 255, 255)";
+                    color.innerText = "N/A";
+                }
+
+                //color.style.backgroundColor = productList[i].versions[j].HTMLColor;
+                //if(productList[i].versions[j].HTMLColor === "") color.innerText = "N/A";
             }
             if(productList[i].versions.length > 5){
                 const colorNum = document.createElement("div");

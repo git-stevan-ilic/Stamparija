@@ -78,6 +78,14 @@
     display:block;
     height:4vh;
     width:4vh;
+
+    justify-content:center;
+    align-items:center;
+    display:flex;
+
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-color:cover;
 }
 .studio-color:hover{
     transform:scale(1.1);

@@ -200,7 +200,12 @@ function generateColors(id, versions){
         if(id !== versions[i].ID){
             const studioColor = document.createElement("div");
             studioColor.className = "studio-color";
-            studioColor.style.backgroundColor = versions[i].HTMLColor;
+            if(versions[i].ColorImage !== "") studioColor.style.backgroundImage = "url('"+versions[i].ColorImage+"')";
+            else if(versions[i].HTMLColor !== "") studioColor.style.backgroundColor = versions[i].HTMLColor;
+            else{
+                studioColor.style.backgroundColor = "rgb(255, 255, 255)";
+                studioColor.innerText = "N/A";
+            }
             studioColorHolder.appendChild(studioColor);
             studioColor.onclick = ()=>{
                 let currVersion = versions[i];

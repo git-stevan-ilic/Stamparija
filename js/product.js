@@ -29,11 +29,13 @@ function loadProductLogic(){
             
             document.querySelector(".product-display-name").innerText  = currVersion.Name;
             document.querySelector(".product-display-code").innerText  = "Širfa: "+data.ID;
-            document.querySelector(".product-display-price").innerText = currVersion.Price+"€";
             document.getElementById("desc").innerText = currVersion.Description;
             if(dimesion !== "") document.getElementById("dimensions").innerText = "Dimenzija: "+dimesion;
             if(currVersion.Weight && currVersion.WeightUM) document.getElementById("weight").innerText = "Težina: "+currVersion.Weight + currVersion.WeightUM;
             document.getElementById("package").innerText = "Pakovanje: "+currVersion.Package;
+            const price = document.querySelector(".product-display-price");
+            price.innerText = currVersion.Price+"€";
+            if(currVersion.Price === 0) price.innerText = "Cena na upit";
 
             if(currVersion.Sizes.length > 0){
                 let sizeText = "Veličine:";
@@ -57,8 +59,14 @@ function loadProductLogic(){
                 if(data.productData.versions[i].HTMLColor !== currVersion.HTMLColor){
                     const color = document.createElement("a");
                     color.className = "product-display-color";
-                    color.style.backgroundColor = data.productData.versions[i].HTMLColor;
-                    if(data.productData.versions[i].HTMLColor === "") color.innerText = "N/A";
+
+                    if(data.productData.versions[i].ColorImage !== "") color.style.backgroundImage = "url('"+data.productData.versions[i].ColorImage+"')";
+                    else if(data.productData.versions[i].HTMLColor !== "") color.style.backgroundColor = data.productData.versions[i].HTMLColor;
+                    else{
+                        color.style.backgroundColor = "rgb(255, 255, 255)";
+                        color.innerText = "N/A";
+                    }
+                    
                     color.target = "_self";
                     color.href = "../pages/product.html?id="+data.productData.versions[i].ID;
                     colorHolder.appendChild(color);
@@ -110,6 +118,5 @@ function loadProductLogic(){
 
         const logoButton = document.querySelector("#your-logo");
         logoButton.href = "../pages/studio.html?id="+data.ID.slice(0, 5);
-        //logoButton.onclick = ()=>{window.open("../pages/studio.html?id="+data.ID.slice(0, 5))}
     });
 }

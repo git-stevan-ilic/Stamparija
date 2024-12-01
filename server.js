@@ -21,13 +21,7 @@ const io = new Server(server);
 /*--Start Server-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 app.use(express.static(__dirname));
 app.get("/", (req, res)=>{res.sendFile(__dirname+"/index.html")});
-server.listen(process.env.PORT, ()=>{
-    console.log("Running at port "+process.env.PORT)
-    const apiRootUrl = process.env.ROOT_URL;
-    const apiLoginEndpoint = process.env.LOGIN_ENDPOINT;
-    const url = apiRootUrl + apiLoginEndpoint;
-    console.log(url)
-});
+server.listen(process.env.PORT, ()=>{console.log("Running at port "+process.env.PORT)});
 
 /*--Input/Output-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 io.on("connection", (client)=>{
@@ -268,7 +262,16 @@ function generateUsedProducts(data, apiIDs){
                         });
                     }
                     else{
-                        if(sizeIndex === -1) generatedProducts[j].Products[productIndex].versions.push(currVersion);
+                        if(sizeIndex === -1){
+                            let versionExists = false;
+                            for(let p = 0; p < generatedProducts[j].Products[productIndex].versions.length; p++){
+                                if(generatedProducts[j].Products[productIndex].versions[p].ID === ID){
+                                    versionExists = true;
+                                    break;
+                                }
+                            }
+                            if(!versionExists) generatedProducts[j].Products[productIndex].versions.push(currVersion);
+                        }
                         else{
                             let foundIndex, sizeFound = false;
                             for(let p = 0; p < generatedProducts[j].Products[productIndex].versions.length; p++){
@@ -319,6 +322,7 @@ function generateUsedProducts(data, apiIDs){
                                 if(productData.Model.Description2.length > productData.Model.Description.length)
                                     currVersion.Description = productData.Model.Description2;
                                 currVersion.HTMLColor = productData.Shade.HtmlColor;
+                                currVersion.ColorImage = productData.Shade.Image;
                             }
                             versionNum++;
                             if(versionNum >= generatedProducts[i].Products[j].versions.length){
@@ -341,7 +345,7 @@ function generateUsedProducts(data, apiIDs){
                             }
                         }).catch(error => console.log("\n\n\nProduct API Error:\n\n", error));
                     }).catch(error => console.log("\n\n\nLogin Error:\n\n", error));
-                }, i*1250);
+                }, (i*1000 + j*100 + k*10));
             }
         }
     }
@@ -366,14 +370,3 @@ getProduct();
 eventEmitter.on("updated-all-products", ()=>{
     io.emit("all-product-data", allProducts);
 });
-
-function generateFinalImage(client, images){
-    /*const canvas = createCanvas(1080, 1080);
-    const ctx = canvas.getContext("2d");
-
-    for(let i = 0; i < images.length; i++){
-        ctx.drawImage(images[i], 0, 0, canvas.width, canvas.height);
-    }
-
-    client.emit("receive-final-image", images, canvas.toDataURL());*/
-}

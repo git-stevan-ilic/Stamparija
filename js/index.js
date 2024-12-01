@@ -197,7 +197,7 @@ function initLoad(){
                 const resultElement = document.createElement("a");
                 if(results[i].type === 0){
                     resultElement.className = "search-item search-item-small";
-                    resultElement.innerHTML = results[i].name;
+                    resultElement.innerText = results[i].name;
                     if(results[i].cat) resultElement.href = "../pages/product-list.html?cat="+results[i].cat;
                     if(results[i].subCat) resultElement.href = "../pages/product-list.html?subcat="+results[i].subCat;
                 }
@@ -210,9 +210,10 @@ function initLoad(){
                     const searchItemPrice = document.createElement("div"); searchItemPrice.className = "search-item-price";
 
                     searchItemIcon.style.backgroundImage = "url('"+results[i].img+"')";
-                    searchItemTitle.innerHTML = results[i].name;
-                    searchItemCode.innerHTML  = results[i].code;
-                    searchItemPrice.innerHTML = results[i].price+"€";
+                    searchItemTitle.innerText = results[i].name;
+                    searchItemCode.innerText  = results[i].code;
+                    searchItemPrice.innerText = results[i].price+"€";
+                    if(results[i].price === 0) searchItemPrice.innerText = "Cena na upit";
 
                     searchItemBody.appendChild(searchItemTitle);
                     searchItemBody.appendChild(searchItemCode);
@@ -234,7 +235,7 @@ function initLoad(){
             const moreButton   = document.createElement("a");
             buttonHolder.className = "search-item search-item-more";
             moreButton.className = "more-button";
-            moreButton.innerHTML = "Vidi više";
+            moreButton.innerText = "Vidi više";
 
             buttonHolder.appendChild(moreButton);
             searchDropDown.appendChild(buttonHolder);
