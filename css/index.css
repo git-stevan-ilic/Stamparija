@@ -6,6 +6,8 @@
     
     --category-width-small:8.5em;
     --category-width:17em;
+
+    --default-canvas-size:80vh;
 }
 body{
     font-family:"Inter";

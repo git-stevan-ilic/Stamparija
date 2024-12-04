@@ -187,13 +187,16 @@ async function getProductsAPI(accessToken, productID){
     const product = await axios.get(url, header)
     .then(response => {return response.data})
     .catch(error => {
-        if(error.status === 404) console.log("Product with ID:"+productID+" is currenctly unavailable");
-        else console.error("\n\n\nProduct Error:\n\n", error)}
-    );
+        switch(error.status){
+            default:  console.error("\n\n\nProduct Error:\n\n", error); break;
+            case 401: console.log("Authorization for product with ID:"+productID+" was denied:\n\n", error); break;
+            case 404: console.log("Product with ID:"+productID+" is currenctly unavailable"); break;
+        }
+    });
     return product;
 }
 
-let allProducts = [], generatedProducts = [];;
+let allProducts = [], generatedProducts = [];
 function getProduct(){
     loginAPI().then((token)=>{
         getProductsAPI(token, null).then((data)=>{
@@ -345,7 +348,7 @@ function generateUsedProducts(data, apiIDs){
                             }
                         }).catch(error => console.log("\n\n\nProduct API Error:\n\n", error));
                     }).catch(error => console.log("\n\n\nLogin Error:\n\n", error));
-                }, (i*1000 + j*100 + k*10));
+                }, (i*1500 + j*10 + k));
             }
         }
     }

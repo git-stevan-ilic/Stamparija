@@ -285,11 +285,11 @@
     box-shadow:0px 0px 2vh rgba(0, 0, 0, 0.1);
     background-color:rgb(255, 255, 255);
     border:1px solid rgb(200, 200, 200);
+    height:var(--default-canvas-size);
     transform:translate(-50%, -50%);
     position:absolute;
     overflow:visible;
     aspect-ratio:1;
-    height:80vh;
     left:50%;
     top:50%;
 }
@@ -318,7 +318,6 @@ canvas{
 }
 .canvas-outline{
     border:1px solid rgb(200, 200, 255);
-    transform:translate(-50%, -50%);
     position:absolute;
     cursor:default;
     opacity:0;

@@ -24,6 +24,10 @@ function loadStudioLogic(){
 
 /*--Generation---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 function generateStudio(client, data){
+    const style = getComputedStyle(document.body);
+    const canvasSizeCSS = style.getPropertyValue("--default-canvas-size");
+    const canvasSize = parseInt(canvasSizeCSS.slice(0, -2));
+
     let currVersion = data.versions[0];
     console.log("current product", data);
     console.log("current version", currVersion);
@@ -31,7 +35,6 @@ function generateStudio(client, data){
     let imgIndex = 0, images = [], imageData = [], zoom = 10, loadedImages = [];
     generateColors(currVersion.ID, data.versions);
     generateImages(currVersion.Images, imgIndex);
-
 
     document.addEventListener("update-image-data", (e)=>{
         imageData = e.detail.imageData.concat(loadedImages);
@@ -70,6 +73,12 @@ function generateStudio(client, data){
         tempImageData.splice(0, 1);
         loadedImages = tempImageData;
     });
+    document.addEventListener("remove-drag-move", ()=>{
+        back.removeEventListener("mousedown", mouseDown);
+    });
+    document.addEventListener("add-drag-move", ()=>{
+        back.addEventListener("mousedown", mouseDown);
+    });
 
     const studioOutlineHolder = document.querySelector(".studio-outline-holder");
     const studioCanvasHolder = document.querySelector(".studio-canvas-holder");
@@ -86,7 +95,7 @@ function generateStudio(client, data){
         if(zoom > 30) zoom = 30;
         zoomValue.innerText = zoom*10+"%";
         resizeCanvases(imageData, zoom);
-        let newSize = 80 * zoom / 10;
+        let newSize = canvasSize * zoom / 10;
         studioCanvasHolder.style.height = newSize+"vh";
         studioOutlineHolder.style.height = newSize+"vh";
 
@@ -95,7 +104,7 @@ function generateStudio(client, data){
             translateX = "0%";
             left = "0px";
         }
-        if(newSize > 80){
+        if(newSize > canvasSize){
             translateY = "0%";
             top = "0px";
         }
@@ -159,12 +168,13 @@ function generateStudio(client, data){
                 inputImg.src = reader.result;
                 inputImg.onload = ()=>{
                     const rect = studioCanvasHolder.getBoundingClientRect();
-                    let inputImgData = resizeImgToFit(inputImg, rect);
+                    let inputImgData = resizeImgToFit(inputImg, rect, zoom);
                     let newImageData = {
                         id:"canvas-"+crypto.randomUUID(),
+                        scaleX:1, scaleY:1, angle:0,
+                        x:0.5 - inputImgData.w / 2,
+                        y:0.5 - inputImgData.h / 2,
                         zIndex:imageData.length,
-                        x:0.5, y:0.5, angle:0,
-                        scaleX:1, scaleY:1,
                         h:inputImgData.h,
                         w:inputImgData.w,
                         image:inputImg,
@@ -243,7 +253,7 @@ function generateImages(imageLinks, imgIndex){
         images.push(image);
         if(i === imgIndex){
             imageData.push({
-                w:1, h:1, x:0.5, y:0.5, angle:0,
+                w:1, h:1, x:0, y:0, angle:0,
                 scaleX:1, scaleY:1,
                 id:"canvas-main",
                 image:image
@@ -277,12 +287,15 @@ function generateCustomImages(imageData, zoom){
         outline.style.height = "calc("+imageData[i].h*100+"% - 2px)";
         outline.style.width = "calc("+imageData[i].w*100+"% - 2px)";
         outline.style.left = imageData[i].x*100+"%";
-        outline.style.top = imageData[i].x*100+"%";
+        outline.style.top = imageData[i].y*100+"%";
         studioOutlineHolder.appendChild(outline);
 
         let orbs = [
-            {x:0, y:0, type:0, c:"nw-resize"}, {x:1, y:0, type:0, c:"ne-resize"}, {x:1, y:1, type:0, c:"se-resize"},
-            {x:0, y:1, type:0, c:"sw-resize"}, {x:0.5, y:-0.25, type:1, c:"url('../assets/rotate.cur'), auto"}
+            {x:0, y:0, type:0, c:"nw-resize"}, {x:1, y:0, type:0, c:"ne-resize"},
+            {x:1, y:1, type:0, c:"se-resize"}, {x:0, y:1, type:0, c:"sw-resize"},
+            {x:0.5, y:0, type:1, c:"n-resize"}, {x:0.5, y:1, type:1, c:"s-resize"},
+            {x:0, y:0.5, type:1, c:"w-resize"}, {x:1, y:0.5, type:1, c:"e-resize"},
+            {x:0.5, y:-0.25, type:2, c:"url('../assets/rotate.cur'), auto"}
         ];
         for(let j = 0; j < orbs.length; j++){
             const orb = document.createElement("div");
@@ -298,7 +311,6 @@ function generateCustomImages(imageData, zoom){
         line.className = "canvas-outline-connect";
         outline.appendChild(line);
         outlineLogic(outline, imageData, i);
-        
     }
     resizeCanvases(imageData, zoom);
 }
@@ -306,10 +318,14 @@ function generateCustomImages(imageData, zoom){
 /*--Canvas Logic-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 function resizeCanvases(imageData, zoom){
     const studioCanvasHolder = document.querySelector(".studio-canvas-holder");
+    const style = getComputedStyle(document.body);
+    const canvasSizeCSS = style.getPropertyValue("--default-canvas-size");
+    const canvasSize = parseInt(canvasSizeCSS.slice(0, -2));
+
     for(let i = 0; i < imageData.length; i++){
         const canvas = studioCanvasHolder.children[i];
-        canvas.height = window.innerHeight * 0.80 * zoom / 10;
-        canvas.width = window.innerHeight * 0.80 * zoom / 10;
+        canvas.height = window.innerHeight * canvasSize /100 * zoom / 10;
+        canvas.width = window.innerHeight * canvasSize / 100 * zoom / 10;
         canvas.id = imageData[i].id
     }
     drawCanvases(imageData);
@@ -328,19 +344,22 @@ function drawCanvases(imageData){
 
         ctx.beginPath();
         ctx.save();
-        ctx.translate(imgL, imgT);
+        ctx.translate(imgL + imgW / 2, imgT + imgH / 2);
         ctx.scale(imageData[i].scaleX, imageData[i].scaleY);
         ctx.rotate(imageData[i].angle * Math.PI / 180);
-        ctx.drawImage(imageData[i].image, -imgW/2, -imgH/2, imgW, imgH);
+        ctx.drawImage(imageData[i].image, -imgW / 2, -imgH / 2, imgW, imgH);
         ctx.restore();
         ctx.closePath();
     }
 }
-function resizeImgToFit(image, rect){
+function resizeImgToFit(image, rect, zoom){
     let inputImgData = {w:1, h:1}
-    let aspectRatio = image.width / image.height
-    if(image.width > rect.width && image.height > rect.height){
-        if(image.width >= image.height){
+    let imageH = image.height * zoom / 10;
+    let imageW = image.width * zoom / 10;
+
+    let aspectRatio = imageW / imageH;
+    if(imageW > rect.width && imageH > rect.height){
+        if(imageW >= imageH){
             inputImgData.w = 1;
             inputImgData.h = 1 / aspectRatio;
         }
@@ -350,18 +369,18 @@ function resizeImgToFit(image, rect){
         }
         return inputImgData;
     }
-    if(image.width > rect.width){
+    if(imageW > rect.width){
         inputImgData.w = 1;
         inputImgData.h = 1 / aspectRatio;
         return inputImgData;
     }
-    if(image.height > rect.height){
+    if(imageH > rect.height){
         inputImgData.h = 1;
         inputImgData.w = 1 * aspectRatio;
         return inputImgData;
     }
-    inputImgData.h = image.height / rect.height;
-    inputImgData.w = image.width / rect.width;
+    inputImgData.h = imageH / rect.height;
+    inputImgData.w = imageW / rect.width;
     return inputImgData;
 }
 
@@ -371,30 +390,40 @@ function outlineLogic(outline, imageData, index){
     let outlineHolderRect, offsetX, offsetY;
     outline.addEventListener("mousedown", elemMoveMouseDown);
 
-    function elemMoveMouseDown(e){           
+    function elemMoveMouseDown(e){
         outlineHolderRect = studioOutlineHolder.getBoundingClientRect();
         let outlineRect = outline.getBoundingClientRect();
 
-        let offsetXoutline = 0.5 - e.offsetX / outlineRect.width;
-        let offsetYoutline = 0.5 - e.offsetY / outlineRect.height;
         let ratioW = outlineRect.width / outlineHolderRect.width;
         let ratioH = outlineRect.height / outlineHolderRect.height;
-        offsetX = offsetXoutline * ratioW;
-        offsetY = offsetYoutline * ratioH;
+
+        //let angle = imageData[index].angle * Math.PI / 180;
+        //let clickedX = e.offsetX * Math.cos(angle) - e.offsetY * Math.sin(angle);
+        //let clickedY = e.offsetX * Math.sin(angle) + e.offsetY * Math.cos(angle);
+
+        offsetX = (e.offsetX /  outlineRect.width) * ratioW;
+        offsetY = (e.offsetY / outlineRect.height) * ratioH;
 
         studioOutlineHolder.addEventListener("mousemove", elemMoveMouseMove);
         studioOutlineHolder.addEventListener("mouseup", elemMoveMouseUp);
         outline.classList.add("selected-outline");
 
+        const event = new Event("remove-drag-move");
+        document.dispatchEvent(event);
+
         setTimeout(()=>{
             let eventData =  {detail:{index:index}}
             let event = new CustomEvent("open-side-buttons", eventData);
             document.dispatchEvent(event);
-        },100);
+        }, 100);
     }
     function elemMoveMouseMove(e){
-        let newX = (e.clientX - outlineHolderRect.x) / outlineHolderRect.width + offsetX;
-        let newY = (e.clientY - outlineHolderRect.y) / outlineHolderRect.height + offsetY;
+        //let angle = (imageData[index].angle) * Math.PI / 180;
+        //let rotadedX = offsetX * Math.cos(angle) - offsetY * Math.sin(angle);
+        //let rotatedY = offsetX * Math.sin(angle) + offsetY * Math.cos(angle);
+
+        let newX = (e.clientX - outlineHolderRect.x) / outlineHolderRect.width - offsetX;
+        let newY = (e.clientY - outlineHolderRect.y) / outlineHolderRect.height - offsetY;
         imageData[index].x = newX;
         imageData[index].y = newY;
 
@@ -404,10 +433,7 @@ function outlineLogic(outline, imageData, index){
         emitRedrawCanvas(imageData);
     }
     function elemMoveMouseUp(e){
-        let newX = (e.clientX - outlineHolderRect.x) / outlineHolderRect.width + offsetX;
-        let newY = (e.clientY - outlineHolderRect.y) / outlineHolderRect.height + offsetY;
-        outline.style.left = newX*100+"%";
-        outline.style.top = newY*100+"%";
+        elemMoveMouseMove(e);
 
         const allOutlines = document.querySelectorAll(".canvas-outline");
         for(let j = 0; j < allOutlines.length; j++) allOutlines[j].classList.remove("selected-outline");
@@ -415,18 +441,54 @@ function outlineLogic(outline, imageData, index){
 
         studioOutlineHolder.removeEventListener("mousemove", elemMoveMouseMove);
         studioOutlineHolder.removeEventListener("mouseup", elemMoveMouseUp);
-        emitRedrawCanvas(imageData);
+
+        const event = new Event("add-drag-move");
+        document.dispatchEvent(event);
     }
 }
 function outlineOrbLogic(orb, orbData, imageData, index){
     const studioOutlineHolder = document.querySelector(".studio-outline-holder");
-    const studioCanvasHolder = document.querySelector(".studio-canvas-holder");
-    const rect = studioCanvasHolder.getBoundingClientRect();
     const outline = orb.parentElement;
 
-    if(!orbData.type){
-        orb.addEventListener("mousedown", orbResizeMouseDown);
+    let currX, currY, initX, initY, initScaleX, initScaleY;
+    function resizeX(e, dir){
+        const studioCanvasHolder = document.querySelector(".studio-canvas-holder");
+        const rect = studioCanvasHolder.getBoundingClientRect();;
 
+        currX = (e.clientX - rect.x) / rect.width;
+        let diffX = currX - initX;
+        imageData[index].scaleX = initScaleX;
+
+        if(Math.sign(diffX) !== Math.sign(dir)) imageData[index].scaleX = -initScaleX;
+        imageData[index].w = Math.abs(diffX);
+        
+        if(diffX >= 0) imageData[index].x = initX;
+        else imageData[index].x = initX - imageData[index].w;
+
+        outline.style.width = Math.abs(imageData[index].w) * 100 + "%";
+        outline.style.left = imageData[index].x * 100 + "%";
+    }
+    function resizeY(e, dir){
+        const studioCanvasHolder = document.querySelector(".studio-canvas-holder");
+        const rect = studioCanvasHolder.getBoundingClientRect();
+
+        currY = (e.clientY - rect.y) / rect.height;
+        let diffY = currY - initY;
+        imageData[index].scaleY = initScaleY;
+
+        if(Math.sign(diffY) !== Math.sign(dir)) imageData[index].scaleY = -initScaleY;
+        imageData[index].h = Math.abs(diffY);
+
+        if(diffY >= 0) imageData[index].y = initY;
+        else imageData[index].y = initY - imageData[index].h;
+
+        outline.style.height = Math.abs(imageData[index].h) * 100 + "%";
+        outline.style.top = imageData[index].y * 100 + "%";
+
+    }
+
+    if(orbData.type === 0){
+        orb.addEventListener("mousedown", orbResizeMouseDown);
         let dir = {h:0, v:0} //horizontal vertical
         switch(orbData.c){
             default:break;
@@ -435,70 +497,118 @@ function outlineOrbLogic(orb, orbData, imageData, index){
             case "sw-resize": dir = {h:-1, v:1 }; break;
             case "se-resize": dir = {h:1,  v:1 }; break;
         }
-
-        let initX, initY, currX, currY;
         function orbResizeMouseDown(e){
             e.stopPropagation();
-            initX = e.clientX;
-            initY = e.clientY;
+
+            let dirX = 0;
+            let dirY = 0;
+            if(dir.h < 0) dirX = 1;
+            if(dir.v < 0) dirY = 1;
+
+            initScaleX = imageData[index].scaleX;
+            initScaleY = imageData[index].scaleY;
+            initX = imageData[index].x + dirX * imageData[index].w;
+            initY = imageData[index].y + dirY * imageData[index].h;
+
+            studioOutlineHolder.addEventListener("mousemove", orbResizeMouseMove);
+            studioOutlineHolder.addEventListener("mouseup", orbResizeMouseUp);
+        }
+        function orbResizeMouseMove(e){
+            e.stopPropagation();
+            resizeX(e, dir.h);
+            resizeY(e, dir.v);
+            emitRedrawCanvas(imageData);
+        }
+        function orbResizeMouseUp(e){
+            orbResizeMouseMove(e);
+            studioOutlineHolder.removeEventListener("mousemove", orbResizeMouseMove);
+            studioOutlineHolder.removeEventListener("mouseup", orbResizeMouseUp);
+        }
+        return;
+    }
+    if(orbData.type === 1){
+        orb.addEventListener("mousedown", orbResizeMouseDown);
+        let dir = {h:0, v:0} //horizontal vertical
+        switch(orbData.c){
+            default:break;
+            case "n-resize": dir = {h:0, v:-1}; break;
+            case "s-resize": dir = {h:0,  v:1}; break;
+            case "w-resize": dir = {h:-1, v:0}; break;
+            case "e-resize": dir = {h:1,  v:0}; break;
+        }
+        function orbResizeMouseDown(e){
+            e.stopPropagation();
+
+            let dirX, dirY;
+            if(dir.h === 0){
+                dirY = 0;
+                if(dir.v < 0) dirY = 1;
+                initScaleY = imageData[index].scaleY;
+                initY = imageData[index].y + dirY * imageData[index].h;
+            }
+            else{
+                dirX = 0;
+                if(dir.h < 0) dirX = 1;
+                initScaleX = imageData[index].scaleX;
+                initX = imageData[index].x + dirX * imageData[index].w;
+            }
             
             studioOutlineHolder.addEventListener("mousemove", orbResizeMouseMove);
             studioOutlineHolder.addEventListener("mouseup", orbResizeMouseUp);
         }
         function orbResizeMouseMove(e){
-            currX = e.clientX;
-            currY = e.clientY;
-
-            let diffX = (currX - initX) /  rect.width * dir.h;
-            let diffY = (currY - initY) / rect.height * dir.v;
-            let diff = Math.max(diffX, diffY);
-
-            imageData[index].w = imageData[index].w + diff;
-            imageData[index].h = imageData[index].h + diff;
-            imageData[index].x = imageData[index].x + diff * dir.h / 2;
-            imageData[index].y = imageData[index].y + diff * dir.v / 2;
-
-            outline.style.top = imageData[index].y*100+"%";
-            outline.style.left = imageData[index].x*100+"%";
-            outline.style.width = imageData[index].w*100+"%";
-            outline.style.height = imageData[index].h*100+"%";
-            
-
-            initX = e.clientX;
-            initY = e.clientY;
+            e.stopPropagation();
+            switch(orbData.c){
+                default:break;
+                case "n-resize": resizeY(e, dir.v); break;
+                case "s-resize": resizeY(e, dir.v); break;
+                case "w-resize": resizeX(e, dir.h); break;
+                case "e-resize": resizeX(e, dir.h); break;
+            }
             emitRedrawCanvas(imageData);
         }
-        function orbResizeMouseUp(){
+        function orbResizeMouseUp(e){
+            orbResizeMouseMove(e);
             studioOutlineHolder.removeEventListener("mousemove", orbResizeMouseMove);
             studioOutlineHolder.removeEventListener("mouseup", orbResizeMouseUp);
         }
+        return;
     }
-    else{
-        orb.addEventListener("mousedown", orbRotateMouseDown);
 
-        let currX, currY;
-        function orbRotateMouseDown(e){
-            e.stopPropagation();
-            currX = (e.clientX - rect.x) / rect.width;
-            currY = (e.clientY - rect.y) / rect.height;
+    orb.addEventListener("mousedown", orbRotateMouseDown);
+    function orbRotateMouseDown(e){
+        e.stopPropagation();
 
-            studioOutlineHolder.addEventListener("mousemove", orbRotateMouseMove);
-            studioOutlineHolder.addEventListener("mouseup", orbRotateMouseUp);
-        }
-        function orbRotateMouseMove(e){
-            currX = (e.clientX - rect.x) / rect.width;
-            currY = (e.clientY - rect.y) / rect.height;
+        const studioCanvasHolder = document.querySelector(".studio-canvas-holder");
+        const rect = studioCanvasHolder.getBoundingClientRect();
 
-            let angle = getLineAngle(currX, currY, imageData[index].x, imageData[index].y) - 90;
-            imageData[index].angle = angle;
-            outline.style.transform = "translate(-50%, -50%) rotate("+imageData[index].angle+"deg)";
+        currX = (e.clientX - rect.x) / rect.width;
+        currY = (e.clientY - rect.y) / rect.height;
 
-            emitRedrawCanvas(imageData);
-        }
-        function orbRotateMouseUp(){
-            studioOutlineHolder.removeEventListener("mousemove", orbRotateMouseMove);
-            studioOutlineHolder.removeEventListener("mouseup", orbRotateMouseUp);
-        }
+        studioOutlineHolder.addEventListener("mousemove", orbRotateMouseMove);
+        studioOutlineHolder.addEventListener("mouseup", orbRotateMouseUp);
+    }
+    function orbRotateMouseMove(e){
+        e.stopPropagation();
+
+        const studioCanvasHolder = document.querySelector(".studio-canvas-holder");
+        const rect = studioCanvasHolder.getBoundingClientRect();
+
+        currX = (e.clientX - rect.x) / rect.width;
+        currY = (e.clientY - rect.y) / rect.height;
+
+        let centerX = imageData[index].x + imageData[index].w / 2;
+        let centerY = imageData[index].y + imageData[index].h / 2;
+        let angle = getLineAngle(currX, currY, centerX, centerY) - 90;
+        imageData[index].angle = angle;
+
+        outline.style.transform = "rotate("+imageData[index].angle+"deg)";
+        emitRedrawCanvas(imageData);
+    }
+    function orbRotateMouseUp(e){
+        orbRotateMouseMove(e)
+        studioOutlineHolder.removeEventListener("mousemove", orbRotateMouseMove);
+        studioOutlineHolder.removeEventListener("mouseup", orbRotateMouseUp);
     }
 }
 function displaySideButtons(imageData, index){
@@ -534,7 +644,7 @@ function emitRedrawCanvas(imageData){
     let event = new CustomEvent("redraw-canvases", eventData);
     document.dispatchEvent(event);
 }
-function getLineAngle(cx, cy, ex, ey) {
+function getLineAngle(cx, cy, ex, ey){
     let dy = ey - cy;
     let dx = ex - cx;
     let theta = Math.atan2(dy, dx);
