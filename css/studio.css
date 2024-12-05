@@ -32,7 +32,7 @@
 
     justify-content:center;
     flex-direction:column;
-    align-items:center;
+    align-items:flex-start;
     display:flex;
 }
 .studio-image{
@@ -59,7 +59,7 @@
 /*--Colors-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 .studio-color-holder{
     height:calc(4vh + 2px);
-    bottom:1vh;
+    bottom:2vh;
     left:1vh;
 
     justify-content:flex-end;
@@ -166,13 +166,13 @@
 }
 #download{
     position:absolute;
-    bottom:calc(5vh + 2px);
-    right:1vh;
+    bottom:calc(6vh + 2px);
+    right:2vh;
 }
 #send{
     position:absolute;
-    bottom:1vh;
-    right:1vh;
+    bottom:2vh;
+    right:2vh;
 }
 
 .studio-input{
@@ -219,11 +219,11 @@
     background-image:url("../assets/icons/add text.png");
 }
 #input-text{
-    right:1vh;
+    right:2vh;
     top:1vh;
 }
 #input-image{
-    right:9vh;
+    right:10vh;
     top:1vh;
 }
 
@@ -233,7 +233,7 @@
     position:absolute;
     height:25vh;
     width:5vh;
-    right:1vh;
+    right:2vh;
     top:50%;
 
     justify-content:center;

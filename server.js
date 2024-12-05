@@ -1,4 +1,5 @@
 /*--Load Constants-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+import { createCanvas, loadImage } from "canvas";
 import EventEmitter from "events";
 import express from "express";
 import http from "http";
@@ -140,24 +141,47 @@ io.on("connection", (client)=>{
         }
         if(!productFound) client.emit("studio-received", {Found:productFound});
     });
-    /*client.on("request-final-images", (imgData, sendMail)=>{
-        let images = [];
-        for(let i = 0; i < imgData.length; i++){
-            let src = imgData[i].rawData;
-            if(i > 0) src = Buffer.from(imgData[i].rawData);
-            loadImage(src).then((img)=>{
-                images.push(img);
-                if(images.length >= imgData.length){
-                    generateFinalImage(client, images);
+    client.on("request-final-images", (imageData, sendMail)=>{
+        let loadedImages = [];
+        for(let i = 0; i < imageData.length; i++){
+            loadImage(imageData[i].src).then(image => {
+                loadedImages[i] = image;
+                for(let j = 0; j < loadedImages.length; j++){
+                    if(loadedImages[j] === undefined) break;
+                    if(j === imageData.length-1) createFinalImage();
                 }
             });
         }
-    });*/
 
-    /*ss(client).on("request-final-images", (stream, data)=>{
-        let filename = path.basename(data.name);
-        stream.pipe(fs.createWriteStream(filename));
-    });*/
+        function createFinalImage(){
+            const canvas = createCanvas(1080, 1080);
+            const ctx = canvas.getContext("2d");
+
+            for(let i = 0; i < imageData.length; i++){
+                let imgH = imageData[i].h * canvas.height;
+                let imgW = imageData[i].w * canvas.width;
+                let imgT = imageData[i].y * canvas.height;
+                let imgL = imageData[i].x * canvas.width;
+
+                ctx.beginPath();
+                ctx.save();
+                ctx.translate(imgL + imgW / 2, imgT + imgH / 2);
+                ctx.scale(imageData[i].scaleX, imageData[i].scaleY);
+                ctx.rotate(imageData[i].angle * Math.PI / 180);
+                ctx.drawImage(loadedImages[i], -imgW / 2, -imgH / 2, imgW, imgH);
+                ctx.restore();
+                ctx.closePath();
+            }
+
+            if(!sendMail){
+                let finalImage = canvas.toDataURL();
+                client.emit("download-final-image", finalImage);
+            }
+            else{
+                
+            }
+        }
+    });
 });
 
 /*--Products-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/

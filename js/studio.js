@@ -14,12 +14,13 @@ function loadStudioLogic(){
         if(!data.Found) pageBodyContent.innerHTML = "<div style='margin-left:3vh;margin-top:3vh;'>Proizvod nije nađen";
         else generateStudio(client, data);
     });
-    /*client.on("receive-final-image", (images, data)=>{
-        console.log(images);
-        let img = new Image();
-        img.src = data;
-        document.body.appendChild(img);
-    });*/
+    client.on("download-final-image", (image)=>{
+        const downloadLink = document.createElement("a");
+        downloadLink.download = "Logo Studio Image.png";
+        downloadLink.href = image;
+        downloadLink.click();
+        downloadLink.remove();
+    });
 }
 
 /*--Generation---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -39,7 +40,7 @@ function generateStudio(client, data){
     document.addEventListener("update-image-data", (e)=>{
         imageData = e.detail.imageData.concat(loadedImages);
         images = e.detail.images;
-        generateCustomImages(imageData, zoom);
+        generateCustomImages(imageData, zoom, false);
         resizeCanvases(imageData, zoom);
         window.onresize = ()=>{
             resizeCanvases(imageData, zoom);
@@ -49,7 +50,7 @@ function generateStudio(client, data){
     });
     document.addEventListener("update-custom-images", (e)=>{
         imageData = e.detail.imageData;
-        generateCustomImages(e.detail.imageData, zoom);
+        generateCustomImages(e.detail.imageData, zoom, true);
     });
     document.addEventListener("update-curr-version", (e)=>{
         currVersion = e.detail.currVersion;
@@ -69,15 +70,28 @@ function generateStudio(client, data){
         displaySideButtons(imageData, e.detail.index);
     });
     document.addEventListener("update-delete-backup", (e)=>{
-        let tempImageData = e.detail.imageData;
-        tempImageData.splice(0, 1);
-        loadedImages = tempImageData;
+        let index = e.detail.index;
+        document.getElementById("outline-"+imageData[index].id).remove();
+        document.getElementById(imageData[index].id).remove();
+        loadedImages.splice((index - 1), 1);
+        imageData.splice(index, 1);
+        generateCustomImages(imageData, zoom, false);
+        resizeCanvases(imageData, zoom);
+        window.onresize = ()=>{
+            resizeCanvases(imageData, zoom);
+            zoomFunc(0);
+        }
+        zoomFunc(0);
     });
     document.addEventListener("remove-drag-move", ()=>{
         back.removeEventListener("mousedown", mouseDown);
     });
     document.addEventListener("add-drag-move", ()=>{
         back.addEventListener("mousedown", mouseDown);
+    });
+    document.addEventListener("clone-image", (e)=>{
+        imageData.push(e.detail.clone);
+        generateCustomImages(imageData, zoom, true);
     });
 
     const studioOutlineHolder = document.querySelector(".studio-outline-holder");
@@ -121,8 +135,7 @@ function generateStudio(client, data){
     const back = document.querySelector("#back");
     back.addEventListener("mousedown", mouseDown);
     function mouseDown(e){
-        const allOutlines = document.querySelectorAll(".canvas-outline");
-        for(let j = 0; j < allOutlines.length; j++) allOutlines[j].classList.remove("selected-outline");
+        deselectAllOutlines();
 
         const sideButtonHolder = document.querySelector(".side-button-holder");
         sideButtonHolder.style.animation = "fade-out ease-in-out 0.1s";
@@ -166,15 +179,15 @@ function generateStudio(client, data){
             reader.readAsDataURL(file);
             reader.onloadend = ()=>{
                 inputImg.src = reader.result;
-                inputImg.onload = ()=>{
+                inputImg.onload = (e)=>{
                     const rect = studioCanvasHolder.getBoundingClientRect();
                     let inputImgData = resizeImgToFit(inputImg, rect, zoom);
                     let newImageData = {
+                        src:reader.result,
                         id:"canvas-"+crypto.randomUUID(),
                         scaleX:1, scaleY:1, angle:0,
                         x:0.5 - inputImgData.w / 2,
                         y:0.5 - inputImgData.h / 2,
-                        zIndex:imageData.length,
                         h:inputImgData.h,
                         w:inputImgData.w,
                         image:inputImg,
@@ -190,18 +203,19 @@ function generateStudio(client, data){
         }
     }
 
+    document.querySelector("#download").onclick = ()=>{
+        client.emit("request-final-images", imageData, false);
+    }
+    document.querySelector("#send").onclick = ()=>{
+        client.emit("request-final-images", imageData, true);
+    }
+
+
+
     window.oncontextmenu = (e)=>{
         e.preventDefault();
         console.log(imageData)
     }
-    /*document.querySelector("#download").onclick = ()=>{
-        //client.emit("request-final-images", imageData, false);
-    }
-    document.querySelector("#send").onclick = ()=>{
-        //const stream = ss.createStream();
-        //(client).emit("request-final-images", stream, {name: "test", imageData:imageData});
-        //client.emit("request-final-images", imageData, true);
-    }*/
 }
 function generateColors(id, versions){
     const studioColorHolder = document.querySelector(".studio-color-holder");
@@ -253,6 +267,7 @@ function generateImages(imageLinks, imgIndex){
         images.push(image);
         if(i === imgIndex){
             imageData.push({
+                src:imageLinks[i].Image,
                 w:1, h:1, x:0, y:0, angle:0,
                 scaleX:1, scaleY:1,
                 id:"canvas-main",
@@ -270,7 +285,7 @@ function generateImages(imageLinks, imgIndex){
         }
     }
 }
-function generateCustomImages(imageData, zoom){
+function generateCustomImages(imageData, zoom, selectLast){
     const studioOutlineHolder = document.querySelector(".studio-outline-holder");
     const studioCanvasHolder = document.querySelector(".studio-canvas-holder");
     while(studioOutlineHolder.children.length > 0) studioOutlineHolder.removeChild(studioOutlineHolder.lastChild);
@@ -284,10 +299,10 @@ function generateCustomImages(imageData, zoom){
         outline.id = "outline-"+imageData[i].id;
         outline.className = "canvas-outline";
 
-        outline.style.height = "calc("+imageData[i].h*100+"% - 2px)";
-        outline.style.width = "calc("+imageData[i].w*100+"% - 2px)";
-        outline.style.left = imageData[i].x*100+"%";
-        outline.style.top = imageData[i].y*100+"%";
+        outline.style.height = "calc(" + imageData[i].h * 100 + "% - 2px)";
+        outline.style.width = "calc(" + imageData[i].w * 100 + "% - 2px)";
+        outline.style.left = imageData[i].x * 100 + "%";
+        outline.style.top = imageData[i].y * 100 + "%";
         studioOutlineHolder.appendChild(outline);
 
         let orbs = [
@@ -311,6 +326,7 @@ function generateCustomImages(imageData, zoom){
         line.className = "canvas-outline-connect";
         outline.appendChild(line);
         outlineLogic(outline, imageData, i);
+        if(selectLast && i === imageData.length-1) selectOutline(outline);
     }
     resizeCanvases(imageData, zoom);
 }
@@ -397,16 +413,14 @@ function outlineLogic(outline, imageData, index){
         let ratioW = outlineRect.width / outlineHolderRect.width;
         let ratioH = outlineRect.height / outlineHolderRect.height;
 
-        //let angle = imageData[index].angle * Math.PI / 180;
-        //let clickedX = e.offsetX * Math.cos(angle) - e.offsetY * Math.sin(angle);
-        //let clickedY = e.offsetX * Math.sin(angle) + e.offsetY * Math.cos(angle);
-
         offsetX = (e.offsetX /  outlineRect.width) * ratioW;
         offsetY = (e.offsetY / outlineRect.height) * ratioH;
 
         studioOutlineHolder.addEventListener("mousemove", elemMoveMouseMove);
         studioOutlineHolder.addEventListener("mouseup", elemMoveMouseUp);
-        outline.classList.add("selected-outline");
+
+        deselectAllOutlines();
+        selectOutline(outline);
 
         const event = new Event("remove-drag-move");
         document.dispatchEvent(event);
@@ -418,26 +432,22 @@ function outlineLogic(outline, imageData, index){
         }, 100);
     }
     function elemMoveMouseMove(e){
-        //let angle = (imageData[index].angle) * Math.PI / 180;
-        //let rotadedX = offsetX * Math.cos(angle) - offsetY * Math.sin(angle);
-        //let rotatedY = offsetX * Math.sin(angle) + offsetY * Math.cos(angle);
-
         let newX = (e.clientX - outlineHolderRect.x) / outlineHolderRect.width - offsetX;
         let newY = (e.clientY - outlineHolderRect.y) / outlineHolderRect.height - offsetY;
+
         imageData[index].x = newX;
         imageData[index].y = newY;
 
-        outline.style.left = newX*100+"%";
-        outline.style.top = newY*100+"%";
-        outline.classList.add("selected-outline");
+        outline.style.left = newX * 100 + "%";
+        outline.style.top = newY * 100 + "%";
+        selectOutline(outline);
         emitRedrawCanvas(imageData);
     }
     function elemMoveMouseUp(e){
         elemMoveMouseMove(e);
 
-        const allOutlines = document.querySelectorAll(".canvas-outline");
-        for(let j = 0; j < allOutlines.length; j++) allOutlines[j].classList.remove("selected-outline");
-        outline.classList.add("selected-outline");
+        deselectAllOutlines();
+        selectOutline(outline);
 
         studioOutlineHolder.removeEventListener("mousemove", elemMoveMouseMove);
         studioOutlineHolder.removeEventListener("mouseup", elemMoveMouseUp);
@@ -484,7 +494,6 @@ function outlineOrbLogic(orb, orbData, imageData, index){
 
         outline.style.height = Math.abs(imageData[index].h) * 100 + "%";
         outline.style.top = imageData[index].y * 100 + "%";
-
     }
 
     if(orbData.type === 0){
@@ -613,14 +622,35 @@ function outlineOrbLogic(orb, orbData, imageData, index){
 }
 function displaySideButtons(imageData, index){
     const sideButtonHolder = document.querySelector(".side-button-holder");
-    sideButtonHolder.style.animation = "fade-in ease-in-out 0.1s";
-    sideButtonHolder.style.display = "flex";
-    sideButtonHolder.onanimationend = ()=>{
-        sideButtonHolder.style.animation = "none";
-        sideButtonHolder.onanimationend = null;
+    if(sideButtonHolder.style.display !== "flex"){
+        sideButtonHolder.style.animation = "fade-in ease-in-out 0.1s";
+        sideButtonHolder.style.display = "flex";
+        sideButtonHolder.onanimationend = ()=>{
+            sideButtonHolder.style.animation = "none";
+            sideButtonHolder.onanimationend = null;
+        }
     }
 
-    /*document.querySelector("#flipH").onclick = ()=>{
+    document.querySelector("#duplicate").onclick = ()=>{
+        let clone = {
+            image:  imageData[index].image.cloneNode(true),
+            scaleX: imageData[index].scaleX,
+            scaleY: imageData[index].scaleY,
+            angle:  imageData[index].angle,
+            id:     imageData[index].id,
+            x:      imageData[index].x + 0.05,
+            y:      imageData[index].y + 0.05,
+            w:      imageData[index].w,
+            h:      imageData[index].h,
+        };
+        let eventData =  {detail:{clone:clone}}
+        let event = new CustomEvent("clone-image", eventData);
+        document.dispatchEvent(event);
+    }
+    document.querySelector("#bringFront").onclick = ()=>{
+       
+    }
+    document.querySelector("#flipH").onclick = ()=>{
         imageData[index].scaleX *= -1;
         emitRedrawCanvas(imageData);
     }
@@ -629,15 +659,10 @@ function displaySideButtons(imageData, index){
         emitRedrawCanvas(imageData);
     }
     document.querySelector("#delete").onclick = ()=>{
-        document.getElementById("outline-"+imageData[index].id).remove();
-        document.getElementById(imageData[index].id).remove();
-        imageData.splice(index, 1);
-        emitRedrawCanvas(imageData);
-
-        let eventData =  {detail:{imageData:imageData}}
+        let eventData =  {detail:{index:index}}
         let event = new CustomEvent("update-delete-backup", eventData);
         document.dispatchEvent(event);
-    }*/
+    }
 }
 function emitRedrawCanvas(imageData){
     let eventData =  {detail:{imageData:imageData}}
@@ -651,4 +676,19 @@ function getLineAngle(cx, cy, ex, ey){
     theta *= 180 / Math.PI;
     if (theta < 0) theta = 360 + theta;
     return theta;
+}
+function deselectAllOutlines(){
+    const allOutlines = document.querySelectorAll(".canvas-outline");
+    for(let i = 0; i < allOutlines.length; i++){
+        allOutlines[i].classList.remove("selected-outline");
+        for(let j = 0; j < allOutlines[i].children.length; j++){
+            allOutlines[i].children[j].style.display = "none";
+        }
+    }
+}
+function selectOutline(outline){
+    outline.classList.add("selected-outline");
+    for(let i = 0; i < outline.children.length; i++){
+        outline.children[i].style.display = "block";
+    }
 }
