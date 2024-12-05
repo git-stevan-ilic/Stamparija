@@ -100,6 +100,7 @@ function generateStudio(client, data){
         back.addEventListener("mousedown", mouseDown);
     });
     document.addEventListener("clone-image", (e)=>{
+        loadedImages.push(e.detail.clone);
         imageData.push(e.detail.clone);
         generateCustomImages(imageData, zoom, true);
     });
@@ -230,11 +231,41 @@ function generateStudio(client, data){
     }
     const sendButton = document.querySelector("#send");
     sendButton.onclick = ()=>{
-        sendButton.disabled = true;
-        client.emit("request-final-images", imageData, true, currVersion.ID);
-        alert("Vaša slika se šalje");
+        client.emit("get-captcha");
     }
+    client.on("receive-captcha", (captchaData)=>{
+        const captchaInput = document.querySelector("#captcha-input");
+        const captcha = document.querySelector(".captcha");
+        captcha.innerHTML = captchaData.data;
+        captchaInput.value = "";
 
+        const captchaMask = document.querySelector("#captcha-mask");
+        captchaMask.style.animation = "fade-in ease-in-out 0.2s";
+        captchaMask.style.display = "block";
+        captchaMask.onanimationend = ()=>{
+            captchaMask.style.animation = "none";
+            captchaMask.onanimationend = null;
+        }
+        function hideCaptchaWindow(){
+            captchaMask.style.animation = "fade-out ease-in-out 0.2s";
+            captchaMask.onanimationend = ()=>{
+                captchaMask.style.animation = "none";
+                captchaMask.style.display = "none";
+                captchaMask.onanimationend = null;
+            }
+        }
+
+        document.querySelector("#captcha-cancel").onclick = hideCaptchaWindow;
+        document.querySelector("#captcha-confirm").onclick = ()=>{
+            if(captchaInput.value !== captchaData.text) alert("Pogresan kod");
+            else{
+                sendButton.disabled = true;
+                hideCaptchaWindow();
+                client.emit("request-final-images", imageData, true, currVersion.ID);
+                alert("Vaša slika se šalje");
+            }
+        }
+    });
 
 
     window.oncontextmenu = (e)=>{
@@ -661,11 +692,12 @@ function displaySideButtons(imageData, index){
 
     document.querySelector("#duplicate").onclick = ()=>{
         let clone = {
-            image:  imageData[index].image.cloneNode(true),
+            id:     "canvas-"+crypto.randomUUID(),
+            image:  imageData[index].image.cloneNode(),
             scaleX: imageData[index].scaleX,
             scaleY: imageData[index].scaleY,
             angle:  imageData[index].angle,
-            id:     imageData[index].id,
+            src:    imageData[index].src,
             x:      imageData[index].x + 0.05,
             y:      imageData[index].y + 0.05,
             w:      imageData[index].w,

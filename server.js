@@ -1,5 +1,6 @@
 /*--Load Constants-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 import { createCanvas, loadImage } from "canvas";
+import svgCaptcha from "svg-captcha";
 import nodemailer from "nodemailer";
 import EventEmitter from "events";
 import express from "express";
@@ -10,6 +11,7 @@ import { Server } from "socket.io";
 import dotenv from "dotenv";
 import axios from "axios";
 import fs from "fs";
+
 
 dotenv.config();
 const app = express();
@@ -133,7 +135,10 @@ io.on("connection", (client)=>{
             for(let j = 0; j < allProducts[i].Products.length; j++){
                 if(allProducts[i].Products[j].ID === id){
                     productFound = true;
-                    let dataToSend = {Found:productFound, versions:allProducts[i].Products[j].versions}
+                    let dataToSend = {
+                        versions:allProducts[i].Products[j].versions,
+                        Found:productFound,
+                    }
                     client.emit("studio-received", dataToSend);
                 }
             }
@@ -205,6 +210,10 @@ io.on("connection", (client)=>{
                 sendEmail(id, imageData[0].src, imgDataSend, finalImage, client);
             }
         }
+    });
+    client.on("get-captcha", ()=>{
+        let captcha = svgCaptcha.create();
+        client.emit("receive-captcha", captcha);
     });
 });
 
@@ -456,11 +465,11 @@ function sendEmail(id, originalImage, imgDataSend, finalImage, client){
 }
 function generateEmailAttachments(originalImage, imgDataSend, finalImage){
     let attachments = [], htmlText = "";
-    attachments.push({filename:"Slika artikla.png", path:originalImage});
+    attachments.push({filename:"Slika Artikla.png", path:originalImage});
     for(let i = 0; i < imgDataSend.length; i++){
         let index = i+1;
-        let filenameO = "Originalna slika "+index+".png";
-        let filenameE = "Editovana slika "+index+".png";
+        let filenameO = "Originalna Slika "+index+".png";
+        let filenameE = "Editovana Slika "+index+".png";
        
         attachments.push({
             filename:filenameO,
@@ -482,6 +491,6 @@ function generateEmailAttachments(originalImage, imgDataSend, finalImage){
         let textH = "Visina: "+coordH+"px<br><br>";
         htmlText += "<b>Slika "+index+"</b><br>"+textL+textT+textW+textH;
     }
-    attachments.push({filename:"Finalna slika.png", path:finalImage});
+    attachments.push({filename:"Finalna Slika.png", path:finalImage});
     return {attachments:attachments, htmlText:htmlText};
 }
