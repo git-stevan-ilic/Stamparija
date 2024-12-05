@@ -1,5 +1,6 @@
 /*--Load Constants-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 import { createCanvas, loadImage } from "canvas";
+import nodemailer from "nodemailer";
 import EventEmitter from "events";
 import express from "express";
 import http from "http";
@@ -17,7 +18,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const eventEmitter = new EventEmitter();
 const io = new Server(server);
-
 
 /*--Start Server-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 app.use(express.static(__dirname));
@@ -141,15 +141,19 @@ io.on("connection", (client)=>{
         }
         if(!productFound) client.emit("studio-received", {Found:productFound});
     });
-    client.on("request-final-images", (imageData, sendMail)=>{
+    client.on("request-final-images", (imageData, sendMail, id)=>{
         let loadedImages = [];
         for(let i = 0; i < imageData.length; i++){
             loadImage(imageData[i].src).then(image => {
                 loadedImages[i] = image;
+                let allLoaded = true;
                 for(let j = 0; j < loadedImages.length; j++){
-                    if(loadedImages[j] === undefined) break;
-                    if(j === imageData.length-1) createFinalImage();
+                    if(loadedImages[j] === undefined){
+                        allLoaded = false;
+                        break;
+                    }
                 }
+                if(allLoaded) createFinalImage();
             });
         }
 
@@ -157,28 +161,48 @@ io.on("connection", (client)=>{
             const canvas = createCanvas(1080, 1080);
             const ctx = canvas.getContext("2d");
 
+            let editedImages = [];
             for(let i = 0; i < imageData.length; i++){
                 let imgH = imageData[i].h * canvas.height;
                 let imgW = imageData[i].w * canvas.width;
                 let imgT = imageData[i].y * canvas.height;
                 let imgL = imageData[i].x * canvas.width;
 
-                ctx.beginPath();
-                ctx.save();
-                ctx.translate(imgL + imgW / 2, imgT + imgH / 2);
-                ctx.scale(imageData[i].scaleX, imageData[i].scaleY);
-                ctx.rotate(imageData[i].angle * Math.PI / 180);
-                ctx.drawImage(loadedImages[i], -imgW / 2, -imgH / 2, imgW, imgH);
-                ctx.restore();
-                ctx.closePath();
+                const tempCanvas = createCanvas(1080, 1080);
+                const ctxt = tempCanvas.getContext("2d");
+
+                ctxt.beginPath();
+                ctxt.save();
+                ctxt.translate(imgL + imgW / 2, imgT + imgH / 2);
+                ctxt.scale(imageData[i].scaleX, imageData[i].scaleY);
+                ctxt.rotate(imageData[i].angle * Math.PI / 180);
+                ctxt.drawImage(loadedImages[i], -imgW / 2, -imgH / 2, imgW, imgH);
+                ctxt.restore();
+                ctxt.closePath();
+
+                if(i > 0) editedImages.push(tempCanvas.toDataURL());
+                ctx.drawImage(tempCanvas, 0, 0);
             }
 
-            if(!sendMail){
-                let finalImage = canvas.toDataURL();
-                client.emit("download-final-image", finalImage);
-            }
+            let finalImage = canvas.toDataURL();
+            if(!sendMail) client.emit("download-final-image", finalImage);
             else{
-                
+                let imgDataSend = [];
+                if(imageData.length > 1){
+                    for(let i = 1; i < imageData.length; i++){
+                        imgDataSend.push({
+                            originalImg:imageData[i].src,
+                            editedImg:editedImages[i-1],
+                            editedCoords:{
+                                l:imageData[i].x,
+                                t:imageData[i].y,
+                                w:imageData[i].w,
+                                h:imageData[i].h
+                            }
+                        });
+                    }
+                }
+                sendEmail(id, imageData[0].src, imgDataSend, finalImage, client);
             }
         }
     });
@@ -397,3 +421,67 @@ getProduct();
 eventEmitter.on("updated-all-products", ()=>{
     io.emit("all-product-data", allProducts);
 });
+
+/*--Email--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+function sendEmail(id, originalImage, imgDataSend, finalImage, client){
+    let htmlText = "<h2>Artikal "+id+"</h2><b>Slika Artikla</b><br>Širina: 1080px<br>Visina: 1080px<br><br>";
+    let attachmentData = generateEmailAttachments(originalImage, imgDataSend, finalImage);
+    let attachments = attachmentData.attachments;
+    htmlText += attachmentData.htmlText;
+
+    const transporter = nodemailer.createTransport({
+        host:process.env.LOGO_STUDIO_EMAIL_HOST,
+        port:process.env.LOGO_STUDIO_EMAIL_PORT,
+        secure:process.env.LOGO_STUDIO_SECURE,
+        auth:{
+            user:process.env.LOGO_STUDIO_SEND_EMAIL,
+            pass:process.env.LOGO_STUDIO_SEND_PASSWORD,
+        },
+    });
+    const emailData = {
+        from:"Logo Studio <"+process.env.LOGO_STUDIO_SEND_EMAIL+">",
+        to:process.env.LOGO_STUDIO_RECEIVE_EMAIL,
+        subject:id,
+        text:"",
+        html:htmlText,
+        attachments:attachments
+    }
+    transporter.sendMail(emailData, (error)=>{
+        if(error){
+            console.log("Email Error:"+error);
+            client.emit("email-error");
+        }
+        else client.emit("email-success");
+    });
+}
+function generateEmailAttachments(originalImage, imgDataSend, finalImage){
+    let attachments = [], htmlText = "";
+    attachments.push({filename:"Slika artikla.png", path:originalImage});
+    for(let i = 0; i < imgDataSend.length; i++){
+        let index = i+1;
+        let filenameO = "Originalna slika "+index+".png";
+        let filenameE = "Editovana slika "+index+".png";
+       
+        attachments.push({
+            filename:filenameO,
+            path:imgDataSend[i].originalImg
+        });
+        attachments.push({
+            filename:filenameE,
+            path:imgDataSend[i].editedImg
+        });
+
+        let coordX = Math.round(imgDataSend[i].editedCoords.l * 1080);
+        let coordY = Math.round(imgDataSend[i].editedCoords.t * 1080);
+        let coordW = Math.round(imgDataSend[i].editedCoords.w * 1080);
+        let coordH = Math.round(imgDataSend[i].editedCoords.h * 1080);
+
+        let textL = "Daljina od leve ivice: "+coordX+"px<br>";
+        let textT = "Daljina od gornje ivice: "+coordY+"px<br>";
+        let textW = "Širina: "+coordW+"px<br>";
+        let textH = "Visina: "+coordH+"px<br><br>";
+        htmlText += "<b>Slika "+index+"</b><br>"+textL+textT+textW+textH;
+    }
+    attachments.push({filename:"Finalna slika.png", path:finalImage});
+    return {attachments:attachments, htmlText:htmlText};
+}

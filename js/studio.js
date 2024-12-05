@@ -4,6 +4,7 @@ window.addEventListener("load", loadStudioLogic);
 function loadStudioLogic(){
     const client = io();
 
+    const sendButton = document.querySelector("#send");
     const pageBodyContent = document.querySelector(".page-body-content");
     const params = new URLSearchParams(location.search);
     let productID = params.getAll("id")[0];
@@ -20,6 +21,14 @@ function loadStudioLogic(){
         downloadLink.href = image;
         downloadLink.click();
         downloadLink.remove();
+    });
+    client.on("email-error", ()=>{
+        sendButton.disabled = false;
+        alert("Greška u slanju emaila");
+    });
+    client.on("email-success", ()=>{
+        sendButton.disabled = false;
+        alert("Email sa slikama vašeg logoa je poslat");
     });
 }
 
@@ -60,6 +69,7 @@ function generateStudio(client, data){
     document.addEventListener("update-base-image", (e)=>{
         imageData[0].image = images[e.detail.baseImgIndex];
         imgIndex = e.detail.baseImgIndex;
+        generateImages(currVersion.Images, imgIndex);
         drawCanvases(imageData);
     });
     document.addEventListener("redraw-canvases", (e)=>{
@@ -92,6 +102,18 @@ function generateStudio(client, data){
     document.addEventListener("clone-image", (e)=>{
         imageData.push(e.detail.clone);
         generateCustomImages(imageData, zoom, true);
+    });
+    document.addEventListener("switch-order", (e)=>{
+        imageData = e.detail.imageData;
+        let index = e.detail.index;
+
+        let currData = imageData.splice(index, 1);
+        imageData = imageData.concat(currData);
+
+        let currLoaded = loadedImages.splice((index-1), 1);
+        loadedImages = loadedImages.concat(currLoaded);
+
+        generateCustomImages(imageData, zoom, false);
     });
 
     const studioOutlineHolder = document.querySelector(".studio-outline-holder");
@@ -204,10 +226,13 @@ function generateStudio(client, data){
     }
 
     document.querySelector("#download").onclick = ()=>{
-        client.emit("request-final-images", imageData, false);
+        client.emit("request-final-images", imageData, false, null);
     }
-    document.querySelector("#send").onclick = ()=>{
-        client.emit("request-final-images", imageData, true);
+    const sendButton = document.querySelector("#send");
+    sendButton.onclick = ()=>{
+        sendButton.disabled = true;
+        client.emit("request-final-images", imageData, true, currVersion.ID);
+        alert("Vaša slika se šalje");
     }
 
 
@@ -326,7 +351,10 @@ function generateCustomImages(imageData, zoom, selectLast){
         line.className = "canvas-outline-connect";
         outline.appendChild(line);
         outlineLogic(outline, imageData, i);
-        if(selectLast && i === imageData.length-1) selectOutline(outline);
+        if(selectLast && i === imageData.length-1){
+            displaySideButtons(imageData, i);
+            selectOutline(outline);
+        }
     }
     resizeCanvases(imageData, zoom);
 }
@@ -648,7 +676,9 @@ function displaySideButtons(imageData, index){
         document.dispatchEvent(event);
     }
     document.querySelector("#bringFront").onclick = ()=>{
-       
+        let eventData =  {detail:{imageData:imageData, index:index}}
+        let event = new CustomEvent("switch-order", eventData);
+        document.dispatchEvent(event);
     }
     document.querySelector("#flipH").onclick = ()=>{
         imageData[index].scaleX *= -1;
@@ -692,3 +722,31 @@ function selectOutline(outline){
         outline.children[i].style.display = "block";
     }
 }
+
+
+
+
+
+let allFonts = [
+    "Abadi MT Condensed Light", "Aharoni", "Aharoni Bold", "Aldhabi", "AlternateGothic2 BT", "Andale Mono", "Andalus", "Angsana New", "AngsanaUPC", "Aparajita",
+    "Apple Chancery", "Arabic Typesetting", "Arial", "Arial Black", "Arial narrow", "Arial Nova", "Arial Rounded MT Bold", "Arnoldboecklin", "Avanta Garde", "Bahnschrift",
+    "Bahnschrift Light", "Bahnschrift SemiBold", "Bahnschrift SemiLight", "Baskerville", "Batang", "BatangChe", "Big Caslon", "BIZ UDGothic", "BIZ UDMincho Medium", "Blippo",
+    "Bodoni MT", "Book Antiqua", "Book Antiqua", "Bookman", "Bradley Hand", "Browallia New", "BrowalliaUPC", "Brush Script MT", "Brush Script Std", "Brushstroke", "Calibri",
+    "Calibri Light", "Calisto MT", "Cambodian", "Cambria", "Cambria Math", "Candara", "Century Gothic", "Chalkduster", "Cherokee", "Comic Sans", "Comic Sans MS", "Consolas",
+    "Constantia", "Copperplate", "Copperplate Gothic Light", "Copperplate Gothic&nbsp;Bold", "Corbel", "Cordia New", "CordiaUPC", "Coronetscript", "Courier", "Courier New",
+    "DaunPenh", "David", "DengXian", "DFKai-SB", "Didot", "DilleniaUPC", "DokChampa", "Dotum", "DotumChe", "Ebrima", "Estrangelo Edessa", "EucrosiaUPC", "Euphemia", "FangSong",
+    "Florence", "Franklin Gothic Medium", "FrankRuehl", "FreesiaUPC", "Futara", "Gabriola", "Gadugi", "Garamond", "Gautami", "Geneva", "Georgia", "Georgia Pro", "Gill Sans",
+    "Gill Sans Nova", "Gisha", "Goudy Old Style", "Gulim", "GulimChe", "Gungsuh", "GungsuhChe", "Hebrew", "Hoefler Text", "HoloLens MDL2 Assets", "Impact", "Ink Free", "IrisUPC",
+    "Iskoola Pota", "Japanese", "JasmineUPC", "Javanese Text", "Jazz LET", "KaiTi", "Kalinga", "Kartika", "Khmer UI", "KodchiangUPC", "Kokila", "Korean", "Lao", "Lao UI", "Latha",
+    "Leelawadee", "Leelawadee UI", "Leelawadee UI Semilight", "Levenim MT", "LilyUPC", "Lucida Bright", "Lucida Console", "Lucida Handwriting", "Lucida Sans", "Lucida Sans Typewriter",
+    "Lucida Sans Unicode", "Lucidatypewriter", "Luminari", "Malgun Gothic", "Malgun Gothic Semilight", "Mangal", "Marker Felt", "Marlett", "Meiryo", "Meiryo UI", "Microsoft Himalaya",
+    "Microsoft JhengHei", "Microsoft JhengHei UI", "Microsoft New Tai Lue", "Microsoft PhagsPa", "Microsoft Sans Serif", "Microsoft Tai Le", "Microsoft Uighur", "Microsoft YaHei",
+    "Microsoft YaHei UI", "Microsoft Yi Baiti", "MingLiU", "MingLiU_HKSCS", "MingLiU_HKSCS-ExtB", "MingLiU-ExtB", "Miriam", "Monaco", "Mongolian Baiti", "MoolBoran", "MS Gothic",
+    "MS Mincho", "MS PGothic", "MS PMincho", "MS UI Gothic", "MV Boli", "Myanmar Text", "Narkisim", "Neue Haas Grotesk Text Pro", "New Century Schoolbook", "News Gothic MT", "Nirmala UI",
+    "No automatic language associations", "Noto", "NSimSun", "Nyala", "Oldtown", "Optima", "Palatino", "Palatino Linotype", "papyrus", "Parkavenue", "Perpetua", "Plantagenet Cherokee",
+    "PMingLiU", "Raavi", "Rockwell", "Rockwell Extra Bold", "Rockwell Nova", "Rockwell Nova Cond", "Rockwell Nova Extra Bold", "Rod", "Sakkal Majalla", "Sanskrit Text", "Segoe MDL2 Assets",
+    "Segoe Print", "Segoe Script", "Segoe UI", "Segoe UI Emoji", "Segoe UI Historic", "Segoe UI Symbol", "Shonar Bangla", "Shruti", "SimHei", "SimKai", "Simplified Arabic", "Simplified Chinese",
+    "SimSun", "SimSun-ExtB", "Sitka", "Snell Roundhan", "Stencil Std", "Sylfaen", "Symbol", "Tahoma", "Thai", "Times New Roman", "Traditional Arabic", "Traditional Chinese", "Trattatello",
+    "Trebuchet MS", "Tunga", "UD Digi Kyokasho", "UD Digi KyoKasho NK-R", "UD Digi KyoKasho NP-R", "UD Digi KyoKasho N-R", "Urdu Typesetting", "URW Chancery", "Utsaah", "Vani", "Verdana",
+    "Verdana Pro", "Vijaya", "Vrinda", "Webdings", "Westminster", "Wingdings", "Yu Gothic", "Yu Gothic UI", "Yu Mincho", "Zapf Chancery"
+];
