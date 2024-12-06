@@ -45,6 +45,7 @@ function generateStudio(client, data){
     let imgIndex = 0, images = [], imageData = [], zoom = 10, loadedImages = [];
     generateColors(currVersion.ID, data.versions);
     generateImages(currVersion.Images, imgIndex);
+    generateText();
 
     document.addEventListener("update-image-data", (e)=>{
         imageData = e.detail.imageData.concat(loadedImages);
@@ -76,11 +77,30 @@ function generateStudio(client, data){
         imageData = e.detail.imageData;
         drawCanvases(imageData);
     });
+    document.addEventListener("redraw-text", (e)=>{
+        imageData = e.detail.imageData;
+        const updatedImage = convertTextToImage(imageData[e.detail.index]);
+        imageData[e.detail.index].src = updatedImage.src;
+        imageData[e.detail.index].image = updatedImage;
+        imageData[e.detail.index].image.onload = ()=>{
+            generateCustomImages(imageData, zoom, false);
+        }
+        
+    });
     document.addEventListener("open-side-buttons", (e)=>{
         displaySideButtons(imageData, e.detail.index);
+        if(imageData[e.detail.index].type === 2) openTextSettings(imageData, e.detail.index);
     });
     document.addEventListener("update-delete-backup", (e)=>{
         let index = e.detail.index;
+        if(imageData[index].type === 2) closeTextSettings();
+        const sideButtonHolder = document.querySelector(".side-button-holder");
+        sideButtonHolder.style.animation = "fade-out ease-in-out 0.1s";
+        sideButtonHolder.onanimationend = ()=>{
+            sideButtonHolder.style.animation = "none";
+            sideButtonHolder.style.display = "none";
+            sideButtonHolder.onanimationend = null;
+        }
         document.getElementById("outline-"+imageData[index].id).remove();
         document.getElementById(imageData[index].id).remove();
         loadedImages.splice((index - 1), 1);
@@ -117,12 +137,13 @@ function generateStudio(client, data){
         generateCustomImages(imageData, zoom, false);
     });
 
+    const pageBodyContent = document.querySelector(".page-body-content");
     const studioOutlineHolder = document.querySelector(".studio-outline-holder");
     const studioCanvasHolder = document.querySelector(".studio-canvas-holder");
     const zoomValue = document.querySelector("#zoom-value");
     document.querySelector(".minus").onclick = ()=>{zoomFunc(-1)}
     document.querySelector(".plus").onclick = ()=>{zoomFunc(1)}
-    window.addEventListener("wheel", (event)=>{
+    pageBodyContent.addEventListener("wheel", (event)=>{
         const delta = -Math.sign(event.deltaY);
         zoomFunc(delta);
     });
@@ -159,7 +180,7 @@ function generateStudio(client, data){
     back.addEventListener("mousedown", mouseDown);
     function mouseDown(e){
         deselectAllOutlines();
-
+        closeTextSettings();
         const sideButtonHolder = document.querySelector(".side-button-holder");
         sideButtonHolder.style.animation = "fade-out ease-in-out 0.1s";
         sideButtonHolder.onanimationend = ()=>{
@@ -214,6 +235,13 @@ function generateStudio(client, data){
                         h:inputImgData.h,
                         w:inputImgData.w,
                         image:inputImg,
+                        type:1,
+
+                        outlineSize:0,
+                        colorOutline:"",
+                        colorFill:"",
+                        font:"",
+                        text:""
                     }
                     loadedImages.push(newImageData);
                     imageData.push(newImageData);
@@ -267,6 +295,35 @@ function generateStudio(client, data){
         }
     });
 
+    document.querySelector("#input-text").onclick = ()=>{
+        let text = "Dupli klik za edit";
+        let width = 0.05 * text.length * 0.65;
+        let height = 0.05;
+        let newImageData = {
+            id:"canvas-"+crypto.randomUUID(),
+            scaleX:1, scaleY:1, angle:0,
+            y:0.5 - height / 2,
+            x:0.5 - width / 2,
+            h:height*1.3,
+            w:width,
+            type:2,
+
+            outlineSize:0,
+            colorOutline:"#000000",
+            colorFill:"#000000",
+            font:"Arial",
+            text:text
+        }
+        
+        const textImage = convertTextToImage(newImageData);
+        newImageData.src = textImage.src;
+        newImageData.image = textImage;
+        loadedImages.push(newImageData);
+        imageData.push(newImageData);
+        newImageData.image.onload = ()=>{
+            generateCustomImages(imageData, zoom, true);
+        }
+    }
 
     window.oncontextmenu = (e)=>{
         e.preventDefault();
@@ -327,7 +384,13 @@ function generateImages(imageLinks, imgIndex){
                 w:1, h:1, x:0, y:0, angle:0,
                 scaleX:1, scaleY:1,
                 id:"canvas-main",
-                image:image
+                image:image,
+                type:0,
+                outlineSize:0,
+                colorOutline:"",
+                colorFill:"",
+                font:"",
+                text:""
             });
         }
         image.onload = ()=>{
@@ -366,7 +429,7 @@ function generateCustomImages(imageData, zoom, selectLast){
             {x:1, y:1, type:0, c:"se-resize"}, {x:0, y:1, type:0, c:"sw-resize"},
             {x:0.5, y:0, type:1, c:"n-resize"}, {x:0.5, y:1, type:1, c:"s-resize"},
             {x:0, y:0.5, type:1, c:"w-resize"}, {x:1, y:0.5, type:1, c:"e-resize"},
-            {x:0.5, y:-0.25, type:2, c:"url('../assets/rotate.cur'), auto"}
+            //{x:0.5, y:-0.25, type:2, c:"url('../assets/rotate.cur'), auto"}
         ];
         for(let j = 0; j < orbs.length; j++){
             const orb = document.createElement("div");
@@ -378,16 +441,191 @@ function generateCustomImages(imageData, zoom, selectLast){
             outline.appendChild(orb);
             outlineOrbLogic(orb, orbs[j], imageData, i);
         }
-        const line = document.createElement("div");
+        /*const line = document.createElement("div");
         line.className = "canvas-outline-connect";
-        outline.appendChild(line);
+        outline.appendChild(line);*/
+
+        if(imageData[i].type === 2){
+            /*const editTextInput = document.createElement("input");
+            editTextInput.className = "edit-text-input";
+            editTextInput.type = "text";
+            outline.appendChild(editTextInput);
+            editTextInput.onmousedown = (e)=>{e.stopPropagation()}
+            editTextInput.id = "input-"+imageData[i].id;
+            editTextInput.onchange = ()=>{
+                imageData[i].text = editTextInput.value;
+                emitRedrawText(imageData, i);
+            }*/
+        }
+
         outlineLogic(outline, imageData, i);
         if(selectLast && i === imageData.length-1){
             displaySideButtons(imageData, i);
             selectOutline(outline);
+            if(imageData[i].type === 2) openTextSettings(imageData, i);
         }
     }
     resizeCanvases(imageData, zoom);
+}
+
+/*--Text Logic---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+function generateText(){
+    let allFonts = getAllFonts();
+    const textColor = document.querySelector("#text-color");
+    const backColor = document.querySelector("#back-color");
+    const range = document.querySelector("#outline-range");
+    textColor.value = "#000000";
+    backColor.value = "#000000";
+    range.value = 0;
+    
+    document.querySelector(".font-window-close").onclick = closeFontWindow;
+    const fontWindowBody = document.querySelector(".font-window-body");
+    for(let i = 0; i < allFonts.length; i++){
+        const font = document.createElement("div");
+        font.className = "font";
+        font.style.fontFamily = allFonts[i];
+        font.innerText = allFonts[i];
+
+        fontWindowBody.appendChild(font);
+    }
+}
+function getAllFonts(){
+    return [
+        "Abadi MT Condensed Light", "Aharoni", "Aharoni Bold", "Aldhabi", "AlternateGothic2 BT", "Andale Mono", "Andalus", "Angsana New", "AngsanaUPC", "Aparajita",
+        "Apple Chancery", "Arabic Typesetting", "Arial", "Arial Black", "Arial narrow", "Arial Nova", "Arial Rounded MT Bold", "Arnoldboecklin", "Avanta Garde", "Bahnschrift",
+        "Bahnschrift Light", "Bahnschrift SemiBold", "Bahnschrift SemiLight", "Baskerville", "Batang", "BatangChe", "Big Caslon", "BIZ UDGothic", "BIZ UDMincho Medium", "Blippo",
+        "Bodoni MT", "Book Antiqua", "Book Antiqua", "Bookman", "Bradley Hand", "Browallia New", "BrowalliaUPC", "Brush Script MT", "Brush Script Std", "Brushstroke", "Calibri",
+        "Calibri Light", "Calisto MT", "Cambodian", "Cambria", "Cambria Math", "Candara", "Century Gothic", "Chalkduster", "Cherokee", "Comic Sans", "Comic Sans MS", "Consolas",
+        "Constantia", "Copperplate", "Copperplate Gothic Light", "Copperplate Gothic&nbsp;Bold", "Corbel", "Cordia New", "CordiaUPC", "Coronetscript", "Courier", "Courier New",
+        "DaunPenh", "David", "DengXian", "DFKai-SB", "Didot", "DilleniaUPC", "DokChampa", "Dotum", "DotumChe", "Ebrima", "Estrangelo Edessa", "EucrosiaUPC", "Euphemia", "FangSong",
+        "Florence", "Franklin Gothic Medium", "FrankRuehl", "FreesiaUPC", "Futara", "Gabriola", "Gadugi", "Garamond", "Gautami", "Geneva", "Georgia", "Georgia Pro", "Gill Sans",
+        "Gill Sans Nova", "Gisha", "Goudy Old Style", "Gulim", "GulimChe", "Gungsuh", "GungsuhChe", "Hebrew", "Hoefler Text", "HoloLens MDL2 Assets", "Impact", "Ink Free", "IrisUPC",
+        "Iskoola Pota", "Japanese", "JasmineUPC", "Javanese Text", "Jazz LET", "KaiTi", "Kalinga", "Kartika", "Khmer UI", "KodchiangUPC", "Kokila", "Korean", "Lao", "Lao UI", "Latha",
+        "Leelawadee", "Leelawadee UI", "Leelawadee UI Semilight", "Levenim MT", "LilyUPC", "Lucida Bright", "Lucida Console", "Lucida Handwriting", "Lucida Sans", "Lucida Sans Typewriter",
+        "Lucida Sans Unicode", "Lucidatypewriter", "Luminari", "Malgun Gothic", "Malgun Gothic Semilight", "Mangal", "Marker Felt", "Marlett", "Meiryo", "Meiryo UI", "Microsoft Himalaya",
+        "Microsoft JhengHei", "Microsoft JhengHei UI", "Microsoft New Tai Lue", "Microsoft PhagsPa", "Microsoft Sans Serif", "Microsoft Tai Le", "Microsoft Uighur", "Microsoft YaHei",
+        "Microsoft YaHei UI", "Microsoft Yi Baiti", "MingLiU", "MingLiU_HKSCS", "MingLiU_HKSCS-ExtB", "MingLiU-ExtB", "Miriam", "Monaco", "Mongolian Baiti", "MoolBoran", "MS Gothic",
+        "MS Mincho", "MS PGothic", "MS PMincho", "MS UI Gothic", "MV Boli", "Myanmar Text", "Narkisim", "Neue Haas Grotesk Text Pro", "New Century Schoolbook", "News Gothic MT", "Nirmala UI",
+        "No automatic language associations", "Noto", "NSimSun", "Nyala", "Oldtown", "Optima", "Palatino", "Palatino Linotype", "papyrus", "Parkavenue", "Perpetua", "Plantagenet Cherokee",
+        "PMingLiU", "Raavi", "Rockwell", "Rockwell Extra Bold", "Rockwell Nova", "Rockwell Nova Cond", "Rockwell Nova Extra Bold", "Rod", "Sakkal Majalla", "Sanskrit Text", "Segoe MDL2 Assets",
+        "Segoe Print", "Segoe Script", "Segoe UI", "Segoe UI Emoji", "Segoe UI Historic", "Segoe UI Symbol", "Shonar Bangla", "Shruti", "SimHei", "SimKai", "Simplified Arabic", "Simplified Chinese",
+        "SimSun", "SimSun-ExtB", "Sitka", "Snell Roundhan", "Stencil Std", "Sylfaen", "Symbol", "Tahoma", "Thai", "Times New Roman", "Traditional Arabic", "Traditional Chinese", "Trattatello",
+        "Trebuchet MS", "Tunga", "UD Digi Kyokasho", "UD Digi KyoKasho NK-R", "UD Digi KyoKasho NP-R", "UD Digi KyoKasho N-R", "Urdu Typesetting", "URW Chancery", "Utsaah", "Vani", "Verdana",
+        "Verdana Pro", "Vijaya", "Vrinda", "Webdings", "Westminster", "Wingdings", "Yu Gothic", "Yu Gothic UI", "Yu Mincho", "Zapf Chancery"
+    ];
+}
+function openTextSettings(imageData, index){
+    const textItemFont = document.querySelector(".text-item-font");
+    const textColor = document.querySelector("#text-color");
+    const backColor = document.querySelector("#back-color");
+    const range = document.querySelector("#outline-range");
+
+    textItemFont.innerText = imageData[index].font;
+    textColor.value = imageData[index].colorOutline;
+    backColor.value = imageData[index].colorFill;
+    range.value = imageData[index].outlineSize;
+
+    const textHolder = document.querySelector(".text-holder");
+    textHolder.style.animation = "fade-in ease-in-out 0.1s";
+    textHolder.style.display = "flex";
+    textHolder.onanimationend = ()=>{
+        textHolder.style.animation = "none";
+        textHolder.onanimationend = null;
+    }
+
+    const fontMask = document.querySelector("#font-mask");
+    document.querySelector(".text-item-font").onclick = ()=>{
+        fontMask.style.animation = "fade-in ease-in-out 0.1s";
+        fontMask.style.display = "block";
+        fontMask.onanimationend = ()=>{
+            fontMask.style.animation = "none";
+            fontMask.onanimationend = null;
+        }
+    }
+
+    let allFonts = getAllFonts();
+    const fontWindowBody = document.querySelector(".font-window-body");
+    while(fontWindowBody.children.length > 0) fontWindowBody.removeChild(fontWindowBody.lastChild);
+    for(let i = 0; i < allFonts.length; i++){
+        const font = document.createElement("div");
+        font.className = "font";
+        font.style.fontFamily = allFonts[i];
+        font.innerText = allFonts[i];
+
+        fontWindowBody.appendChild(font);
+        font.onclick = ()=>{
+            closeFontWindow();
+            textItemFont.innerText = allFonts[i];
+            imageData[index].font = allFonts[i];
+            emitRedrawText(imageData, index);
+        }
+    }
+
+    backColor.oninput = ()=>{
+        imageData[index].colorFill = backColor.value;
+        emitRedrawText(imageData, index);
+    }
+    textColor.oninput = ()=>{
+        imageData[index].colorOutline = textColor.value;
+        emitRedrawText(imageData, index);
+    }
+    range.oninput = ()=>{
+        imageData[index].outlineSize = parseInt(range.value);
+        emitRedrawText(imageData, index);
+    }
+}
+function closeTextSettings(){
+    const textHolder = document.querySelector(".text-holder");
+    textHolder.style.animation = "fade-out ease-in-out 0.1s";
+    textHolder.onanimationend = ()=>{
+        textHolder.style.animation = "none";
+        textHolder.style.display = "none";
+        textHolder.onanimationend = null;
+    }
+}
+function closeFontWindow(){
+    const fontMask = document.querySelector("#font-mask");
+    fontMask.style.animation = "fade-out ease-in-out 0.1s";
+    fontMask.onanimationend = ()=>{
+        fontMask.style.animation = "none";
+        fontMask.style.display = "none";
+        fontMask.onanimationend = null;
+    }
+}
+function convertTextToImage(imgData){
+    const style = getComputedStyle(document.body);
+    const canvasSizeCSS = style.getPropertyValue("--default-canvas-size");
+    const canvasSize = parseInt(canvasSizeCSS.slice(0, -2));
+
+    let height = 0.05;    
+    const tempCanvas = document.createElement("canvas");
+    const ctx = tempCanvas.getContext("2d");
+    tempCanvas.height = window.innerHeight * canvasSize / 100 * height * 1.3;
+
+    ctx.beginPath();
+    ctx.font = tempCanvas.height+"px " + imgData.font;
+    let textWidth = ctx.measureText(imgData.text).width;
+    ctx.closePath();
+    tempCanvas.width = textWidth;
+
+    ctx.beginPath();
+    ctx.lineWidth = imgData.outlineSize / 20;
+    ctx.fillStyle = imgData.colorFill;
+    ctx.strokeStyle = imgData.colorOutline;
+    ctx.font = tempCanvas.height+"px " + imgData.font;
+
+    ctx.fillText(imgData.text, 0, tempCanvas.height / 1.3);
+    if(imgData.outlineSize > 0) ctx.strokeText(imgData.text, 0, tempCanvas.height / 1.3);
+    ctx.closePath();
+
+    const textImage = new Image();
+    textImage.src = tempCanvas.toDataURL();
+    return textImage;
+}
+function emitRedrawText(imageData, index){
+    let eventData =  {detail:{imageData:imageData, index:index}}
+    let event = new CustomEvent("redraw-text", eventData);
+    document.dispatchEvent(event);
 }
 
 /*--Canvas Logic-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -754,31 +992,3 @@ function selectOutline(outline){
         outline.children[i].style.display = "block";
     }
 }
-
-
-
-
-
-let allFonts = [
-    "Abadi MT Condensed Light", "Aharoni", "Aharoni Bold", "Aldhabi", "AlternateGothic2 BT", "Andale Mono", "Andalus", "Angsana New", "AngsanaUPC", "Aparajita",
-    "Apple Chancery", "Arabic Typesetting", "Arial", "Arial Black", "Arial narrow", "Arial Nova", "Arial Rounded MT Bold", "Arnoldboecklin", "Avanta Garde", "Bahnschrift",
-    "Bahnschrift Light", "Bahnschrift SemiBold", "Bahnschrift SemiLight", "Baskerville", "Batang", "BatangChe", "Big Caslon", "BIZ UDGothic", "BIZ UDMincho Medium", "Blippo",
-    "Bodoni MT", "Book Antiqua", "Book Antiqua", "Bookman", "Bradley Hand", "Browallia New", "BrowalliaUPC", "Brush Script MT", "Brush Script Std", "Brushstroke", "Calibri",
-    "Calibri Light", "Calisto MT", "Cambodian", "Cambria", "Cambria Math", "Candara", "Century Gothic", "Chalkduster", "Cherokee", "Comic Sans", "Comic Sans MS", "Consolas",
-    "Constantia", "Copperplate", "Copperplate Gothic Light", "Copperplate Gothic&nbsp;Bold", "Corbel", "Cordia New", "CordiaUPC", "Coronetscript", "Courier", "Courier New",
-    "DaunPenh", "David", "DengXian", "DFKai-SB", "Didot", "DilleniaUPC", "DokChampa", "Dotum", "DotumChe", "Ebrima", "Estrangelo Edessa", "EucrosiaUPC", "Euphemia", "FangSong",
-    "Florence", "Franklin Gothic Medium", "FrankRuehl", "FreesiaUPC", "Futara", "Gabriola", "Gadugi", "Garamond", "Gautami", "Geneva", "Georgia", "Georgia Pro", "Gill Sans",
-    "Gill Sans Nova", "Gisha", "Goudy Old Style", "Gulim", "GulimChe", "Gungsuh", "GungsuhChe", "Hebrew", "Hoefler Text", "HoloLens MDL2 Assets", "Impact", "Ink Free", "IrisUPC",
-    "Iskoola Pota", "Japanese", "JasmineUPC", "Javanese Text", "Jazz LET", "KaiTi", "Kalinga", "Kartika", "Khmer UI", "KodchiangUPC", "Kokila", "Korean", "Lao", "Lao UI", "Latha",
-    "Leelawadee", "Leelawadee UI", "Leelawadee UI Semilight", "Levenim MT", "LilyUPC", "Lucida Bright", "Lucida Console", "Lucida Handwriting", "Lucida Sans", "Lucida Sans Typewriter",
-    "Lucida Sans Unicode", "Lucidatypewriter", "Luminari", "Malgun Gothic", "Malgun Gothic Semilight", "Mangal", "Marker Felt", "Marlett", "Meiryo", "Meiryo UI", "Microsoft Himalaya",
-    "Microsoft JhengHei", "Microsoft JhengHei UI", "Microsoft New Tai Lue", "Microsoft PhagsPa", "Microsoft Sans Serif", "Microsoft Tai Le", "Microsoft Uighur", "Microsoft YaHei",
-    "Microsoft YaHei UI", "Microsoft Yi Baiti", "MingLiU", "MingLiU_HKSCS", "MingLiU_HKSCS-ExtB", "MingLiU-ExtB", "Miriam", "Monaco", "Mongolian Baiti", "MoolBoran", "MS Gothic",
-    "MS Mincho", "MS PGothic", "MS PMincho", "MS UI Gothic", "MV Boli", "Myanmar Text", "Narkisim", "Neue Haas Grotesk Text Pro", "New Century Schoolbook", "News Gothic MT", "Nirmala UI",
-    "No automatic language associations", "Noto", "NSimSun", "Nyala", "Oldtown", "Optima", "Palatino", "Palatino Linotype", "papyrus", "Parkavenue", "Perpetua", "Plantagenet Cherokee",
-    "PMingLiU", "Raavi", "Rockwell", "Rockwell Extra Bold", "Rockwell Nova", "Rockwell Nova Cond", "Rockwell Nova Extra Bold", "Rod", "Sakkal Majalla", "Sanskrit Text", "Segoe MDL2 Assets",
-    "Segoe Print", "Segoe Script", "Segoe UI", "Segoe UI Emoji", "Segoe UI Historic", "Segoe UI Symbol", "Shonar Bangla", "Shruti", "SimHei", "SimKai", "Simplified Arabic", "Simplified Chinese",
-    "SimSun", "SimSun-ExtB", "Sitka", "Snell Roundhan", "Stencil Std", "Sylfaen", "Symbol", "Tahoma", "Thai", "Times New Roman", "Traditional Arabic", "Traditional Chinese", "Trattatello",
-    "Trebuchet MS", "Tunga", "UD Digi Kyokasho", "UD Digi KyoKasho NK-R", "UD Digi KyoKasho NP-R", "UD Digi KyoKasho N-R", "Urdu Typesetting", "URW Chancery", "Utsaah", "Vani", "Verdana",
-    "Verdana Pro", "Vijaya", "Vrinda", "Webdings", "Westminster", "Wingdings", "Yu Gothic", "Yu Gothic UI", "Yu Mincho", "Zapf Chancery"
-];
