@@ -1,5 +1,6 @@
 /*--Load Constants-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-import { createCanvas, loadImage } from "canvas";
+import { StaticCanvas, FabricImage } from "fabric/node";
+import { createCanvas } from "canvas";
 import svgCaptcha from "svg-captcha";
 import nodemailer from "nodemailer";
 import EventEmitter from "events";
@@ -10,6 +11,7 @@ import { fileURLToPath } from "url";
 import { Server } from "socket.io";
 import dotenv from "dotenv";
 import axios from "axios";
+import jsdom from "jsdom";
 import fs from "fs";
 
 
@@ -20,6 +22,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const eventEmitter = new EventEmitter();
 const io = new Server(server);
+const { JSDOM } = jsdom;
+const { window } = new JSDOM(`...`);
+const { document } = (new JSDOM(`...`)).window;
+global.document = document;
+global.window = window;
 
 /*--Start Server-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 app.use(express.static(__dirname));
@@ -146,70 +153,8 @@ io.on("connection", (client)=>{
         }
         if(!productFound) client.emit("studio-received", {Found:productFound});
     });
-    client.on("request-final-images", (imageData, sendMail, id)=>{
-        let loadedImages = [];
-        for(let i = 0; i < imageData.length; i++){
-            loadImage(imageData[i].src).then(image => {
-                loadedImages[i] = image;
-                let allLoaded = true;
-                for(let j = 0; j < loadedImages.length; j++){
-                    if(loadedImages[j] === undefined){
-                        allLoaded = false;
-                        break;
-                    }
-                }
-                if(allLoaded) createFinalImage();
-            });
-        }
-
-        function createFinalImage(){
-            const canvas = createCanvas(1080, 1080);
-            const ctx = canvas.getContext("2d");
-
-            let editedImages = [];
-            for(let i = 0; i < imageData.length; i++){
-                let imgH = imageData[i].h * canvas.height;
-                let imgW = imageData[i].w * canvas.width;
-                let imgT = imageData[i].y * canvas.height;
-                let imgL = imageData[i].x * canvas.width;
-
-                const tempCanvas = createCanvas(1080, 1080);
-                const ctxt = tempCanvas.getContext("2d");
-
-                ctxt.beginPath();
-                ctxt.save();
-                ctxt.translate(imgL + imgW / 2, imgT + imgH / 2);
-                ctxt.scale(imageData[i].scaleX, imageData[i].scaleY);
-                ctxt.rotate(imageData[i].angle * Math.PI / 180);
-                ctxt.drawImage(loadedImages[i], -imgW / 2, -imgH / 2, imgW, imgH);
-                ctxt.restore();
-                ctxt.closePath();
-
-                if(i > 0) editedImages.push(tempCanvas.toDataURL());
-                ctx.drawImage(tempCanvas, 0, 0);
-            }
-
-            let finalImage = canvas.toDataURL();
-            if(!sendMail) client.emit("download-final-image", finalImage);
-            else{
-                let imgDataSend = [];
-                if(imageData.length > 1){
-                    for(let i = 1; i < imageData.length; i++){
-                        imgDataSend.push({
-                            originalImg:imageData[i].src,
-                            editedImg:editedImages[i-1],
-                            editedCoords:{
-                                l:imageData[i].x,
-                                t:imageData[i].y,
-                                w:imageData[i].w,
-                                h:imageData[i].h
-                            }
-                        });
-                    }
-                }
-                sendEmail(id, imageData[0].src, imgDataSend, finalImage, client);
-            }
-        }
+    client.on("final-image", (imageData, sendMail, productID, returnEmail)=>{
+        generateFinalImage(imageData, sendMail, client, productID, returnEmail);
     });
     client.on("get-captcha", ()=>{
         let captcha = svgCaptcha.create();
@@ -432,8 +377,12 @@ eventEmitter.on("updated-all-products", ()=>{
 });
 
 /*--Email--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-function sendEmail(id, originalImage, imgDataSend, finalImage, client){
-    let htmlText = "<h2>Artikal "+id+"</h2><b>Slika Artikla</b><br>Širina: 1080px<br>Visina: 1080px<br><br>";
+function sendEmail(productID, returnEmail, originalImage, imgDataSend, finalImage, client){
+    let htmlText = "<h2>Artikal "+productID+"</h2>";
+    htmlText += "<b>Povratni email</b><br> "+returnEmail+"<br><br>";
+    htmlText += "<b>Slika Artikla</b><br>";
+    htmlText += "Širina: 1080px<br>Visina: 1080px<br><br>";
+
     let attachmentData = generateEmailAttachments(originalImage, imgDataSend, finalImage);
     let attachments = attachmentData.attachments;
     htmlText += attachmentData.htmlText;
@@ -450,7 +399,7 @@ function sendEmail(id, originalImage, imgDataSend, finalImage, client){
     const emailData = {
         from:"Logo Studio <"+process.env.LOGO_STUDIO_SEND_EMAIL+">",
         to:process.env.LOGO_STUDIO_RECEIVE_EMAIL,
-        subject:id,
+        subject:productID,
         text:"",
         html:htmlText,
         attachments:attachments
@@ -469,28 +418,79 @@ function generateEmailAttachments(originalImage, imgDataSend, finalImage){
     for(let i = 0; i < imgDataSend.length; i++){
         let index = i+1;
         let filenameO = "Originalna Slika "+index+".png";
-        let filenameE = "Editovana Slika "+index+".png";
        
         attachments.push({
             filename:filenameO,
             path:imgDataSend[i].originalImg
         });
-        attachments.push({
-            filename:filenameE,
-            path:imgDataSend[i].editedImg
-        });
 
-        let coordX = Math.round(imgDataSend[i].editedCoords.l * 1080);
-        let coordY = Math.round(imgDataSend[i].editedCoords.t * 1080);
-        let coordW = Math.round(imgDataSend[i].editedCoords.w * 1080);
-        let coordH = Math.round(imgDataSend[i].editedCoords.h * 1080);
+        let coordX = Math.round(imgDataSend[i].editedCoords.x * 1080);
+        let coordY = Math.round(imgDataSend[i].editedCoords.y * 1080);
+        let flipX = "Ne", flipY = "Ne";
+        if(imgDataSend[i].editedCoords.flipX) flipX = "Da";
+        if(imgDataSend[i].editedCoords.flipY) flipY = "Da";
+        
 
-        let textL = "Daljina od leve ivice: "+coordX+"px<br>";
-        let textT = "Daljina od gornje ivice: "+coordY+"px<br>";
-        let textW = "Širina: "+coordW+"px<br>";
-        let textH = "Visina: "+coordH+"px<br><br>";
-        htmlText += "<b>Slika "+index+"</b><br>"+textL+textT+textW+textH;
+        let textL  = "Daljina od leve ivice: "+coordX+"px<br>";
+        let textT  = "Daljina od gornje ivice: "+coordY+"px<br>";
+        let textA  = "Ugao: "+imgDataSend[i].editedCoords.angle+"°<br>";
+        let textFx = "Obrnuto po horizontali: "+flipX+"<br>";
+        let textFy = "Obrnuto po vertikali: "+flipY+"<br>";
+        let textSx = "Skalirano po horizontali: "+imgDataSend[i].editedCoords.scaleX+"<br>";
+        let textSy = "Skalirano po vertikali: "+imgDataSend[i].editedCoords.scaleY+"<br><br>";
+        htmlText += "<b>Slika "+index+"</b><br>" + textL + textT + textA + textFx + textFy + textSx + textSy;
     }
     attachments.push({filename:"Finalna Slika.png", path:finalImage});
     return {attachments:attachments, htmlText:htmlText};
+}
+
+/*--Image Generation---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+function generateFinalImage(imageData, sendMail, client, productID, returnEmail){
+    const canvasSize = 1080;
+    const canvasElement = createCanvas(canvasSize, canvasSize);
+    canvasElement.id = "temp-canvas";
+
+    const canvas = new StaticCanvas(canvasElement.id, {width:canvasSize, height:canvasSize});
+    for(let i = 0; i < imageData.length; i++){
+        FabricImage.fromURL(imageData[i].src).then(result => {
+            let y = imageData[i].y * canvasSize;
+            let x = imageData[i].x * canvasSize;
+
+            const img = result.set({left:x, top:y, lockScalingFlip:true, angle:imageData[i].angle});
+            img.set({
+                scaleX:imageData[i].scaleX,
+                scaleY:imageData[i].scaleY,
+                flipX: imageData[i].flipX,
+                flipY: imageData[i].flipY
+            });
+            canvas.add(img);
+        });
+    }
+    canvas.renderAll();
+    setTimeout(()=>{
+        const imageURL = canvas.toDataURL();
+        if(!sendMail) client.emit("download-final-image", imageURL);
+        else finalImageData(productID, returnEmail, imageData, imageURL, client);
+        canvas.dispose();
+    }, 250);
+}
+function finalImageData(productID, returnEmail, imageData, finalImage, client){
+    let imgDataSend = [];
+    if(imageData.length > 1){
+        for(let i = 1; i < imageData.length; i++){
+            imgDataSend.push({
+                originalImg:imageData[i].src,
+                editedCoords:{
+                    scaleX:imageData[i].scaleX,
+                    scaleY:imageData[i].scaleY,
+                    flipX:imageData[i].flipX,
+                    flipY:imageData[i].flipY,
+                    angle:imageData[i].angle,
+                    x:imageData[i].x,
+                    y:imageData[i].y
+                }
+            });
+        }
+    }
+    sendEmail(productID, returnEmail, imageData[0].src, imgDataSend, finalImage, client);
 }

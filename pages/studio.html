@@ -13,6 +13,7 @@
     <link rel="stylesheet" type="text/css" href="../css/index.css">
 
     <script type="text/javascript" src="../js/socket.io.min.js"></script>
+    <script type="text/javascript" src="../js/fabric.js"></script>
     <script type="text/javascript" src="../js/studio.js"></script>
     <script type="text/javascript" src="../js/index.js"></script>
     <title>Logo Studio</title>
@@ -236,8 +237,8 @@
                 <div class="content-page" id="back">
                     <div class="studio-canvas-holder">
                         <canvas id="canvas-main"></canvas>
+                        <canvas id="canvas-added"></canvas>
                     </div>
-                    <div class="studio-outline-holder"></div>
                 </div>
                 <div class="content-page" id="front">
                     <div class="studio-color-holder"></div>
@@ -252,7 +253,6 @@
                     </div>
                     <button id="download" class="studio-button">Preuzmite sliku</button>
                     <button id="send" class="studio-button">Pošaljite nam sliku</button>
-
                     <div class="studio-input" id="input-image">
                         <div class="studio-input-img" id="input-image-img"></div>
                         <div class="studio-input-text">Slika</div>
@@ -261,7 +261,7 @@
                         <div class="studio-input-img" id="input-text-img"></div>
                         <div class="studio-input-text">Tekst</div>
                     </div>
-                    <div class="side-button-holder">
+                    <div class="side-button-holder" data-index="">
                         <div class="side-button" id="duplicate" title="napravite duplikat"></div>
                         <div class="side-button" id="bringFront" title="gurnite na vrh"></div>
                         <div class="side-button" id="flipH" title="obrnite horizontalno"></div>
@@ -292,6 +292,8 @@
     </div>
     <div class="mask" id="captcha-mask">
         <div class="captcha-window">
+            <div class="captcha-email-text">Unesite vaš email na koji ćemo da odgovorimo</div>
+            <input type="email" id="input-email">
             <div class="captcha"></div>
             <input type="text" id="captcha-input">
             <div class="captcha-buttons">
