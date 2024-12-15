@@ -153,8 +153,8 @@ io.on("connection", (client)=>{
         }
         if(!productFound) client.emit("studio-received", {Found:productFound});
     });
-    client.on("final-image", (imageData, sendMail, productID, returnEmail)=>{
-        generateFinalImage(imageData, sendMail, client, productID, returnEmail);
+    client.on("final-image", (defaultCanvasSize, imageData, sendMail, productID, returnEmail)=>{
+        generateFinalImage(defaultCanvasSize, imageData, sendMail, client, productID, returnEmail);
     });
     client.on("get-captcha", ()=>{
         let captcha = svgCaptcha.create();
@@ -416,8 +416,11 @@ function generateEmailAttachments(originalImage, imgDataSend, finalImage){
     let attachments = [], htmlText = "";
     attachments.push({filename:"Slika Artikla.png", path:originalImage});
     for(let i = 0; i < imgDataSend.length; i++){
+        let addType = "Slika";
+        if(imgDataSend[i].type === 2) addType = "Text";
+
         let index = i+1;
-        let filenameO = "Originalna Slika "+index+".png";
+        let filenameO = index + ") Original "+addType+".png";
        
         attachments.push({
             filename:filenameO,
@@ -430,6 +433,11 @@ function generateEmailAttachments(originalImage, imgDataSend, finalImage){
         if(imgDataSend[i].editedCoords.flipX) flipX = "Da";
         if(imgDataSend[i].editedCoords.flipY) flipY = "Da";
         
+        let textC = "", textF = "";
+        if(imgDataSend[i].type === 2){
+            textC = "Tekst: "+imgDataSend[i].text+"<br>";
+            textF = "Font: "+imgDataSend[i].font+"<br>";
+        }
 
         let textL  = "Daljina od leve ivice: "+coordX+"px<br>";
         let textT  = "Daljina od gornje ivice: "+coordY+"px<br>";
@@ -438,14 +446,14 @@ function generateEmailAttachments(originalImage, imgDataSend, finalImage){
         let textFy = "Obrnuto po vertikali: "+flipY+"<br>";
         let textSx = "Skalirano po horizontali: "+imgDataSend[i].editedCoords.scaleX+"<br>";
         let textSy = "Skalirano po vertikali: "+imgDataSend[i].editedCoords.scaleY+"<br><br>";
-        htmlText += "<b>Slika "+index+"</b><br>" + textL + textT + textA + textFx + textFy + textSx + textSy;
+        htmlText += "<b>"+index+") "+addType+"</b><br>" + textC + textF + textL + textT + textA + textFx + textFy + textSx + textSy;
     }
     attachments.push({filename:"Finalna Slika.png", path:finalImage});
     return {attachments:attachments, htmlText:htmlText};
 }
 
 /*--Image Generation---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-function generateFinalImage(imageData, sendMail, client, productID, returnEmail){
+function generateFinalImage(defaultCanvasSize, imageData, sendMail, client, productID, returnEmail){
     const canvasSize = 1080;
     const canvasElement = createCanvas(canvasSize, canvasSize);
     canvasElement.id = "temp-canvas";
@@ -454,20 +462,26 @@ function generateFinalImage(imageData, sendMail, client, productID, returnEmail)
     const canvas = new StaticCanvas(canvasElement.id, canvadOptions);
     let elementsToAdd = [], imageLoadDelay = 1;
     for(let i = 0; i < imageData.length; i++){
+        let aspectRatio = defaultCanvasSize / 1080;
         if(imageData[i].type < 2){
+            if(imageData[i].type === 0) aspectRatio = 1;
+
             FabricImage.fromURL(imageData[i].src).then(result => {
                 let y = imageData[i].y * canvasSize;
                 let x = imageData[i].x * canvasSize;
     
                 const img = result.set({left:x, top:y, lockScalingFlip:true, angle:imageData[i].angle});
                 img.set({
-                    scaleX:imageData[i].scaleX,
-                    scaleY:imageData[i].scaleY,
+                    scaleX:imageData[i].scaleX / aspectRatio,
+                    scaleY:imageData[i].scaleY / aspectRatio,    
                     flipX: imageData[i].flipX,
                     flipY: imageData[i].flipY
                 });
                 elementsToAdd[i] = img;
                 imageLoadDelay++;
+
+                let condition = imageLoadDelay === imageData.length + 1;
+                if(condition) finalizeImage();
             });
         }
         else{
@@ -475,7 +489,7 @@ function generateFinalImage(imageData, sendMail, client, productID, returnEmail)
             let x = imageData[i].x * canvasSize;
 
             const text = new IText(imageData[i].text, {
-                strokeWidth:imageData[i].outlineSize,
+                strokeWidth:imageData[i].outlineSize / aspectRatio,
                 stroke:imageData[i].colorOutline,
                 fill:imageData[i].colorFill,
                 angle:imageData[i].angle,
@@ -491,19 +505,21 @@ function generateFinalImage(imageData, sendMail, client, productID, returnEmail)
             });
             elementsToAdd[i] = text;
             imageLoadDelay++;
+
+            let condition = imageLoadDelay === imageData.length + 1;
+            if(condition) finalizeImage();
         }
     }
 
-    setTimeout(()=>{
+    function finalizeImage(){
         for(let i = 0; i < elementsToAdd.length; i++) canvas.add(elementsToAdd[i]);
         canvas.renderAll();
-        setTimeout(()=>{
-            const imageURL = canvas.toDataURL();
-            if(!sendMail) client.emit("download-final-image", imageURL);
-            else finalImageData(productID, returnEmail, imageData, imageURL, client);
-            canvas.dispose();
-        }, 250);
-    }, imageLoadDelay * 250);
+
+        const imageURL = canvas.toDataURL();
+        if(!sendMail) client.emit("download-final-image", imageURL);
+        else finalImageData(productID, returnEmail, imageData, imageURL, client);
+        canvas.dispose();
+    }
 }
 function finalImageData(productID, returnEmail, imageData, finalImage, client){
     let imgDataSend = [];
@@ -511,6 +527,10 @@ function finalImageData(productID, returnEmail, imageData, finalImage, client){
         for(let i = 1; i < imageData.length; i++){
             imgDataSend.push({
                 originalImg:imageData[i].src,
+                type:imageData[i].type,
+                text:imageData[i].text,
+                font:imageData[i].font,
+
                 editedCoords:{
                     scaleX:imageData[i].scaleX,
                     scaleY:imageData[i].scaleY,

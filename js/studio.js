@@ -65,6 +65,9 @@ function generateStudio(client, data){
     generateCanvases(imageData, zoom);
 
     /*--Events---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    window.onresize = ()=>{
+        generateCanvases(imageData, zoom);
+    }
     document.addEventListener("update-base-image-list", (e)=>{
         images = e.detail.images;
         drawBaseImage(images[imgIndex]);
@@ -153,7 +156,7 @@ function generateStudio(client, data){
     downloadButton.onclick = ()=>{
         downloadButton.disabled = true;
         let dataToSend = generateFinalImageData(images[imgIndex], imageData);
-        client.emit("final-image", dataToSend, false);
+        client.emit("final-image", getDefaultCanvasSize(), dataToSend, false);
     }
     sendButton.onclick = ()=>{
         client.emit("get-captcha");
@@ -191,12 +194,13 @@ function generateStudio(client, data){
                     sendButton.disabled = true;
                     hideCaptchaWindow();
                     let dataToSend = generateFinalImageData(images[imgIndex], imageData);
-                    client.emit("final-image", dataToSend, true, currVersion.ID, inputEmail.value);
+                    client.emit("final-image", getDefaultCanvasSize(), dataToSend, true, currVersion.ID, inputEmail.value);
                     alert("Vaša slika se šalje");
                 }
             }
         }
     });
+
 
     /*--Input----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
     const fileInput = document.querySelector(".file-input");
@@ -206,7 +210,7 @@ function generateStudio(client, data){
             id:"canvas-"+crypto.randomUUID(),
             scaleX:1, scaleY:1, angle:0,
             flipX:false, flipY:false,
-            x:0.5, y:0.5, type:2,
+            x:0.25, y:0.25, type:2,
             outlineSize:0,
             fontSize:0.05,
             colorOutline:"#000000",
@@ -231,19 +235,12 @@ function generateStudio(client, data){
                 inputImg.src = reader.result;
                 inputImg.onload = ()=>{
 
-                    const studioCanvasHolder = document.querySelector(".studio-canvas-holder");
-                    const rect = studioCanvasHolder.getBoundingClientRect();
-                    let inputImgData = resizeImgToFit(inputImg, rect, zoom);
                     let newImageData = {
                         src:reader.result,
                         id:"canvas-"+crypto.randomUUID(),
                         scaleX:1, scaleY:1, angle:0,
                         flipX:false, flipY:false,
-                        x:0.5 - inputImgData.w / 2,
-                        y:0.5 - inputImgData.h / 2,
-                        h:inputImgData.h,
-                        w:inputImgData.w,
-                        type:1,
+                        x:0.25, y:0.25, type:1,
 
                         outlineSize:0,
                         colorOutline:"",
@@ -358,8 +355,14 @@ function generateImages(imageLinks, imgIndex){
 }
 function generateFinalImageData(baseImg, imageData){
     let finalImageData = JSON.parse(JSON.stringify(imageData));
-    finalImageData.unshift({x:0, y:0, angle:0, scaleX:1, scaleY:1, src:baseImg.src, type:0});
+    finalImageData.unshift({x:0, y:0, angle:0, scaleX:1, scaleY:1, flipX:false, flipY:false, src:baseImg.src, type:0});
     return finalImageData;
+}
+function getDefaultCanvasSize(){
+    const style = getComputedStyle(document.body);
+    const canvasSizeCSS = style.getPropertyValue("--default-canvas-size");
+    const canvasSize = parseInt(canvasSizeCSS.slice(0, -2));
+    return window.innerHeight * canvasSize /100
 }
 
 /*--Image Logic--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -427,37 +430,6 @@ function drawCanvases(imageData, zoom){
         canvas.renderAll();
     }, 50);
 }
-function resizeImgToFit(image, rect, zoom){
-    let inputImgData = {w:1, h:1}
-    let imageH = image.height * zoom / 10;
-    let imageW = image.width * zoom / 10;
-
-    let aspectRatio = imageW / imageH;
-    if(imageW > rect.width && imageH > rect.height){
-        if(imageW >= imageH){
-            inputImgData.w = 1;
-            inputImgData.h = 1 / aspectRatio;
-        }
-        else{
-            inputImgData.h = 1;
-            inputImgData.w = 1 * aspectRatio;
-        }
-        return inputImgData;
-    }
-    if(imageW > rect.width){
-        inputImgData.w = 1;
-        inputImgData.h = 1 / aspectRatio;
-        return inputImgData;
-    }
-    if(imageH > rect.height){
-        inputImgData.h = 1;
-        inputImgData.w = 1 * aspectRatio;
-        return inputImgData;
-    }
-    inputImgData.h = imageH / rect.height;
-    inputImgData.w = imageW / rect.width;
-    return inputImgData;
-}
 function addImageObjectEvents(img, index, imageData, zoom){
     img.on("moving", (e)=>{
         const studioCanvasHolder = document.querySelector(".studio-canvas-holder");
@@ -496,9 +468,13 @@ function addImageObjectEvents(img, index, imageData, zoom){
         document.dispatchEvent(event);
     });
 
-    img.on("deselected", hideSideButtons);
-    img.on("selected", (e)=>{
+    img.on("deselected", ()=>{
+        hideSideButtons();
+        if(imageData[index].type === 2) closeTextSettings();
+    });
+    img.on("selected", ()=>{
         displaySideButtons(imageData, index);
+        if(imageData[index].type === 2) openTextSettings(imageData, index);
     });
 
     if(imageData[index].type === 2){
@@ -606,4 +582,101 @@ function getAllFonts(){
         "Trebuchet MS", "Tunga", "UD Digi Kyokasho", "UD Digi KyoKasho NK-R", "UD Digi KyoKasho NP-R", "UD Digi KyoKasho N-R", "Urdu Typesetting", "URW Chancery", "Utsaah", "Vani", "Verdana",
         "Verdana Pro", "Vijaya", "Vrinda", "Webdings", "Westminster", "Wingdings", "Yu Gothic", "Yu Gothic UI", "Yu Mincho", "Zapf Chancery"
     ];
+}
+function openTextSettings(imageData, index){
+    const textItemFont = document.querySelector(".text-item-font");
+    const textSizeRange = document.querySelector("#font-size-range");
+    const outlineRange = document.querySelector("#outline-range");
+    const textColor = document.querySelector("#text-color");
+    const backColor = document.querySelector("#back-color");
+  
+
+    textItemFont.innerText = imageData[index].font;
+    textColor.value = imageData[index].colorOutline;
+    backColor.value = imageData[index].colorFill;
+    outlineRange.value = imageData[index].outlineSize;
+    textSizeRange.value = imageData[index].fontSize * 500;
+
+    const textHolder = document.querySelector(".text-holder");
+    if(textHolder.style.display !== "flex"){
+        textHolder.style.animation = "fade-in ease-in-out 0.1s";
+        textHolder.style.display = "flex";
+        textHolder.onanimationend = ()=>{
+            textHolder.style.animation = "none";
+            textHolder.onanimationend = null;
+        }
+    }
+
+    const fontMask = document.querySelector("#font-mask");
+    document.querySelector(".text-item-font").onclick = ()=>{
+        fontMask.style.animation = "fade-in ease-in-out 0.1s";
+        fontMask.style.display = "block";
+        fontMask.onanimationend = ()=>{
+            fontMask.style.animation = "none";
+            fontMask.onanimationend = null;
+        }
+    }
+
+    let allFonts = getAllFonts();
+    const fontWindowBody = document.querySelector(".font-window-body");
+    while(fontWindowBody.children.length > 0) fontWindowBody.removeChild(fontWindowBody.lastChild);
+    for(let i = 0; i < allFonts.length; i++){
+        const font = document.createElement("div");
+        font.className = "font";
+        font.style.fontFamily = allFonts[i];
+        font.innerText = allFonts[i];
+
+        fontWindowBody.appendChild(font);
+        font.onclick = ()=>{
+            closeFontWindow();
+            textItemFont.innerText = allFonts[i];
+            imageData[index].font = allFonts[i];
+            let eventData =  {detail:{imageData:imageData}}
+            let event = new CustomEvent("redraw-added-canvas", eventData);
+            document.dispatchEvent(event);
+        }
+    }
+
+    backColor.oninput = ()=>{
+        imageData[index].colorFill = backColor.value;
+        let eventData =  {detail:{imageData:imageData}}
+        let event = new CustomEvent("redraw-added-canvas", eventData);
+        document.dispatchEvent(event);
+    }
+    textColor.oninput = ()=>{
+        imageData[index].colorOutline = textColor.value;
+        let eventData =  {detail:{imageData:imageData}}
+        let event = new CustomEvent("redraw-added-canvas", eventData);
+        document.dispatchEvent(event);
+    }
+    outlineRange.oninput = ()=>{
+        imageData[index].outlineSize = parseInt(outlineRange.value) / 20;
+        let eventData =  {detail:{imageData:imageData}}
+        let event = new CustomEvent("redraw-added-canvas", eventData);
+        document.dispatchEvent(event);
+    }
+    textSizeRange.oninput = ()=>{
+        imageData[index].fontSize = parseInt(textSizeRange.value) / 500;
+        let eventData =  {detail:{imageData:imageData}}
+        let event = new CustomEvent("redraw-added-canvas", eventData);
+        document.dispatchEvent(event);
+    }
+}
+function closeTextSettings(){
+    const textHolder = document.querySelector(".text-holder");
+    textHolder.style.animation = "fade-out ease-in-out 0.1s";
+    textHolder.onanimationend = ()=>{
+        textHolder.style.animation = "none";
+        textHolder.style.display = "none";
+        textHolder.onanimationend = null;
+    }
+}
+function closeFontWindow(){
+    const fontMask = document.querySelector("#font-mask");
+    fontMask.style.animation = "fade-out ease-in-out 0.1s";
+    fontMask.onanimationend = ()=>{
+        fontMask.style.animation = "none";
+        fontMask.style.display = "none";
+        fontMask.onanimationend = null;
+    }
 }

@@ -392,7 +392,9 @@ canvas{
     transform:translate(-50%);
     color:rgb(50, 50, 50);
     margin-left:50%;
-    width:180px;
+    width:calc(180px - 1em);
+    padding-right:0.5em;
+    padding-left:0.5em;
 }
 .captcha{
     transform:translate(-50%);
