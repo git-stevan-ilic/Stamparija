@@ -26,7 +26,7 @@ function loadStudioLogic(){
     client.on("download-final-image", (imageURL)=>{
         document.querySelector("#download").disabled = false;
         const downloadLink = document.createElement("a");
-        downloadLink.download = "Logo Studio Image.png";
+        downloadLink.download = "Prikaz Štampe.png";
         downloadLink.href = imageURL;
         downloadLink.click();
         downloadLink.remove();
@@ -198,9 +198,28 @@ function generateStudio(client, data){
         }
     });
 
-    /*--File Input-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    /*--Input----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
     const fileInput = document.querySelector(".file-input");
     document.querySelector("#input-image").onclick = ()=>{fileInput.click()}
+    document.querySelector("#input-text").onclick = ()=>{
+        let newImageData = {
+            id:"canvas-"+crypto.randomUUID(),
+            scaleX:1, scaleY:1, angle:0,
+            flipX:false, flipY:false,
+            x:0.5, y:0.5, type:2,
+            outlineSize:0,
+            fontSize:0.05,
+            colorOutline:"#000000",
+            colorFill:"#000000",
+            font:"Arial",
+            text:"Dupli klik za modifikovanje teksta"
+        }
+        loadedImages.push(null);
+        imageData.push(newImageData);
+        let eventData =  {detail:{imageData:imageData}}
+        let event = new CustomEvent("redraw-added-canvas", eventData);
+        document.dispatchEvent(event);
+    }
     fileInput.onchange = ()=>{
         if(fileInput.files.length === 0) alert("Slika nije validna");
         else{
@@ -242,6 +261,7 @@ function generateStudio(client, data){
             }
         }
     }
+    
 
     
 
@@ -338,7 +358,7 @@ function generateImages(imageLinks, imgIndex){
 }
 function generateFinalImageData(baseImg, imageData){
     let finalImageData = JSON.parse(JSON.stringify(imageData));
-    finalImageData.unshift({x:0, y:0, angle:0, scaleX:1, scaleY:1, src:baseImg.src});
+    finalImageData.unshift({x:0, y:0, angle:0, scaleX:1, scaleY:1, src:baseImg.src, type:0});
     return finalImageData;
 }
 
@@ -361,23 +381,51 @@ function drawCanvases(imageData, zoom){
         height:canvasElement.height,
         width:canvasElement.width
     });
+    let addedElements = [];
     for(let i = 0; i < imageData.length; i++){
-        fabric.Image.fromURL(imageData[i].src).then(result => {
+        if(imageData[i].type === 1){
+            fabric.Image.fromURL(imageData[i].src).then(result => {
+                let y = imageData[i].y * canvasElement.height;
+                let x = imageData[i].x * canvasElement.width;
+    
+                const img = result.set({left:x, top:y, lockScalingFlip:true, angle:imageData[i].angle});
+                img.set({
+                    scaleX:imageData[i].scaleX * zoom / 10,
+                    scaleY:imageData[i].scaleY * zoom / 10,
+                    flipX: imageData[i].flipX,
+                    flipY: imageData[i].flipY
+                });
+                addedElements[i] = img;
+                addImageObjectEvents(img, i, imageData, zoom);
+            });
+        }
+        else{
             let y = imageData[i].y * canvasElement.height;
             let x = imageData[i].x * canvasElement.width;
 
-            const img = result.set({left:x, top:y, lockScalingFlip:true, angle:imageData[i].angle});
-            img.set({
+            const text = new fabric.IText(imageData[i].text, {
+                strokeWidth:imageData[i].outlineSize,
+                stroke:imageData[i].colorOutline,
+                fill:imageData[i].colorFill,
+                angle:imageData[i].angle,
+                lockScalingFlip:true,
+                left:x, top:y,
+
                 scaleX:imageData[i].scaleX * zoom / 10,
                 scaleY:imageData[i].scaleY * zoom / 10,
                 flipX: imageData[i].flipX,
-                flipY: imageData[i].flipY
+                flipY: imageData[i].flipY,
+                fontFamily:imageData[i].font,
+                fontSize:canvasElement.height * imageData[i].fontSize / zoom * 10
             });
-            canvas.add(img);
-            addImageObjectEvents(img, i, imageData, zoom);
-        });
+            addedElements[i] = text;
+            addImageObjectEvents(text, i, imageData, zoom);
+        }
     }
-    canvas.renderAll();
+    setTimeout(()=>{
+        for(let i = 0; i < addedElements.length; i++) canvas.add(addedElements[i]);
+        canvas.renderAll();
+    }, 50);
 }
 function resizeImgToFit(image, rect, zoom){
     let inputImgData = {w:1, h:1}
@@ -441,7 +489,6 @@ function addImageObjectEvents(img, index, imageData, zoom){
 
         imageData[index].x = e.transform.target.left / rect.width;
         imageData[index].y = e.transform.target.top / rect.height;
-        imageData[index].scaleX = e.transform.target.scaleX;
         imageData[index].angle = e.transform.target.angle;
 
         let eventData =  {detail:{imageData:imageData}}
@@ -453,6 +500,15 @@ function addImageObjectEvents(img, index, imageData, zoom){
     img.on("selected", (e)=>{
         displaySideButtons(imageData, index);
     });
+
+    if(imageData[index].type === 2){
+        img.on("changed", ()=>{
+            imageData[index].text = img.text;
+            let eventData =  {detail:{imageData:imageData}}
+            let event = new CustomEvent("update-data", eventData);
+            document.dispatchEvent(event);
+        });
+    }
 }
 function displaySideButtons(imageData, index){
     const sideButtonHolder = document.querySelector(".side-button-holder");
@@ -467,19 +523,14 @@ function displaySideButtons(imageData, index){
     }
 
     document.querySelector("#duplicate").onclick = ()=>{
-        let clone = {
-            id:     "canvas-"+crypto.randomUUID(),
-            scaleX: imageData[index].scaleX,
-            scaleY: imageData[index].scaleY,
-            flipX:  imageData[index].flipX,
-            flipY:  imageData[index].flipY,
-            angle:  imageData[index].angle,
-            src:    imageData[index].src,
-            x:      imageData[index].x + 0.05,
-            y:      imageData[index].y + 0.05,
-            w:      imageData[index].w,
-            h:      imageData[index].h,
-        };
+        let clone = {};
+        let keys = Object.keys(imageData[index]);
+        let values = Object.values(imageData[index]);
+        for(let i = 0; i < keys.length; i++) clone[keys[i]] = values[i];
+        clone["id"] = "canvas-"+crypto.randomUUID();
+        clone["x"] += 0.05;
+        clone["y"] += 0.05;
+        
         let eventData =  {detail:{clone:clone}}
         let event = new CustomEvent("clone-image", eventData);
         document.dispatchEvent(event);

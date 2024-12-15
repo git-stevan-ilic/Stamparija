@@ -1,5 +1,5 @@
 /*--Load Constants-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-import { StaticCanvas, FabricImage } from "fabric/node";
+import { StaticCanvas, FabricImage, IText } from "fabric/node";
 import { createCanvas } from "canvas";
 import svgCaptcha from "svg-captcha";
 import nodemailer from "nodemailer";
@@ -298,7 +298,7 @@ function generateUsedProducts(data, apiIDs){
     console.log("Generating Product Data Complete");
     console.log("Retrieving Product Image and Color Data...\n");
     
-    let subCategoryNum = 0;
+    /*let subCategoryNum = 0;
     for(let i = 0; i < generatedProducts.length; i++){
         let productNum = 0;
         if(generatedProducts[i].Products.length === 0){
@@ -353,7 +353,7 @@ function generateUsedProducts(data, apiIDs){
                 }, (i*1500 + j*10 + k));
             }
         }
-    }
+    }*/
 }
 
 fs.readFile(process.env.API_BACKUP, (error, jsonData)=>{
@@ -450,29 +450,60 @@ function generateFinalImage(imageData, sendMail, client, productID, returnEmail)
     const canvasElement = createCanvas(canvasSize, canvasSize);
     canvasElement.id = "temp-canvas";
 
-    const canvas = new StaticCanvas(canvasElement.id, {width:canvasSize, height:canvasSize});
+    const canvadOptions = {width:canvasSize, height:canvasSize, preserveObjectStacking:true};
+    const canvas = new StaticCanvas(canvasElement.id, canvadOptions);
+    let elementsToAdd = [], imageLoadDelay = 1;
     for(let i = 0; i < imageData.length; i++){
-        FabricImage.fromURL(imageData[i].src).then(result => {
+        if(imageData[i].type < 2){
+            FabricImage.fromURL(imageData[i].src).then(result => {
+                let y = imageData[i].y * canvasSize;
+                let x = imageData[i].x * canvasSize;
+    
+                const img = result.set({left:x, top:y, lockScalingFlip:true, angle:imageData[i].angle});
+                img.set({
+                    scaleX:imageData[i].scaleX,
+                    scaleY:imageData[i].scaleY,
+                    flipX: imageData[i].flipX,
+                    flipY: imageData[i].flipY
+                });
+                elementsToAdd[i] = img;
+                imageLoadDelay++;
+            });
+        }
+        else{
             let y = imageData[i].y * canvasSize;
             let x = imageData[i].x * canvasSize;
 
-            const img = result.set({left:x, top:y, lockScalingFlip:true, angle:imageData[i].angle});
-            img.set({
+            const text = new IText(imageData[i].text, {
+                strokeWidth:imageData[i].outlineSize,
+                stroke:imageData[i].colorOutline,
+                fill:imageData[i].colorFill,
+                angle:imageData[i].angle,
+                lockScalingFlip:true,
+                left:x, top:y,
+
                 scaleX:imageData[i].scaleX,
                 scaleY:imageData[i].scaleY,
                 flipX: imageData[i].flipX,
-                flipY: imageData[i].flipY
+                flipY: imageData[i].flipY,
+                fontFamily:imageData[i].font,
+                fontSize:canvasSize * imageData[i].fontSize
             });
-            canvas.add(img);
-        });
+            elementsToAdd[i] = text;
+            imageLoadDelay++;
+        }
     }
-    canvas.renderAll();
+
     setTimeout(()=>{
-        const imageURL = canvas.toDataURL();
-        if(!sendMail) client.emit("download-final-image", imageURL);
-        else finalImageData(productID, returnEmail, imageData, imageURL, client);
-        canvas.dispose();
-    }, 250);
+        for(let i = 0; i < elementsToAdd.length; i++) canvas.add(elementsToAdd[i]);
+        canvas.renderAll();
+        setTimeout(()=>{
+            const imageURL = canvas.toDataURL();
+            if(!sendMail) client.emit("download-final-image", imageURL);
+            else finalImageData(productID, returnEmail, imageData, imageURL, client);
+            canvas.dispose();
+        }, 250);
+    }, imageLoadDelay * 250);
 }
 function finalImageData(productID, returnEmail, imageData, finalImage, client){
     let imgDataSend = [];
