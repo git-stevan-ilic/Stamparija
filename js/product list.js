@@ -38,7 +38,6 @@ function loadProductListLogic(){
             generateSearchResultBody(productHolder, dataArray);
             pathHolder.innerHTML = "<a class='path-link' target='_self' href='../'>Početna ></a> ";
             pathHolder.innerHTML += data.CategoryName;
-            pathHolder.style.display = "none";
             console.log("category data:", data);
         }
     });
@@ -50,7 +49,6 @@ function loadProductListLogic(){
             pathHolder.innerHTML = "<a class='path-link' target='_self' href='../'>Početna ></a> ";
             pathHolder.innerHTML += "<a class='path-link' target='_self' href='../pages/product-list.html?cat="+data.Category+"'>"+data.CategoryName+" ></a> ";
             pathHolder.innerHTML += data.SubCategoryName;
-            pathHolder.style.display = "none";
             console.log("sub category data:", data);
         }
     });

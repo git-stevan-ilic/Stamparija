@@ -1,18 +1,20 @@
 /*--Initial------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 :root{
-    --side-bar-width:17em;
+    --side-bar-left:4em;
+    --side-bar-width:13em;
     --side-bar-extension-height:calc(19 * 4.5vh + 2px);
     --side-bar-compression-height:calc(12 * 4.5vh + 2px);
     
     --category-width-small:8.5em;
-    --category-width:17em;
+    --category-width:13em;
 
     --default-canvas-size:80vh;
 }
 body{
     font-family:"Inter";
     user-select:none;
-    overflow:hidden;
+    overflow-x:hidden;
+    overflow-y:auto;
 
     font-size:2vh;
     padding:0px;
@@ -87,6 +89,7 @@ a{
     z-index:1;
 }
 .path-holder{
+    display:none;
     position:absolute;
     font-size:1.5vh;
     z-index:2;

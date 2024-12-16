@@ -350,6 +350,7 @@ h1{
     font-weight:bold;
     display:flex;
 
+    max-width:40vw;
     font-size:4vh;
     width:75%;
 }
@@ -405,6 +406,7 @@ h1{
 }
 .product-display-desc{
     color:rgb(100, 100, 100);
+    max-width:40vw;
     font-size:2vh;
     width:100%;
 

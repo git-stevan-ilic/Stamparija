@@ -1,15 +1,15 @@
 /*--Side Bar-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 .side-bar{
-    background-image:radial-gradient(circle at 20% 20%, rgb(255, 175, 0) 1%, rgb(245, 165, 0));
-    border-right:1px solid rgb(200, 100, 0);
-    border-top:1px solid rgb(200, 100, 0);
-    background-color:rgb(255, 175, 0);
+    background-image:radial-gradient(circle at 20% 20%, rgb(230, 230, 230) 1%, rgb(220, 220, 220));
+    border:1px solid rgb(200, 200, 200);
+    background-color:rgb(230, 230, 230);
+    margin-left:var(--side-bar-left);
     width:var(--side-bar-width);
     position:relative;
+    margin-top:-1px;
     flex-shrink:0;
     height:100%;
     z-index:2;
-    transform:translateY(-1px);
 }
 .side-bar-item-holder{
     height:calc(var(--side-bar-compression-height));
@@ -31,12 +31,12 @@
     display:flex;
 
     width:calc(var(--side-bar-width) * 0.95);
-    color:rgb(75, 25, 0);
+    color:rgb(50, 50, 50);
     padding-left:2.55%;
     height:4.5vh;
 }
 .side-bar-item:hover{
-    background-image:radial-gradient(circle at 20% 50%, rgb(225, 145, 0), rgb(225, 135, 0));
+    background-image:radial-gradient(circle at 20% 50%, rgb(200, 200, 200), rgb(190, 190, 190));
     animation:nav-bar-item-anim ease-in-out 0.25s;
     background-repeat:no-repeat;
     color:rgb(0, 0, 0);
@@ -54,7 +54,7 @@
     overflow:hidden;
     display:flex;
 
-    color:rgb(75, 25, 0);
+    color:rgb(50, 50, 50);
     height:100%;
     width:100%;
 }
@@ -85,14 +85,14 @@
     opacity:0.5;
 }
 .side-bar-extension-item{
-    border-bottom:1px solid rgb(200, 100, 0);
-    border-top:1px solid rgb(200, 100, 0);
+    border-bottom:1px solid rgb(200, 200, 200);
+    border-top:1px solid rgb(200, 200, 200);
 }
 
 /*--Side Bar Popup-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 .side-bar-popup{
-    border:1px solid rgb(200, 100, 0);
-    background-color:rgb(255, 175, 0);
+    border:1px solid rgb(200, 200, 200);
+    background-color:rgb(230, 230, 230);
     transform:translate(100%);
     position:absolute;
     min-height:4.5vh;
@@ -102,7 +102,7 @@
     top:0px;
 }
 .side-bar-popup-item{
-    color:rgb(75, 25, 0);
+    color:rgb(50, 50, 50);
     padding-right:1em;
     padding-left:0.5em;
     font-size:1.5vh;
@@ -115,7 +115,7 @@
     display:flex;
 }
 .side-bar-popup-item:hover{
-    background-image:radial-gradient(circle at 20% 50%, rgb(225, 145, 0), rgb(225, 135, 0));
+    background-image:radial-gradient(circle at 20% 50%, rgb(200, 200, 200), rgb(190, 190, 190));
     animation:nav-bar-item-anim ease-in-out 0.25s;
     background-repeat:no-repeat;
     color:rgb(0, 0, 0);
@@ -127,12 +127,16 @@
 
 /*--Animations---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 @keyframes side-bar-slide-out{
-    0%   {overflow:hidden; width:var(--side-bar-width);}
-    100% {overflow:hidden; width:0em;}
+    0%   {overflow:hidden; height:100%; margin-left:var(--side-bar-left); opacity:1;}
+    50%  {overflow:hidden; height:0%;   margin-left:var(--side-bar-left); width:var(--side-bar-width); opacity:1;}
+    51%  {overflow:hidden; height:0%;   margin-left:var(--side-bar-left); width:var(--side-bar-width); opacity:0;}
+    100% {overflow:hidden; height:0%;   margin-left:0px; width:0px; opacity:0;}
 }
 @keyframes side-bar-slide-in{
-    0%   {overflow:hidden; width:0em;}
-    100% {overflow:hidden; width:var(--side-bar-width);}
+    0%   {overflow:hidden; height:0%;   margin-left:0px; width:0px; opacity:0;}
+    50%  {overflow:hidden; height:0%;   margin-left:var(--side-bar-left); width:var(--side-bar-width); opacity:0;}
+    51%  {overflow:hidden; height:0%;   margin-left:var(--side-bar-left); width:var(--side-bar-width); opacity:1;}
+    100% {overflow:hidden; height:100%; margin-left:var(--side-bar-left); opacity:1;}
 }
 @keyframes popup-in{
     from {opacity:0; transform:translate(50%) scale(0, 0.5);}

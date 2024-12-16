@@ -52,7 +52,6 @@ function loadProductLogic(){
             pathHolder.innerHTML += "<a class='path-link' target='_self' href='../pages/product-list.html?cat="+data.Category+"'>"+data.CategoryName+" ></a> ";
             pathHolder.innerHTML += "<a class='path-link' target='_self' href='../pages/product-list.html?subcat="+data.SubCategory+"'>"+data.SubCategoryName+" ></a> ";
             pathHolder.innerHTML += data.ID;
-            pathHolder.style.display = "none";
 
             const colorHolder = document.querySelector(".product-display-color-holder"); 
             for(let i = 0; i < data.productData.versions.length; i++){

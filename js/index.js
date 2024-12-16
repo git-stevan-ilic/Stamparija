@@ -1,5 +1,4 @@
 window.onload = initLoad;
-
 function initLoad(){
     const params = new URLSearchParams(location.search);
     const style = getComputedStyle(document.body);
@@ -52,6 +51,7 @@ function initLoad(){
     let showSideBar = true;
     if(showSide !== undefined){
         if(showSide === 0){
+            document.querySelector(".path-holder").style.display = "block";
             const category = document.querySelector("#category");
             category.style.width = "var(--category-width-small)";
             category.className = "category-white";
@@ -103,7 +103,6 @@ function initLoad(){
             category.classList.add("category-white");
 
             category.style.animation = "category-turn-white ease-in-out 0.35s";
-            category.style.width = "var(--category-width-small)";
             category.onanimationend = ()=>{
                 category.style.animation = "none";
                 category.onanimationend = null;
@@ -116,7 +115,6 @@ function initLoad(){
             category.classList.add("category");
 
             category.style.animation = "category-turn-orange ease-in-out 0.35s";
-            category.style.width = "var(--category-width)";
             category.onanimationend = ()=>{
                 category.style.animation = "none";
                 category.onanimationend = null;
@@ -127,20 +125,18 @@ function initLoad(){
         
         sideBar.style.display = "block";
         sideBar.style.animation = "none";
-        sideBar.style.animation = "side-bar-slide-"+direction+" ease-in-out 0.35s";
-        if(direction === "out" && pathHolder) pathHolder.style.display = "block";
+        sideBar.style.animation = "side-bar-slide-"+direction+" ease-in-out 0.35s forwards";
+        if(pathHolder && direction === "in") pathHolder.style.display = "none";
         sideBar.onanimationend = ()=>{
             sideBar.style.animation = "none";
             sideBar.onanimationend = null;
             if(direction === "out"){
                 sideBar.style.overflow = "hidden";
                 sideBar.style.display = "none";
-                sideBar.style.width = "0px";
+                if(pathHolder) pathHolder.style.display = "block";
             }
             else{
-                sideBar.style.width = style.getPropertyValue("--side-bar-width");
                 sideBar.style.overflow = "visible";
-                if(pathHolder) pathHolder.style.display = "none";
             }
         }
     }

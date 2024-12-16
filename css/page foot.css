@@ -1,0 +1,94 @@
+/*--Page Foot----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.page-foot{
+    background-image:radial-gradient(circle at 10% 50%, rgb(255, 255, 255) 1%, rgb(245, 245, 245));
+    border-top:1px solid rgb(200, 200, 200);
+    background-color:rgb(255, 255, 255);
+    position:absolute;
+    height:45%;
+    width:100%;
+    left:0px;
+    top:100%;
+    z-index:4;
+}
+.page-foot-body{
+    transform:translate(-50%);
+    margin-left:50%;
+    height:100%;
+    width:70%;
+}
+.page-foot-info-holder{
+    justify-content:space-between;
+    align-items:center;
+    display:flex;
+    height:25vh;
+}
+.page-foot-info{
+    height:100%;
+    width:calc(100% - 40vw);
+}
+.foot-hr{
+    margin-top:5vh;
+    margin-bottom:2vh;
+    border:1px solid rgb(220, 220, 220);
+}
+#contact-map-foot{
+    border:1px solid rgb(200, 200, 200);
+    height:20vh;
+    width:40vw;
+}
+.page-foot-logo{
+    background-image:url("../assets/logo.png");
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-size:contain;
+    aspect-ratio:4.3;
+    filter:invert(1);
+    margin-top:2vh;
+    height:10vh;
+}
+.page-foot-text{
+    margin-top:2vh;
+    color:rgb(50, 50, 50);
+    font-size:1.75vh;
+    margin-bottom:2vh;
+}
+.page-foot-contact-text{
+    margin-bottom:1vh;
+    font-size:1.75vh;
+    color:rgb(100, 100, 100);
+    user-select:text;
+}
+
+/*--Foot Lists---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.foot-list-holder{
+    color:rgb(100, 100, 100);
+    margin-bottom:2vh;
+    font-size:1.75vh;
+    width:100%;
+
+    justify-content:flex-start;
+    align-items:center;
+    height:min-content;
+    flex-wrap:wrap;
+    display:flex;
+}
+.foot-list-title{
+    margin-right:1em;
+    font-weight:bold;
+    height:100%;
+}
+.foot-list-item{
+    border-right:1px solid rgb(200, 200, 200);
+    color:rgb(100, 100, 100);
+    padding-right:0.5em;
+    margin-right:0.5em;
+    cursor:pointer;
+    display:block;
+    height:2.2vh;
+}
+.foot-list-item:hover{
+    color:rgb(150, 150, 150);
+}
+.foot-list-item:active{
+    color:rgb(175, 175, 175);
+}

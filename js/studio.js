@@ -124,6 +124,7 @@ function generateStudio(client, data){
     document.querySelector(".minus").onclick = ()=>{zoomFunc(-1)}
     document.querySelector(".plus").onclick = ()=>{zoomFunc(1)}
     pageBodyContent.addEventListener("wheel", (event)=>{
+        event.preventDefault();
         const delta = -Math.sign(event.deltaY);
         zoomFunc(delta);
     });
@@ -257,20 +258,6 @@ function generateStudio(client, data){
                 }
             }
         }
-    }
-    
-
-    
-
-
-
-    window.oncontextmenu = (e)=>{
-        e.preventDefault();
-        console.log(imageData);
-
-        let eventData =  {detail:{imageData:imageData}}
-        let event = new CustomEvent("redraw-added-canvas", eventData);
-        document.dispatchEvent(event);
     }
 }
 function generateCanvases(imageData, zoom){
