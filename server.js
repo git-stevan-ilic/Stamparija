@@ -298,7 +298,7 @@ function generateUsedProducts(data, apiIDs){
     console.log("Generating Product Data Complete");
     console.log("Retrieving Product Image and Color Data...\n");
     
-    /*let subCategoryNum = 0;
+    let subCategoryNum = 0;
     for(let i = 0; i < generatedProducts.length; i++){
         let productNum = 0;
         if(generatedProducts[i].Products.length === 0){
@@ -353,7 +353,7 @@ function generateUsedProducts(data, apiIDs){
                 }, (i*1500 + j*10 + k));
             }
         }
-    }*/
+    }
 }
 
 fs.readFile(process.env.API_BACKUP, (error, jsonData)=>{

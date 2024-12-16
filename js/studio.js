@@ -604,6 +604,7 @@ function openTextSettings(imageData, index){
         }
     }
 
+    document.querySelector(".font-window-close").onclick = closeFontWindow;
     let allFonts = getAllFonts();
     const fontWindowBody = document.querySelector(".font-window-body");
     while(fontWindowBody.children.length > 0) fontWindowBody.removeChild(fontWindowBody.lastChild);
@@ -659,6 +660,7 @@ function closeTextSettings(){
     }
 }
 function closeFontWindow(){
+    closeTextSettings();
     const fontMask = document.querySelector("#font-mask");
     fontMask.style.animation = "fade-out ease-in-out 0.1s";
     fontMask.onanimationend = ()=>{

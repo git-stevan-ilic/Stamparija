@@ -4,7 +4,7 @@
     border-top:1px solid rgb(200, 200, 200);
     background-color:rgb(255, 255, 255);
     position:absolute;
-    height:45%;
+    height:55%;
     width:100%;
     left:0px;
     top:100%;
@@ -20,7 +20,7 @@
     justify-content:space-between;
     align-items:center;
     display:flex;
-    height:25vh;
+    height:30vh;
 }
 .page-foot-info{
     height:100%;
@@ -28,12 +28,12 @@
 }
 .foot-hr{
     margin-top:5vh;
-    margin-bottom:2vh;
+    margin-bottom:3vh;
     border:1px solid rgb(220, 220, 220);
 }
 #contact-map-foot{
     border:1px solid rgb(200, 200, 200);
-    height:20vh;
+    height:25vh;
     width:40vw;
 }
 .page-foot-logo{
@@ -43,8 +43,9 @@
     background-size:contain;
     aspect-ratio:4.3;
     filter:invert(1);
-    margin-top:2vh;
-    height:10vh;
+    margin-top:3vh;
+    max-width:43vh;
+    width:100%;
 }
 .page-foot-text{
     margin-top:2vh;
@@ -62,7 +63,7 @@
 /*--Foot Lists---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 .foot-list-holder{
     color:rgb(100, 100, 100);
-    margin-bottom:2vh;
+    margin-bottom:3vh;
     font-size:1.75vh;
     width:100%;
 
