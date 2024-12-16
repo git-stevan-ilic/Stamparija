@@ -4,42 +4,104 @@
         "SubCategory":"01-1",
         "SubCategoryName":"ID Trakice",
         "CategoryName":"Trakice ID Kartice / Nosač",
-        "IDs":["35026", "35025", "35143", "34244", "35146", "35145"]
+        "IDs":["35026", "35025", "35143", "34244", "35146", "35145"],
+        "OurData":[
+            {
+                "ID":"0010101",
+                "ColorImage":"https://apiv2.promosolution.services/content/Shade/863e891f-0143-43af-bc6b-b9568e8aa703.png",
+                "Images":[
+                    {"Image":"../assets/proizvodi/ID Trakice/01-trakice.jpg"},
+                    {"Image":"../assets/proizvodi/ID Trakice/02-trakice-dodatak 1.jpg"},
+                    {"Image":"../assets/proizvodi/ID Trakice/02-trakice-dodatak 3.jpg"},
+                    {"Image":"../assets/proizvodi/ID Trakice/02-trakice-dodatak 4.jpg"},
+                    {"Image":"../assets/proizvodi/ID Trakice/04-trakice.jpg"}
+                ],
+                "Img":"../assets/proizvodi/ID Trakice/01-trakice.jpg",
+                "Model":"ID Trakica",
+                "Name":"ID Trakica",
+                "Price":0,
+                "Sizes":["10mm", "15mm", "20mm", "25mm"],
+                "Description":"Osnova trake je bela boja koja daje velike mogućnosti u pogledu izbora boja, tehnikom sublimacije. Reklamne štampane okovratne trake se upotrebljavaju na konferencijama, seminarima, sajmovima, kao i sportskim dešavanjima.Isto tako koriste se i kao poklon poslovnim partnerima. Na njih je moguće postaviti razne nastavke:metalni karabinjer, plastičnu identifikacionu karticu, futrolu za mobilni telefon, USB memoriju, ključeve i sl. U ponudi izdvajamo traku od 10mm, 15mm, 20mm, 25mm u glatkoj satenskoj i rebrastoj rips izradi."
+            }
+        ]
     },
     {
         "Category":"01",
         "SubCategory":"01-2",
         "SubCategoryName":"ID Nosači",
         "CategoryName":"Trakice ID Kartice / Nosač",
-        "IDs":["34676", "34675", "34674", "35144", "34645", "35138", "35133", "35131", "34360", "34073", "34015"]
+        "IDs":["34676", "34675", "34674", "35144", "34645", "35138", "35133", "35131", "34360", "34073", "34015"],
+        "OurData":[
+            {
+                "ID":"0010201",
+                "ColorImage":"https://apiv2.promosolution.services/content/Shade/863e891f-0143-43af-bc6b-b9568e8aa703.png",
+                "Images":[
+                    {"Image":"../assets/proizvodi/ID Nosaci/01-nosac za id trakice.jpg"},
+                    {"Image":"../assets/proizvodi/ID Nosaci/02-nosac za id trakice.jpg"}
+                ],
+                "Img":"../assets/proizvodi/ID Nosaci/01-nosac za id trakice.jpg",
+                "Model":"ID Nosač",
+                "Name":"ID Nosač",
+                "Price":0,
+                "Sizes":[],
+                "Description":""
+            }
+        ]
+    },
+    {
+        "Category":"01",
+        "SubCategory":"01-3",
+        "SubCategoryName":"Ukrasne Trakice za Pakovanje",
+        "CategoryName":"Trakice ID Kartice / Nosač",
+        "IDs":[],
+        "OurData":[
+            {
+                "ID":"0010301",
+                "ColorImage":"https://apiv2.promosolution.services/content/Shade/863e891f-0143-43af-bc6b-b9568e8aa703.png",
+                "Images":[
+                    {"Image":"../assets/proizvodi/Ukrasne Trakice za Pakovanje/02-ukrasne trakice.jpg"},
+                    {"Image":"../assets/proizvodi/Ukrasne Trakice za Pakovanje/03-ukrasne trakice.jpg"}
+                ],
+                "Img":"../assets/proizvodi/Ukrasne Trakice za Pakovanje/02-ukrasne trakice.jpg",
+                "Model":"Ukrasne Trakice za Pakovanje",
+                "Name":"Ukrasne Trakice za Pakovanje",
+                "Price":0,
+                "Sizes":[],
+                "Description":""
+            }
+        ]
     },
     {
         "Category":"02",
         "SubCategory":"",
         "SubCategoryName":"",
         "CategoryName":"Podloga za miš",
-        "IDs":["37361"]
+        "IDs":["37361"],
+        "OurData":[]
     },
     {
         "Category":"03",
         "SubCategory":"03-1",
         "SubCategoryName":"Šolje",
         "CategoryName":"Šolje / Flašice",
-        "IDs":["44025", "44083", "44124", "44126", "44152", "44153", "44147", "44142", "44154", "44129", "44127", "44098", "44065"]
+        "IDs":["44025", "44083", "44124", "44126", "44152", "44153", "44147", "44142", "44154", "44129", "44127", "44098", "44065"],
+        "OurData":[]
     },
     {
         "Category":"03",
         "SubCategory":"03-2",
         "SubCategoryName":"Flašice / Termosi",
         "CategoryName":"Šolje / Flašice",
-        "IDs":["41164", "41162", "41158", "41108", "41165", "41163"]
+        "IDs":["41164", "41162", "41158", "41108", "41165", "41163"],
+        "OurData":[]
     },
     {
         "Category":"04",
         "SubCategory":"04-1",
         "SubCategoryName":"Torbe",
         "CategoryName":"Torbe i Kese",
-        "IDs":["34683", "34682", "34656", "34626", "34525", "34310", "34301", "34107"]
+        "IDs":["34683", "34682", "34656", "34626", "34525", "34310", "34301", "34107"],
+        "OurData":[]
     },
     {
         "Category":"04",
@@ -50,7 +112,8 @@
             "34183", "34181", "34167", "34166", "34125", "34124", "34615", "34405", "34383", "34382", "34122", "34125", 
             "34025", "34099", "34100", "34181", "34383", "34185", "34573", "34438", "34423", "34421", "34419", "34410", 
             "34404", "34402", "34398", "34316", "34239", "34589", "34627", "34632", "34156", "34147", "34141", "34238"
-        ]
+        ],
+        "OurData":[]
     },
     {
         "Category":"04",
@@ -60,6 +123,54 @@
         "IDs":[
             "34420", "34185", "34029", "34422", "34400", "34393", "34248", "34299", "34035", "34063", 
             "34484", "34403", "34598", "34583", "34475", "34528", "34474", "34486", "34567" 
+        ],
+        "OurData":[]
+    },
+    {
+        "Category":"04",
+        "SubCategory":"04-4",
+        "SubCategoryName":"Pasoš Torbica",
+        "CategoryName":"Torbe i Kese",
+        "IDs":[],
+        "OurData":[
+            {
+                "ID":"0040401",
+                "ColorImage":"https://apiv2.promosolution.services/content/Shade/863e891f-0143-43af-bc6b-b9568e8aa703.png",
+                "Images":[
+                    {"Image":"../assets/proizvodi/Pasoš Torbica/01 pasos torbica.jpg"},
+                    {"Image":"../assets/proizvodi/Pasoš Torbica/03 pasos torbica.jpg"},
+                    {"Image":"../assets/proizvodi/Pasoš Torbica/04 pasos torbica.jpg"}
+                ],
+                "Img":"../assets/proizvodi/Pasoš Torbica/01 pasos torbica.jpg",
+                "Model":"Pasoš Torbica",
+                "Name":"Pasoš Torbica",
+                "Price":0,
+                "Sizes":[],
+                "Description":"Blago otporna torbica izrađena od neoprena, materijala za ronilačka odela. Mogućnost brendiranja u punom koloru ceo proizvod, tehnikom sublimacije. Visoka otpornost na habanje. Standardne dimenzije 16cmx14cm,mogućnost izrade po zahtevu kupca."
+            }
+        ]
+    },
+    {
+        "Category":"04",
+        "SubCategory":"04-5",
+        "SubCategoryName":"Futrola za Tablet",
+        "CategoryName":"Torbe i Kese",
+        "IDs":[],
+        "OurData":[
+            {
+                "ID":"0040501",
+                "ColorImage":"https://apiv2.promosolution.services/content/Shade/863e891f-0143-43af-bc6b-b9568e8aa703.png",
+                "Images":[
+                    {"Image":"../assets/proizvodi/Futrola za Tablet/01b-futrola tablet.jpg"},
+                    {"Image":"../assets/proizvodi/Futrola za Tablet/02b-futrola tablet.jpg"}
+                ],
+                "Img":"../assets/proizvodi/Futrola za Tablet/01b-futrola tablet.jpg",
+                "Model":"Futrola za Tablet",
+                "Name":"Futrola za Tablet",
+                "Price":0,
+                "Sizes":[],
+                "Description":"Vlago otporna futrola izrađena od neoprena, materijala za ronilačka odela. Mogućnost brendiranja u punom koloru ceo proizvod, tehnikom sublimacije. Visoka otpornost na habanje. Mogućnost izrade po zahtevu kupca."
+            }
         ]
     },
     {
@@ -70,14 +181,16 @@
         "IDs":[
             "57078", "57074", "57072", "57057", "57056", "57051", "57050", "57049", 
             "57046", "57040", "57031", "57026", "57025", "57002", "57038"
-        ]
+        ],
+        "OurData":[]
     },
     {
         "Category":"05",
         "SubCategory":"05-2",
         "SubCategoryName":"Prsluci",
         "CategoryName":"Tekstil",
-        "IDs":["57064", "57063", "57052", "57045", "57001", "57069", "57029", "57030", "57009"]
+        "IDs":["57064", "57063", "57052", "57045", "57001", "57069", "57029", "57030", "57009"],
+        "OurData":[]
     },
     {
         "Category":"05",
@@ -89,14 +202,16 @@
             "58056", "58055", "58048", "58047", "58046", "58044", "58029", "58028", "58017", "58016", 
             "58015", "58014", "57068", "57067", "58063", "58070", "58069", "58068", "58067", "58066", 
             "58065", "58062", "58061", "58059", "58051", "58049", "58021", "58012", "58013", "58011"
-        ]
+        ],
+        "OurData":[]
     },
     {
         "Category":"05",
         "SubCategory":"05-4",
         "SubCategoryName":"Kecelja i Oprema",
         "CategoryName":"Tekstil",
-        "IDs":["56020", "57062", "57061", "57060", "57058", "57042", "57014", "57013", "57012", "57011", "57076", "57059"]
+        "IDs":["56020", "57062", "57061", "57060", "57058", "57042", "57014", "57013", "57012", "57011", "57076", "57059"],
+        "OurData":[]
     },
     {
         "Category":"05",
@@ -106,7 +221,8 @@
         "IDs":[
             "56018", "56017", "56019", "56016", "56015", "56014", "56013", "56011", 
             "56009", "56008", "56007", "56006", "56005", "56012", "56010" 
-        ]
+        ],
+        "OurData":[]
     },
     {
         "Category":"05",
@@ -116,7 +232,8 @@
         "IDs":[
             "54028", "54027", "54026", "54025", "53031", "53028", "54024", "54023", "54022", "54021", "54015", "54010", "54009", 
             "54002", "54001", "53027", "53026", "53020", "53019", "53015", "53007", "53003", "53001", "54007", "54004"
-        ]
+        ],
+        "OurData":[]
     },
     {
         "Category":"05",
@@ -126,14 +243,16 @@
         "IDs":[
             "50050", "50051", "50054", "50063", "50064", "50062", "50030", "50031", "50055", 
             "50056", "50057", "50046", "50047", "50042", "50041", "50023", "50022", "50045"
-        ]
+        ],
+        "OurData":[]
     },
     {
         "Category":"05",
         "SubCategory":"05-8",
         "SubCategoryName":"Polomajice",
         "CategoryName":"Tekstil",
-        "IDs":["50067", "50065", "50068", "50066", "50034", "50010", "50038", "50039", "52004", "52003"]
+        "IDs":["50067", "50065", "50068", "50066", "50034", "50010", "50038", "50039", "52004", "52003"],
+        "OurData":[]
     },
     {
         "Category":"05",
@@ -143,7 +262,8 @@
         "IDs":[
             "52005", "52006", "52013", "52009", "52012", "52010", "52011", "52027", "52029", 
             "52032", "52035", "52034", "52033", "52038", "52039", "52040", "52041", "52028"
-        ]
+        ],
+        "OurData":[]
     },
     {
         "Category":"06",
@@ -153,6 +273,66 @@
         "IDs":[
             "34291", "34290", "34269", "34268", "34605", "34370", "34629", "34612", 
             "34635", "34613", "34631", "34630", "34606", "34605", "35356"
+        ],
+        "OurData":[
+            {
+                "ID":"0060101",
+                "ColorImage":"https://apiv2.promosolution.services/content/Shade/863e891f-0143-43af-bc6b-b9568e8aa703.png",
+                "Images":[
+                    {"Image":"../assets/proizvodi/Fascikle za Dokumenta/01-fascikle za dokumenta.jpg"}
+                ],
+                "Img":"../assets/proizvodi/Fascikle za Dokumenta/01-fascikle za dokumenta.jpg",
+                "Model":"Fascikle za Dokumenta",
+                "Name":"Fascikle za Dokumenta",
+                "Price":0,
+                "Sizes":[],
+                "Description":"Izrađujemo u više boja i brendiramo tehnikom sito štampe."
+            }
+        ]
+    },
+    {
+        "Category":"06",
+        "SubCategory":"06-2",
+        "SubCategoryName":"Jelkice - Osveživač Vazduha",
+        "CategoryName":"Auto Oprema",
+        "IDs":[],
+        "OurData":[
+            {
+                "ID":"0060201",
+                "ColorImage":"https://apiv2.promosolution.services/content/Shade/863e891f-0143-43af-bc6b-b9568e8aa703.png",
+                "Images":[
+                    {"Image":"../assets/proizvodi/Jelkice - Osveživač Vazduha/03-jelkice.jpg"}
+                ],
+                "Img":"../assets/proizvodi/Jelkice - Osveživač Vazduha/03-jelkice.jpg",
+                "Model":"Jelkice - Osveživač Vazduha",
+                "Name":"Jelkice - Osveživač Vazduha",
+                "Price":0,
+                "Sizes":[],
+                "Description":"U proizvodnji ovog artikla primenjuju se originalni francuski parfemi visokog kvaliteta.U ponudi izdvajamo nekoliko mirisnih nota a to su: vanilla, jabuka, pino,fresh…. Jelkice izradujemo od najkvalitetnijih materijala po važecim standardima EU.Garantujemo postojanost materijala, kao i to da su u potpunosti ne škodljivi za zdravlje čoveka. Imamo standardne naše oblike osveživača a u mogućnosti smo da vam uradimo željeni oblik."
+            }
+        ]
+    },
+    {
+        "Category":"06",
+        "SubCategory":"06-3",
+        "SubCategoryName":"Auto Krpe",
+        "CategoryName":"Auto Oprema",
+        "IDs":[],
+        "OurData":[
+            {
+                "ID":"0060301",
+                "ColorImage":"https://apiv2.promosolution.services/content/Shade/863e891f-0143-43af-bc6b-b9568e8aa703.png",
+                "Images":[
+                    {"Image":"../assets/proizvodi/Auto Krpe/02A-Auto krpa.jpg"},
+                    {"Image":"../assets/proizvodi/Auto Krpe/02C-Auto krpa.jpg"}
+                ],
+                "Img":"../assets/proizvodi/Auto Krpe/02A-Auto krpa.jpg",
+                "Model":"Auto Krpe",
+                "Name":"Auto Krpe",
+                "Price":0,
+                "Sizes":["30cmx40cm"],
+                "Description":"Visoko kvalitetna poliuretanska krpa,izuzetna moć upijanja. Idealna za reklamu firme,mogućnost štampe u punom koloru.Proizvod ima sopstveno pakovanje"
+            }
         ]
     },
     {
@@ -160,7 +340,8 @@
         "SubCategory":"",
         "SubCategoryName":"",
         "CategoryName":"Krpice za Naočare / Naočare za Sunce",
-        "IDs":["37320", "37321", "32320", "32137", "32032"]
+        "IDs":["37320", "37321", "32320", "32137", "32032"],
+        "OurData":[]
     },
     {
         "Category":"08",
@@ -173,7 +354,8 @@
             "10188", "19054", "10182", "10180", "10178", "10177", "10177", "10177", "10169", "10169", 
             "10169", "10164", "10162", "10161", "10157", "10153", "10145", "10136", "10106", "10104", 
             "10103", "10097", "10091", "10087", "10083", "10039", "10033"
-        ]
+        ],
+        "OurData":[]
     },
     {
         "Category":"08",
@@ -185,14 +367,16 @@
             "11088", "11082", "11066", "11087", "11086", "11085", "11084", "11083", "16030", "12009", 
             "11081", "11080", "11078", "11077", "11076", "11079", "11075", "10184", "11074", "11069", 
             "11068", "11065", "11060", "11059", "11056", "11053", "11052", "11024", "11024", "11024"
-        ]
+        ],
+        "OurData":[]
     },
     {
         "Category":"08",
         "SubCategory":"08-3",
         "SubCategoryName":"Drvene Olovke",
         "CategoryName":"Olovke",
-        "IDs":["12001", "12014", "12013", "12011", "12010", "16029", "12008", "12002"]
+        "IDs":["12001", "12014", "12013", "12011", "12010", "16029", "12008", "12002"],
+        "OurData":[]
     },
     {
         "Category":"08",
@@ -203,7 +387,8 @@
             "14181", "14180", "14179", "14178", "14177", "14176", "14169", "14174", "14173", "14172", "14171", "14170",
             "14168", "14146", "14139", "14138", "14156", "14160", "14140", "14149", "14126", "14104", "14154", 
             "14166", "14165", "14164", "14162", "14161", "14158", "14142", "14155", "14151", "14150", "14141" 
-        ]
+        ],
+        "OurData":[]
     },
     {
         "Category":"09",
@@ -213,14 +398,16 @@
         "IDs":[
             "20089", "20087", "20086", "20085", "20082", "21010", "20081", "20080", "20078", "21006", "21004", 
             "20074", "20070", "20069", "20068", "20059", "20057", "20055", "20051", "20039", "20022"
-        ]
+        ],
+        "OurData":[]
     },
     {
         "Category":"09",
         "SubCategory":"09-2",
         "SubCategoryName":"Metalni Upaljači",
         "CategoryName":"Upaljači",
-        "IDs":["22059", "22058", "22055", "22054", "22050", "22051", "22047", "22045", "22040", "22018", "22004"]
+        "IDs":["22059", "22058", "22055", "22054", "22050", "22051", "22047", "22045", "22040", "22018", "22004"],
+        "OurData":[]
     },
     {
         "Category":"10",
@@ -234,7 +421,8 @@
             "34473", "34460", "34461", "34445", "34415", "34417", "34414", "34367", "34366", "34347", 
             "34345", "34328", "34326", "34280", "34195", "34266", "34262", "34261", "34256", "34257", 
             "34234", "34233", "34232", "35139", "34203", "34194", "34193", "34192", "34178", "34177"
-        ]
+        ],
+        "OurData":[]
     },
     {
         "Category":"10",
@@ -244,14 +432,16 @@
         "IDs":[
             "60943", "60942", "60940", "60939", "60917", "60046",
             "60904", "60038", "60037", "61901", "60901"
-        ]
+        ],
+        "OurData":[]
     },
     {
         "Category":"10",
         "SubCategory":"10-3",
         "SubCategoryName":"Portfolio",
         "CategoryName":"Notesi i Rokovnici",
-        "IDs":["34579", "34576", "34418"]
+        "IDs":["34579", "34576", "34418"],
+        "OurData":[]
     },
     {
         "Category":"11",
@@ -261,6 +451,23 @@
         "IDs":[
             "34608", "34587", "34575", "34570", "34569", "34540", "34533", "34502", "34501", "34441",
             "34435", "34379", "34375", "34374", "34320", "34246", "19055", "41087", "41079", "41168"
+        ],
+        "OurData":[
+            {
+                "ID":"0110101",
+                "ColorImage":"https://apiv2.promosolution.services/content/Shade/863e891f-0143-43af-bc6b-b9568e8aa703.png",
+                "Images":[
+                    {"Image":"../assets/proizvodi/Podmetači za Čaše/01 podmetaci za case.jpg"},
+                    {"Image":"../assets/proizvodi/Podmetači za Čaše/02 podmetaci za case.jpg"}
+                ],
+                "Img":"../assets/proizvodi/Podmetači za Čaše/01 podmetaci za case.jpg",
+                "Model":"Podmetači za Čaše",
+                "Name":"Podmetači za Čaše",
+                "Price":0,
+                "Sizes":["9cm x 9cm"],
+                "Description":"Materijal se sastoji se iz dva sloja, gornja strana poliester platno bele boje, donja strana je poliuretanska guma koja omogućava max prijanjanje podloge na površinu. Mogućnost štampe u punom koloru tehnikom sublimacije što garantuje najbolji kvalitet. Podmetač ima veliku moć upijanja vlage bez deformacije. Mogućnost pranja i održavnja. Dobar vid reklame malih i velikih preduzeća,kao i pogodan proizvod suvenirskog programa.",
+                "Package":"kartonska ambalaza + set 6kom.podmetaca."
+            }
         ]
     },
     {
@@ -272,6 +479,47 @@
             "40076", "40072", "40071", "40070", "40069", "40048", "40068", "40067", "40066", "40065", "40064",
             "40063", "40062", "40061", "40060", "40059", "40058", "40057", "40055", "40047", "40045", 
             "40043", "40042", "40040", "40024", "40035", "40029", "40031", "40027", "40005", "40009"
+        ],
+        "OurData":[]
+    },
+    {
+        "Category":"13",
+        "SubCategory":"",
+        "SubCategoryName":"",
+        "CategoryName":"Relaksacija i Sport",
+        "IDs":[
+            "32102", "34348", "34553", "34554", "32268", "32014", 
+            "32013", "33074", "32304", "32298", "32297", "34527"
+        ],
+        "OurData":[
+            {
+                "ID":"0130101",
+                "ColorImage":"https://apiv2.promosolution.services/content/Shade/863e891f-0143-43af-bc6b-b9568e8aa703.png",
+                "Images":[
+                    {"Image":"../assets/proizvodi/Narukvice Klasik/01 narukvice klasik.jpg"},
+                    {"Image":"../assets/proizvodi/Narukvice Klasik/02 narukvice klasik.jpg"}
+                ],
+                "Img":"../assets/proizvodi/Narukvice Klasik/01 narukvice klasik.jpg",
+                "Model":"Narukvice Klasik",
+                "Name":"Narukvice Klasik",
+                "Price":0,
+                "Sizes":[],
+                "Description":"Silikonska PVC narukvica , otporna na vlagu. Pogodna za promociju u malim i velikim tiražima. Štampa se radi tehnikom sito štampe u 1-2 boje. U ponudi izdvajamo klasicnu narukvicu i podesiva narukvicu sa dodacima metalne pločice i stikera."
+            },
+            {
+                "ID":"0130201",
+                "ColorImage":"https://apiv2.promosolution.services/content/Shade/863e891f-0143-43af-bc6b-b9568e8aa703.png",
+                "Images":[
+                    {"Image":"../assets/proizvodi/Narukvice Podesive/01 narukvica podesiva.jpg"},
+                    {"Image":"../assets/proizvodi/Narukvice Podesive/02 narukvica podesiva.jpg"}
+                ],
+                "Img":"../assets/proizvodi/Narukvice Podesive/01 narukvica podesiva.jpg",
+                "Model":"Narukvice Podesive",
+                "Name":"Narukvice Podesive",
+                "Price":0,
+                "Sizes":[],
+                "Description":"Silikonska PVC narukvica , otporna na vlagu. Pogodna za promociju u malim i velikim tiražima. Štampa se radi tehnikom sito štampe u 1-2 boje. U ponudi izdvajamo klasicnu narukvicu i podesiva narukvicu sa dodacima metalne pločice i stikera."
+            }
         ]
     },
     {
@@ -284,7 +532,8 @@
             "37509", "37619", "37335", "37316", "37505", "37357", "37309", "37308", "37307", "37306", "37325", 
             "37305", "37106", "37102", "37122", "37330", "37107", "37307", "37306", "37308", "37309", "37122", 
             "37312", "37106", "37105", "37102", "37101"
-        ]
+        ],
+        "OurData":[]
     },
     {
         "Category":"15",
@@ -296,23 +545,84 @@
             "70085", "70017", "70030", "70082", "70018", "70067", "70064", "70009", "70002", "70004", "70063", "70041",
             "70052", "70012", "70050", "70014", "70042", "70015", "70032", "70035", "70073", "70031", "70038",
             "70016", "70008", "70007", "70010", "70013", "70006", "70019", "70001", "70020", "70025", "70026"
-        ]
+        ],
+        "OurData":[]
     },
     {
         "Category":"15",
         "SubCategory":"15-2",
         "SubCategoryName":"Planeri",
         "CategoryName":"Kalendari i Planeri",
-        "IDs":["64006", "60941", "64004"]
+        "IDs":["64006", "60941", "64004"],
+        "OurData":[]
     },
     {
-        "Category":"13",
-        "SubCategory":"",
-        "SubCategoryName":"",
-        "CategoryName":"Relaksacija i Sport",
-        "IDs":[
-            "32102", "34348", "34553", "34554", "32268", "32014", 
-            "32013", "33074", "32304", "32298", "32297", "34527"
+        "Category":"16",
+        "SubCategory":"16-2",
+        "SubCategoryName":"Privezak Gurtna",
+        "CategoryName":"Privesci",
+        "IDs":[],
+        "OurData":[
+            {
+                "ID":"0160201",
+                "ColorImage":"https://apiv2.promosolution.services/content/Shade/863e891f-0143-43af-bc6b-b9568e8aa703.png",
+                "Images":[
+                    {"Image":"../assets/proizvodi/Privezak Gurtna/01 privezak gurtna.jpg"},
+                    {"Image":"../assets/proizvodi/Privezak Gurtna/02 privezak gurtna.jpg"}
+                ],
+                "Img":"../assets/proizvodi/Privezak Gurtna/01 privezak gurtna.jpg",
+                "Model":"Privezak Gurtna",
+                "Name":"Privezak Gurtna",
+                "Price":0,
+                "Sizes":[],
+                "Description":"U našoj proizvodnji izrađujemo priveske za ključeve koji su ekonomični i laki za brendiranje. Koriste se za promocije, malih i velikih preduzeća i njihovih usluga-proizvoda. Mogućnost izrade u malim i velikim tiražima. U ponudi izdvajamo privezak gurtna, privezak sunđer, privezak traka i guma privezak."
+            }
+        ]
+    },
+    {
+        "Category":"16",
+        "SubCategory":"16-4",
+        "SubCategoryName":"Privezak Traka",
+        "CategoryName":"Privesci",
+        "IDs":[],
+        "OurData":[
+            {
+                "ID":"0160401",
+                "ColorImage":"https://apiv2.promosolution.services/content/Shade/863e891f-0143-43af-bc6b-b9568e8aa703.png",
+                "Images":[
+                    {"Image":"../assets/proizvodi/Privezak Traka/01-Privezak-traka-1-1.jpg"},
+                    {"Image":"../assets/proizvodi/Privezak Traka/02-Privezak-traka-1-1.jpg"},
+                    {"Image":"../assets/proizvodi/Privezak Traka/03-Privezak-trake.jpg"}
+                ],
+                "Img":"../assets/proizvodi/Privezak Traka/01-Privezak-traka-1-1.jpg",
+                "Model":"Privezak Traka",
+                "Name":"Privezak Traka",
+                "Price":0,
+                "Sizes":[],
+                "Description":"U našoj proizvodnji izrađujemo priveske za ključeve koji su ekonomični i laki za brendiranje. Koriste se za promocije, malih i velikih preduzeća i njihovih usluga-proizvoda. Mogućnost izrade u malim i velikim tiražima. U ponudi izdvajamo privezak gurtna, privezak sunđer, privezak traka i guma privezak."
+            }
+        ]
+    },
+    {
+        "Category":"16",
+        "SubCategory":"16-5",
+        "SubCategoryName":"Privezak Guma",
+        "CategoryName":"Privesci",
+        "IDs":[],
+        "OurData":[
+            {
+                "ID":"0160501",
+                "ColorImage":"https://apiv2.promosolution.services/content/Shade/863e891f-0143-43af-bc6b-b9568e8aa703.png",
+                "Images":[
+                    {"Image":"../assets/proizvodi/Privezak Guma/01-privez guma-1.jpg"}
+                ],
+                "Img":"../assets/proizvodi/Privezak Guma/01-privez guma-1.jpg",
+                "Model":"Privezak Guma",
+                "Name":"Privezak Guma",
+                "Price":0,
+                "Sizes":[],
+                "Description":"U našoj proizvodnji izrađujemo priveske za ključeve koji su ekonomični i laki za brendiranje. Koriste se za promocije, malih i velikih preduzeća i njihovih usluga-proizvoda. Mogućnost izrade u malim i velikim tiražima. U ponudi izdvajamo privezak gurtna, privezak sunđer, privezak traka i guma privezak."
+            }
         ]
     }
 ]

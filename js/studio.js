@@ -671,3 +671,50 @@ function closeFontWindow(){
         fontMask.onanimationend = null;
     }
 }
+
+
+
+
+/*
+CategoryName: "Trakice ID Kartice / Nosač"
+​​​​​​
+ColorImage: ""
+​​​​​​
+Description: "Plastični uložak za indentifikacionu karticu sa trakicom"
+​​​​​​
+HTMLColor: "#ffffff"
+​​​​​​
+ID: "3514690"
+​​​​​​
+Images: Array [ {…}, {…} ]
+​​​​​​
+Img: "https://apiv2.promosolution.services/content/ModelItem/3514690_001.jpg?v=240917102814"
+​​​​​​
+Model: "SELF H"
+​​​​​​
+Name: "SELF H, plastični uložak za indentifikacionu karticu sa trakicom, beli"
+​​​​​​
+Package: "384/48/1"
+​​​​​​
+Price: 0.49
+​​​​​​
+ProductIdView: "35.146.90"
+​​​​​​
+Sizes: Array []
+​​​​​​
+SubCategoryName: "ID Trakice"
+​​​​​​
+WMSDepth: 9.25
+​​​​​​
+WMSDimUM: "cm"
+​​​​​​
+WMSHeight: 12.25
+​​​​​​
+WMSWidth: 1.04167
+​​​​​​
+Weight: 0.028
+​​​​​​
+WeightUM: "kg"
+
+https://apiv2.promosolution.services/content/Shade/863e891f-0143-43af-bc6b-b9568e8aa703.png
+*/

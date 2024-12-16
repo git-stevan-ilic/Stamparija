@@ -422,11 +422,10 @@ h1{
     all:unset;
     border:1px solid rgb(150, 150, 150);
     background-color:rgb(255, 255, 255);
-    margin-left:calc(50% - 3em);
+    margin-left:calc(50% - 3.6em);
     border-radius:0.5vh;
     cursor:pointer;
     padding:0.5vh;
-    width:10em;
 }
 #your-logo:hover{
     background-color:rgb(245, 245, 245);

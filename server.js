@@ -292,6 +292,40 @@ function generateUsedProducts(data, apiIDs){
                     }
                 }
             }
+            for(let k = 0; k < apiIDs[j].OurData.length; k++){
+                let ID = apiIDs[j].OurData[k].ID.slice(0, 5);
+                let productIndex = generatedProducts[j].Products.findIndex(e => e.ID === ID);
+
+                let currVersion = {
+                    SubCategoryName:apiIDs[j].SubCategoryName,
+                    CategoryName:apiIDs[j].CategoryName,
+                    Price:apiIDs[j].OurData[k].Price,
+                    Model:apiIDs[j].OurData[k].Model,
+                    Name:apiIDs[j].OurData[k].Name,
+                    Sizes:apiIDs[j].OurData[k].Sizes,
+                    Description:apiIDs[j].OurData[k].Description,
+                    ColorImage:apiIDs[j].OurData[k].ColorImage,
+                    Images:apiIDs[j].OurData[k].Images,
+                    ID:apiIDs[j].OurData[k].ID
+                }
+                if(productIndex !== -1){
+                    let versionExists = false;
+                    for(let p = 0; p < generatedProducts[j].Products[productIndex].versions.length; p++){
+                        if(generatedProducts[j].Products[productIndex].versions[p].ID === apiIDs[j].OurData[k].ID){
+                            versionExists = true;
+                            break;
+                        }
+                    }
+                    if(!versionExists) 
+                        generatedProducts[j].Products[productIndex].versions.push(currVersion);
+                }
+                else{
+                    generatedProducts[j].Products.push({
+                        Img:apiIDs[j].OurData[k].Img,
+                        versions:[currVersion], ID:ID
+                    });
+                }
+            }
         }
     }
 
@@ -308,6 +342,9 @@ function generateUsedProducts(data, apiIDs){
             console.log("Category Completed: "+subCategoryNumDisplay+"/34 Progress: "+percent+"%");
         }
         for(let j = 0; j < generatedProducts[i].Products.length; j++){
+            let IDfirst = generatedProducts[i].Products[j].ID.slice(0, 1);
+            if(IDfirst === "0") continue;
+
             let versionNum = 0;
             for(let k = 0; k < generatedProducts[i].Products[j].versions.length; k++){
                 let currVersion = generatedProducts[i].Products[j].versions[k];
@@ -332,7 +369,12 @@ function generateUsedProducts(data, apiIDs){
                             versionNum++;
                             if(versionNum >= generatedProducts[i].Products[j].versions.length){
                                 productNum++;
-                                if(productNum >= generatedProducts[i].Products.length){
+                                let totalProductNum = generatedProducts[i].Products.length;
+                                for(let p = 0; p < generatedProducts[i].Products.length; p++){
+                                    let IDfirst = generatedProducts[i].Products[p].ID.slice(0, 1);
+                                    if(IDfirst === "0") totalProductNum--;
+                                }
+                                if(productNum >= totalProductNum){
                                     subCategoryNum++;
                                     let percent = Math.round(subCategoryNum / 34 * 100);
                                     let subCategoryNumDisplay = JSON.stringify(subCategoryNum).padStart(2, "0");

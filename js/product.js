@@ -32,7 +32,7 @@ function loadProductLogic(){
             document.getElementById("desc").innerText = currVersion.Description;
             if(dimesion !== "") document.getElementById("dimensions").innerText = "Dimenzija: "+dimesion;
             if(currVersion.Weight && currVersion.WeightUM) document.getElementById("weight").innerText = "Težina: "+currVersion.Weight + currVersion.WeightUM;
-            document.getElementById("package").innerText = "Pakovanje: "+currVersion.Package;
+            if(currVersion.Package) document.getElementById("package").innerText = "Pakovanje: "+currVersion.Package;
             const price = document.querySelector(".product-display-price");
             price.innerText = currVersion.Price+"€";
             if(currVersion.Price === 0) price.innerText = "Cena na upit";
