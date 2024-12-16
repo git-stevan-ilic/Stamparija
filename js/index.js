@@ -242,22 +242,22 @@ function initLoad(){
     client.on("all-product-data", (data)=>{
         console.log("all product data:", data);
         function inputSearch(){
-            let searchQuery = searchBar.value.toLowerCase();
+            let searchQuery = removeDiacritics(searchBar.value.toLowerCase());
             if(searchQuery.length <= 1) searchAnimUp();
             else{
                 let searchResults = [];
                 for(let i = 0; i < data.length; i++){
-                    if(data[i].CategoryName.toLowerCase().indexOf(searchQuery) !== -1){
+                    if(removeDiacritics(data[i].CategoryName.toLowerCase()).indexOf(searchQuery) !== -1){
                         searchResults.push({type:0, name:data[i].CategoryName, cat:data[i].Category});
                     }
-                    if(data[i].SubCategoryName.toLowerCase().indexOf(searchQuery) !== -1){
+                    if(removeDiacritics(data[i].SubCategoryName.toLowerCase()).indexOf(searchQuery) !== -1){
                         searchResults.push({type:0, name:data[i].SubCategoryName, subCat:data[i].SubCategory});
                     }
                     for(let j = 0; j < data[i].Products.length; j++){
                         for(let k = 0; k < data[i].Products[j].versions.length; k++){
                             let currProduct = data[i].Products[j].versions[k];
-                            let nameIndex = currProduct.Name.toLowerCase().indexOf(searchQuery);
-                            let modelIndex = currProduct.Model.toLowerCase().indexOf(searchQuery);
+                            let nameIndex = removeDiacritics(currProduct.Name.toLowerCase()).indexOf(searchQuery);
+                            let modelIndex = removeDiacritics(currProduct.Model.toLowerCase()).indexOf(searchQuery);
                             if(
                                 (nameIndex !== -1 && (nameIndex === 0 || currProduct.Name[nameIndex-1] === " ")) || 
                                 (modelIndex !== -1 && (modelIndex === 0 || currProduct.Model[modelIndex-1] === " "))
@@ -297,4 +297,14 @@ function initLoad(){
             loadingScreen.onanimationend = null;
         }
     }, 350);
+}
+function removeDiacritics(str){
+    let defaultDiacriticsRemovalMap = [
+        {'base':'c', 'letters':/[\u0107\u010D]/g},
+        {'base':'s','letters':/[\u0161]/g}
+    ];
+    for(let i = 0; i < defaultDiacriticsRemovalMap.length; i++){
+        str = str.replace(defaultDiacriticsRemovalMap[i].letters, defaultDiacriticsRemovalMap[i].base);
+    }
+    return str;
 }
