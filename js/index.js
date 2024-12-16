@@ -53,11 +53,9 @@ function initLoad(){
         if(showSide === 0){
             document.querySelector(".path-holder").style.display = "block";
             const category = document.querySelector("#category");
-            category.style.width = "var(--category-width-small)";
             category.className = "category-white";
             sideBar.style.overflow = "hidden";
             sideBar.style.display = "none";
-            sideBar.style.width = "0em";
             showSideBar = false;
         }
     }

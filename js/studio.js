@@ -661,6 +661,8 @@ function closeTextSettings(){
 }
 function closeFontWindow(){
     closeTextSettings();
+    hideSideButtons();
+    
     const fontMask = document.querySelector("#font-mask");
     fontMask.style.animation = "fade-out ease-in-out 0.1s";
     fontMask.onanimationend = ()=>{
