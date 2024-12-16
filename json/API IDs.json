@@ -581,6 +581,29 @@
     },
     {
         "Category":"16",
+        "SubCategory":"16-3",
+        "SubCategoryName":"Privezak Pena",
+        "CategoryName":"Privesci",
+        "IDs":[],
+        "OurData":[
+            {
+                "ID":"0160301",
+                "ColorImage":"https://apiv2.promosolution.services/content/Shade/863e891f-0143-43af-bc6b-b9568e8aa703.png",
+                "Images":[
+                    {"Image":"../assets/proizvodi/Privezak Pena/01_privezak pena.jpg"},
+                    {"Image":"../assets/proizvodi/Privezak Pena/02_privezak pena.jpg"}
+                ],
+                "Img":"../assets/proizvodi/Privezak Pena/01_privezak pena.jpg",
+                "Model":"Privezak Pena",
+                "Name":"Privezak Pena",
+                "Price":0,
+                "Sizes":[],
+                "Description":"U našoj proizvodnji izrađujemo priveske za ključeve koji su ekonomični i laki za brendiranje. Koriste se za promocije, malih i velikih preduzeća i njihovih usluga-proizvoda. Mogućnost izrade u malim i velikim tiražima. U ponudi izdvajamo privezak gurtna, privezak sunđer, privezak traka i guma privezak."
+            }
+        ]
+    },
+    {
+        "Category":"16",
         "SubCategory":"16-4",
         "SubCategoryName":"Privezak Traka",
         "CategoryName":"Privesci",
