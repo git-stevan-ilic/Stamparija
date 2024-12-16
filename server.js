@@ -567,20 +567,25 @@ function finalImageData(productID, returnEmail, imageData, finalImage, client){
     let imgDataSend = [];
     if(imageData.length > 1){
         for(let i = 1; i < imageData.length; i++){
+            let src = src = imageData[i].src;
+            let dataObject = imageData[i];
+            if(imageData[i].isText === true)
+                dataObject = imageData[i].ogData;
+
             imgDataSend.push({
-                originalImg:imageData[i].src,
-                type:imageData[i].type,
-                text:imageData[i].text,
-                font:imageData[i].font,
+                originalImg:src,
+                type:dataObject.type,
+                text:dataObject.text,
+                font:dataObject.font,
 
                 editedCoords:{
-                    scaleX:imageData[i].scaleX,
-                    scaleY:imageData[i].scaleY,
-                    flipX:imageData[i].flipX,
-                    flipY:imageData[i].flipY,
-                    angle:imageData[i].angle,
-                    x:imageData[i].x,
-                    y:imageData[i].y
+                    scaleX:dataObject.scaleX,
+                    scaleY:dataObject.scaleY,
+                    flipX:dataObject.flipX,
+                    flipY:dataObject.flipY,
+                    angle:dataObject.angle,
+                    x:dataObject.x,
+                    y:dataObject.y
                 }
             });
         }

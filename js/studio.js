@@ -341,7 +341,51 @@ function generateImages(imageLinks, imgIndex){
     }
 }
 function generateFinalImageData(baseImg, imageData){
+    const size = getDefaultCanvasSize();
+    const tempCanvas = document.createElement("canvas");
+     tempCanvas.id = "temp-font-canvas";
+    tempCanvas.height = size;
+    tempCanvas.width = size;
+
+    const canvas = new fabric.Canvas(tempCanvas.id, {
+        height:tempCanvas.height,
+        width:tempCanvas.width
+    });
+
     let finalImageData = JSON.parse(JSON.stringify(imageData));
+    for(let i = 0; i < finalImageData.length; i++){
+        if(finalImageData[i].type === 2){
+            let y = imageData[i].y * tempCanvas.height;
+            let x = imageData[i].x * tempCanvas.width;
+
+            canvas.clear();
+            const text = new fabric.IText(imageData[i].text, {
+                strokeWidth:imageData[i].outlineSize,
+                stroke:imageData[i].colorOutline,
+                fill:imageData[i].colorFill,
+                angle:imageData[i].angle,
+                lockScalingFlip:true,
+                left:x, top:y,
+
+                scaleX:imageData[i].scaleX,
+                scaleY:imageData[i].scaleY,
+                flipX: imageData[i].flipX,
+                flipY: imageData[i].flipY,
+                fontFamily:imageData[i].font,
+                fontSize:tempCanvas.height * imageData[i].fontSize
+            });
+            canvas.add(text);
+            let editedImageData = {
+                x:0, y:0, angle:0, scaleX:1, scaleY:1, type:1,
+                flipX:false, flipY:false, src:canvas.toDataURL(), isText:true,
+                ogData:JSON.parse(JSON.stringify(finalImageData[i]))
+            }
+            finalImageData[i] = editedImageData;
+        }
+    }    
+    tempCanvas.remove();
+
+
     finalImageData.unshift({x:0, y:0, angle:0, scaleX:1, scaleY:1, flipX:false, flipY:false, src:baseImg.src, type:0});
     return finalImageData;
 }
@@ -349,7 +393,7 @@ function getDefaultCanvasSize(){
     const style = getComputedStyle(document.body);
     const canvasSizeCSS = style.getPropertyValue("--default-canvas-size");
     const canvasSize = parseInt(canvasSizeCSS.slice(0, -2));
-    return window.innerHeight * canvasSize /100
+    return window.innerHeight * canvasSize / 100;
 }
 
 /*--Image Logic--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -520,6 +564,8 @@ function displaySideButtons(imageData, index){
         document.dispatchEvent(event);
     };
     document.querySelector("#delete").onclick = ()=>{
+        hideSideButtons();
+        if(imageData[index].type === 2) closeTextSettings();
         let eventData =  {detail:{index:index}}
         let event = new CustomEvent("update-delete-backup", eventData);
         document.dispatchEvent(event);
@@ -671,50 +717,3 @@ function closeFontWindow(){
         fontMask.onanimationend = null;
     }
 }
-
-
-
-
-/*
-CategoryName: "Trakice ID Kartice / Nosač"
-​​​​​​
-ColorImage: ""
-​​​​​​
-Description: "Plastični uložak za indentifikacionu karticu sa trakicom"
-​​​​​​
-HTMLColor: "#ffffff"
-​​​​​​
-ID: "3514690"
-​​​​​​
-Images: Array [ {…}, {…} ]
-​​​​​​
-Img: "https://apiv2.promosolution.services/content/ModelItem/3514690_001.jpg?v=240917102814"
-​​​​​​
-Model: "SELF H"
-​​​​​​
-Name: "SELF H, plastični uložak za indentifikacionu karticu sa trakicom, beli"
-​​​​​​
-Package: "384/48/1"
-​​​​​​
-Price: 0.49
-​​​​​​
-ProductIdView: "35.146.90"
-​​​​​​
-Sizes: Array []
-​​​​​​
-SubCategoryName: "ID Trakice"
-​​​​​​
-WMSDepth: 9.25
-​​​​​​
-WMSDimUM: "cm"
-​​​​​​
-WMSHeight: 12.25
-​​​​​​
-WMSWidth: 1.04167
-​​​​​​
-Weight: 0.028
-​​​​​​
-WeightUM: "kg"
-
-https://apiv2.promosolution.services/content/Shade/863e891f-0143-43af-bc6b-b9568e8aa703.png
-*/

@@ -77,7 +77,21 @@
         "SubCategoryName":"",
         "CategoryName":"Podloga za miš",
         "IDs":["37361"],
-        "OurData":[]
+        "OurData":[
+            {
+                "ID":"0020101",
+                "ColorImage":"https://apiv2.promosolution.services/content/Shade/863e891f-0143-43af-bc6b-b9568e8aa703.png",
+                "Images":[
+                    {"Image":"../assets/proizvodi/Podloge/02 B-podloga mis.jpg"}
+                ],
+                "Img":"../assets/proizvodi/Podloge/02 B-podloga mis.jpg",
+                "Model":"Podloga za miš",
+                "Name":"Podloga za miš",
+                "Price":0,
+                "Sizes":["16x22", "18x22", "20x24", "25x35", "35x45", "35x70", "40x90", "Fi-20", "Fi-22"],
+                "Description":"Sastoji se iz dva sloja,gornja strana poliester platno bele boje, donja strana je poliuretanska guma koja omogućava max prijanjanje podloge na površinu. Mogućnost štampe u punom koloru tehnikom sublimacije što garantuje najbolji kvalitet. Mogućnost pranja i održavnja."
+            }
+        ]
     },
     {
         "Category":"03",
