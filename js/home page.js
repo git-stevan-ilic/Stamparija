@@ -17,11 +17,10 @@ function loadContentLogic(){
                 homePageVideo.classList.remove("home-page-video-blur");
                 homePageVideo.style.animation = "none";
                 homePageVideo.onanimationend = null;
-             
+                homePageVideo.play();
+                
                 videoFocus.innerHTML = "Sakrij Video";
-                videoMask.style.height = "7vh";
-                videoMask.style.width = "calc(8em + 2vh)";
-                homePageVideo.src = "https://www.youtube.com/embed/"+videoURL+"?playlist="+videoURL+videoSettingsFocus;
+                videoMask.style.pointerEvents = "none";
             }
         }
         else{
@@ -31,11 +30,10 @@ function loadContentLogic(){
                 homePageVideo.classList.add("home-page-video-blur");
                 homePageVideo.style.animation = "none";
                 homePageVideo.onanimationend = null;
+                homePageVideo.pause();
 
                 videoFocus.innerHTML = "Pusti Video";
-                videoMask.style.height = "100%";
-                videoMask.style.width = "100%";
-                homePageVideo.src = "https://www.youtube.com/embed/"+videoURL+"?playlist="+videoURL+videoSettingsBlur;
+                videoMask.style.pointerEvents = "all";
             }
         }
     }

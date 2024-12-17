@@ -18,15 +18,17 @@
     border-radius:1vh;
     font-size:2vh;
     height:4vh;
-    bottom:2vh;
+    bottom:5vh;
     width:8em;
-    right:2vh;
+    right:1vh;
 
     justify-content:center;
     align-items:center;
     position:absolute;
     cursor:pointer;
     display:flex;
+
+    pointer-events:all;
 }
 .video-focus:hover{
     transform:translateY(-1px);
@@ -38,11 +40,14 @@
     filter:blur(10px);
     opacity:0.5;
 }
-video{
-    border:1px solid rgb(200, 200, 200);
-    background-color:rgb(0, 0, 0);
-    height:70vh;
+#home-page-video{
+    aspect-ratio:auto;
+    height:100%;
     width:100%;
+}
+video{
+    aspect-ratio:1.77;
+    height:70vh;
 }
 
 /*--About Us Page------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
