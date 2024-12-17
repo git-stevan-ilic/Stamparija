@@ -6,7 +6,7 @@ function loadContentLogic(){
 
     const videoSettingsBlur = "&autoplay=1&mute=1&controls=0&disablekb=1&loop=1";
     const videoSettingsFocus = "&autoplay=1&loop=1";
-    const videoURL = "MeFPh2oLjxs";
+    const videoURL = "2Z8zsTyHNXA";
 
     let focus = false;
     videoFocus.onclick = ()=>{
@@ -17,10 +17,11 @@ function loadContentLogic(){
                 homePageVideo.classList.remove("home-page-video-blur");
                 homePageVideo.style.animation = "none";
                 homePageVideo.onanimationend = null;
-                homePageVideo.play();
                 
                 videoFocus.innerHTML = "Sakrij Video";
-                videoMask.style.pointerEvents = "none";
+                videoMask.style.height = "7vh";
+                videoMask.style.width = "calc(8em + 2vh)";
+                homePageVideo.src = "https://www.youtube.com/embed/"+videoURL+"?playlist="+videoURL+videoSettingsFocus;
             }
         }
         else{
@@ -30,10 +31,11 @@ function loadContentLogic(){
                 homePageVideo.classList.add("home-page-video-blur");
                 homePageVideo.style.animation = "none";
                 homePageVideo.onanimationend = null;
-                homePageVideo.pause();
 
                 videoFocus.innerHTML = "Pusti Video";
-                videoMask.style.pointerEvents = "all";
+                videoMask.style.height = "100%";
+                videoMask.style.width = "100%";
+                homePageVideo.src = "https://www.youtube.com/embed/"+videoURL+"?playlist="+videoURL+videoSettingsBlur;
             }
         }
     }
