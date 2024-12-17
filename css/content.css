@@ -5,6 +5,7 @@
     width:100%;
 }
 .video-mask{
+    pointer-events:none;
     position:absolute;
     height:100%;
     width:100%;
@@ -18,15 +19,16 @@
     border-radius:1vh;
     font-size:2vh;
     height:4vh;
-    bottom:2vh;
+    bottom:1vh;
     width:8em;
-    right:2vh;
+    right:1vh;
 
     justify-content:center;
     align-items:center;
     position:absolute;
     cursor:pointer;
     display:flex;
+    pointer-events:all;
 }
 .video-focus:hover{
     transform:translateY(-1px);
