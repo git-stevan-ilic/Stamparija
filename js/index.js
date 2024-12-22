@@ -3,6 +3,17 @@ function initLoad(){
     const params = new URLSearchParams(location.search);
     const style = getComputedStyle(document.body);
     const client = io();
+
+    let browser, android, ios, prefix = (Array.prototype.slice
+    .call(window.getComputedStyle(document.documentElement, ""))
+    .join("") 
+    .match(/-(moz|webkit|ms)-/))[1];
+        
+    let userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    if(/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) ios = true;
+    if(/android/i.test(userAgent)) android = true;
+    if(prefix === "webkit") browser = 0;
+    else browser = 1;
    
     /*--Side Bar Logic-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
     const sideBarItemHolder = document.querySelector(".side-bar-item-holder");
@@ -49,9 +60,18 @@ function initLoad(){
     let showSide = params.getAll("side")[0];
     if(showSide) showSide = parseInt(showSide);
     let showSideBar = true;
+    if(android === true || ios === true){
+        showSide = 0;
+        /*const sideBarLinks = sideBarItemHolder.querySelectorAll(".side-bar-item-elements");
+        for(let i = 0; i < sideBarLinks.length; i++){
+            sideBarLinks[i].target = "_blank";
+            sideBarLinks[i].href = "#";
+        }*/
+    }
     if(showSide !== undefined){
         if(showSide === 0){
-            document.querySelector(".path-holder").style.display = "block";
+            try{document.querySelector(".path-holder").style.display = "block"}
+            catch{}
             const category = document.querySelector("#category");
             category.className = "category-white";
             sideBar.style.overflow = "hidden";

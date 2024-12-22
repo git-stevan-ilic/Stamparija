@@ -14,13 +14,13 @@
     transform:translate(-50%);
     margin-left:50%;
     height:100%;
-    width:70%;
+    width:90%;
 }
 .page-foot-info-holder{
     justify-content:space-between;
     align-items:center;
     display:flex;
-    height:30vh;
+    height:35vh;
 }
 .page-foot-info{
     height:100%;
@@ -33,7 +33,7 @@
 }
 #contact-map-foot{
     border:1px solid rgb(200, 200, 200);
-    height:25vh;
+    height:30vh;
     width:40vw;
 }
 .page-foot-logo{

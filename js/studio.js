@@ -48,6 +48,26 @@ function isEmailValid(email){
 
     return true;
 }
+function uuidv4(){
+    return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
+      (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16)
+    );
+}
+function getUUID(){
+    let browser, android, ios, prefix = (Array.prototype.slice
+    .call(window.getComputedStyle(document.documentElement, ""))
+    .join("") 
+    .match(/-(moz|webkit|ms)-/))[1];
+            
+    let userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    if(/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) ios = true;
+    if(/android/i.test(userAgent)) android = true;
+    if(prefix === "webkit") browser = 0;
+    else browser = 1;
+
+    if(android || ios) return uuidv4();
+    return crypto.randomUUID();
+}
 
 /*--Generation---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 function generateStudio(client, data){
@@ -208,7 +228,7 @@ function generateStudio(client, data){
     document.querySelector("#input-image").onclick = ()=>{fileInput.click()}
     document.querySelector("#input-text").onclick = ()=>{
         let newImageData = {
-            id:"canvas-"+crypto.randomUUID(),
+            id:"canvas-"+getUUID(),
             scaleX:1, scaleY:1, angle:0,
             flipX:false, flipY:false,
             x:0.25, y:0.25, type:2,
@@ -238,7 +258,7 @@ function generateStudio(client, data){
 
                     let newImageData = {
                         src:reader.result,
-                        id:"canvas-"+crypto.randomUUID(),
+                        id:"canvas-"+getUUID(),
                         scaleX:1, scaleY:1, angle:0,
                         flipX:false, flipY:false,
                         x:0.25, y:0.25, type:1,
@@ -534,7 +554,7 @@ function displaySideButtons(imageData, index){
         let keys = Object.keys(imageData[index]);
         let values = Object.values(imageData[index]);
         for(let i = 0; i < keys.length; i++) clone[keys[i]] = values[i];
-        clone["id"] = "canvas-"+crypto.randomUUID();
+        clone["id"] = "canvas-"+getUUID();
         clone["x"] += 0.05;
         clone["y"] += 0.05;
         
