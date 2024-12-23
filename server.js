@@ -156,9 +156,34 @@ io.on("connection", (client)=>{
     client.on("final-image", (defaultCanvasSize, imageData, sendMail, productID, returnEmail)=>{
         generateFinalImage(defaultCanvasSize, imageData, sendMail, client, productID, returnEmail);
     });
-    client.on("get-captcha", ()=>{
+    client.on("get-captcha", (type)=>{
         let captcha = svgCaptcha.create();
-        client.emit("receive-captcha", captcha);
+        client.emit("receive-captcha", captcha, type);
+    });
+    client.on("send-us-email", (data)=>{
+        const transporter = nodemailer.createTransport({
+            host:process.env.LOGO_STUDIO_EMAIL_HOST,
+            port:process.env.LOGO_STUDIO_EMAIL_PORT,
+            secure:process.env.LOGO_STUDIO_SECURE,
+            auth:{
+                user:process.env.LOGO_STUDIO_SEND_EMAIL,
+                pass:process.env.LOGO_STUDIO_SEND_PASSWORD,
+            },
+        });
+        let emailText = "Ime: "+data.name+"\n Email: "+data.email+"\n\n" + data.text;
+        const emailData = {
+            from:"Kontakt Strana <"+process.env.LOGO_STUDIO_SEND_EMAIL+">",
+            to:process.env.LOGO_STUDIO_RECEIVE_EMAIL,
+            subject:data.title,
+            text:emailText,
+        }
+        transporter.sendMail(emailData, (error)=>{
+            if(error){
+                console.log("Email Error:"+error);
+                client.emit("email-error");
+            }
+            else client.emit("send-mail-success");
+        });
     });
 });
 

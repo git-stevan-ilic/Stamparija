@@ -445,3 +445,99 @@ h1{
     from {filter:blur(0px); opacity:1;}
     to   {filter:blur(10px); opacity:0.5;}
 }
+
+/*--Send Us Message----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.send-us-message{
+    border:1px solid rgb(150, 150, 150);
+    background-color:rgb(255, 255, 255);
+    transform:translateY(-50%);
+    position:absolute;
+    padding:1vh;
+    right:3vh;
+    top:50%;
+
+    height:50vh;
+    width:25%;
+    min-width:30vh;
+}
+.send-us-text{
+    color:rgb(50, 50, 50);
+    font-size:2vh;
+}
+input[type=text].send-us-input, input[type=email].send-us-input{
+    background-color:rgb(245, 245, 245);
+    border:1px solid rgb(150, 150, 150);
+    color:rgb(50, 50, 50);
+    width:calc(100% - 2px);
+    font-family:"Inter";
+    font-size:2vh;
+    height:2.5vh;
+    padding:0px;
+    margin-bottom:1vh;
+}
+textarea.send-us-text{
+    background-color:rgb(245, 245, 245);
+    border:1px solid rgb(150, 150, 150);
+    color:rgb(50, 50, 50);
+    width:calc(100% - 2px);
+    font-family:"Inter";
+    font-size:2vh;
+    padding:0px;
+    height:25vh;
+    margin-bottom:1vh;
+    resize:none;
+}
+#send-us-message{
+    margin-left:calc(50% - 2.5em);
+    width:5em;
+}
+.send-mask{
+    background-color:rgb(0, 0, 0, 0.2);
+    position:absolute;
+    display:none;
+    height:100%;
+    width:100%;
+    left:0px;
+    top:0px;
+    z-index:10;
+}
+.send-captcha-window{
+    border:1px solid rgb(150, 150, 150);
+    background-color:rgb(255, 255, 255);
+    transform:translate(-50%, -50%);
+    height:calc(30px + 13vh);
+    width:calc(150px + 8vh);
+    position:absolute;
+    padding:1vh;
+    left:50%;
+    top:50%;
+}
+.send-captcha{
+    transform:translate(-50%);
+    margin-bottom:2vh;
+    margin-left:50%;
+    padding:2vh;
+    height:30px;
+    width:150px;
+}
+#confirm-send-captcha{
+    left:calc(50% - 5.5em);
+    bottom:1vh;
+    width:5em;
+    position:absolute;
+}
+#cancel-send-captcha{
+    left:calc(50% + 0.5em);
+    bottom:1vh;
+    width:5em;
+    position:absolute;
+}
+input[type=text].confirm-captcha-input{
+    background-color:rgb(245, 245, 245);
+    border:1px solid rgb(150, 150, 150);
+    transform:translate(-50%);
+    color:rgb(50, 50, 50);
+    margin-bottom:2vh;
+    margin-left:50%;
+    width:148px;
+}

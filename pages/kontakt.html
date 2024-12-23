@@ -255,11 +255,31 @@
                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7323.6595854363395!2d20.206912953390265!3d44.950642534242014!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x475a59353ff324a1%3A0x6b18844a5da53444!2sCara%20Du%C5%A1ana%2095%2C%20Nova%20Pazova%2022330!5e0!3m2!1sen!2srs!4v1730937116421!5m2!1sen!2srs" 
                         allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
                     </iframe>
+                    <div class="send-us-message">
+                        <div class="send-us-text">Vaše Ime:</div>
+                        <input type="text" class="send-us-input" id="send-us-name">
+                        <div class="send-us-text">Vaš Email:</div>
+                        <input type="email" class="send-us-input" id="send-us-email">
+                        <div class="send-us-text">Tema:</div>
+                        <input type="text" class="send-us-input" id="send-us-title">
+                        <div class="send-us-text">Poruka:</div>
+                        <textarea id="send-us-text" class="send-us-text"></textarea>
+                        <button id="send-us-message">Pošalji</button>
+                    </div>
+                   
                 </div>
             </div>
         </div>
     </div>
-    <div class="page-foot">
+    <div class="send-mask">
+        <div class="send-captcha-window">
+            <div class="send-captcha"></div>
+            <input type="text" class="confirm-captcha-input" id="confirm-captcha-input">
+            <button id="confirm-send-captcha">Pošalji</button>
+            <button id="cancel-send-captcha">Izađi</button>
+        </div>
+    </div>
+    <div class="page-foot push-down-foot-small">
         <div class="page-foot-body">
             <div class="page-foot-info-holder">
                 <div class="page-foot-info">

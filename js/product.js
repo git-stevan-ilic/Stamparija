@@ -12,7 +12,7 @@ function loadProductLogic(){
         const productDisplayHolder = document.querySelector(".product-display-holder");
         if(!data.Found) productDisplayHolder.innerText = "Proizvod nije nađen";
         else{
-            console.log("product:", data);;
+            //console.log("product:", data);;
             let currVersion;
             for(let i = 0; i < data.productData.versions.length; i++){
                 if(data.productData.versions[i].ID === data.ID){
@@ -20,7 +20,7 @@ function loadProductLogic(){
                     break;
                 }
             }
-            console.log("current version:", currVersion);
+            //console.log("current version:", currVersion);
 
             let dimesion = "";
             if(currVersion.WMSWidth && currVersion.WMSDimUM && currVersion.WMSHeight && currVersion.WMSDimUM && currVersion.WMSDepth && currVersion.WMSDimUM){

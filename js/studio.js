@@ -32,22 +32,6 @@ function loadStudioLogic(){
         downloadLink.remove();
     });
 }
-function isEmailValid(email){
-    const emailRegex = /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
-    if(!email) return false;
-    if(email.length > 254) return false;
-
-    let valid = emailRegex.test(email);
-    if(!valid) return false;
-
-    let parts = email.split("@");
-    if(parts[0].length > 64) return false;
-
-    let domainParts = parts[1].split(".");
-    if(domainParts.some((part)=>{return part.length > 63})) return false;
-
-    return true;
-}
 function uuidv4(){
     return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
       (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16)
@@ -76,8 +60,8 @@ function generateStudio(client, data){
     const canvasSize = parseInt(canvasSizeCSS.slice(0, -2));
 
     let currVersion = data.versions[0];
-    console.log("current product", data);
-    console.log("current version", currVersion);
+    //console.log("current product", data);
+    //console.log("current version", currVersion);
 
     let imgIndex = 0, images = [], imageData = [], zoom = 10, loadedImages = [];
     generateColors(currVersion.ID, data.versions);
@@ -180,43 +164,45 @@ function generateStudio(client, data){
         client.emit("final-image", getDefaultCanvasSize(), dataToSend, false);
     }
     sendButton.onclick = ()=>{
-        client.emit("get-captcha");
+        client.emit("get-captcha", 1);
     }
-    client.on("receive-captcha", (captchaData)=>{
-        const captchaInput = document.querySelector("#captcha-input");
-        const captcha = document.querySelector(".captcha");
-        captcha.innerHTML = captchaData.data;
-        captchaInput.value = "";
-
-        const captchaMask = document.querySelector("#captcha-mask");
-        captchaMask.style.animation = "fade-in ease-in-out 0.2s";
-        captchaMask.style.display = "block";
-        captchaMask.onanimationend = ()=>{
-            captchaMask.style.animation = "none";
-            captchaMask.onanimationend = null;
-        }
-        function hideCaptchaWindow(){
-            captchaMask.style.animation = "fade-out ease-in-out 0.2s";
+    client.on("receive-captcha", (captchaData, type)=>{
+        if(type === 1){
+            const captchaInput = document.querySelector("#captcha-input");
+            const captcha = document.querySelector(".captcha");
+            captcha.innerHTML = captchaData.data;
+            captchaInput.value = "";
+    
+            const captchaMask = document.querySelector("#captcha-mask");
+            captchaMask.style.animation = "fade-in ease-in-out 0.2s";
+            captchaMask.style.display = "block";
             captchaMask.onanimationend = ()=>{
                 captchaMask.style.animation = "none";
-                captchaMask.style.display = "none";
                 captchaMask.onanimationend = null;
             }
-        }
-
-        const inputEmail = document.querySelector("#input-email");
-        inputEmail.value = "";
-        document.querySelector("#captcha-cancel").onclick = hideCaptchaWindow;
-        document.querySelector("#captcha-confirm").onclick = ()=>{
-            if(captchaInput.value !== captchaData.text) alert("Pogresan kod");
-            else{
-                if(!isEmailValid(inputEmail.value)) alert("Unesite ispravan email");
+            function hideCaptchaWindow(){
+                captchaMask.style.animation = "fade-out ease-in-out 0.2s";
+                captchaMask.onanimationend = ()=>{
+                    captchaMask.style.animation = "none";
+                    captchaMask.style.display = "none";
+                    captchaMask.onanimationend = null;
+                }
+            }
+    
+            const inputEmail = document.querySelector("#input-email");
+            inputEmail.value = "";
+            document.querySelector("#captcha-cancel").onclick = hideCaptchaWindow;
+            document.querySelector("#captcha-confirm").onclick = ()=>{
+                if(captchaInput.value !== captchaData.text) alert("Pogresan kod");
                 else{
-                    sendButton.disabled = true;
-                    hideCaptchaWindow();
-                    let dataToSend = generateFinalImageData(images[imgIndex], imageData);
-                    client.emit("final-image", getDefaultCanvasSize(), dataToSend, true, currVersion.ID, inputEmail.value);
-                    alert("Vaša slika se šalje");
+                    if(!isEmailValid(inputEmail.value)) alert("Unesite ispravan email");
+                    else{
+                        sendButton.disabled = true;
+                        hideCaptchaWindow();
+                        let dataToSend = generateFinalImageData(images[imgIndex], imageData);
+                        client.emit("final-image", getDefaultCanvasSize(), dataToSend, true, currVersion.ID, inputEmail.value);
+                        alert("Vaša slika se šalje");
+                    }
                 }
             }
         }

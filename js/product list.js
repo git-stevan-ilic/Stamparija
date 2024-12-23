@@ -28,7 +28,7 @@ function loadProductListLogic(){
         productPageTitle.innerHTML = 'Pretraga: "'+searchQuery+'"';
         pathHolder.style.display = "none";
         generateSearchResultBody(productHolder, data);
-        console.log("search result body:", data);
+        //console.log("search result body:", data);
     });
     client.on("category-received", (data)=>{
         if(!data.Found) productPageTitle.innerText = "Proizvodi nisu nađeni";
@@ -38,7 +38,7 @@ function loadProductListLogic(){
             generateSearchResultBody(productHolder, dataArray);
             pathHolder.innerHTML = "<a class='path-link' target='_self' href='../'>Početna ></a> ";
             pathHolder.innerHTML += data.CategoryName;
-            console.log("category data:", data);
+            //console.log("category data:", data);
         }
     });
     client.on("sub-category-received", (data)=>{
@@ -49,7 +49,7 @@ function loadProductListLogic(){
             pathHolder.innerHTML = "<a class='path-link' target='_self' href='../'>Početna ></a> ";
             pathHolder.innerHTML += "<a class='path-link' target='_self' href='../pages/product-list.html?cat="+data.Category+"'>"+data.CategoryName+" ></a> ";
             pathHolder.innerHTML += data.SubCategoryName;
-            console.log("sub category data:", data);
+            //console.log("sub category data:", data);
         }
     });
 }

@@ -26,30 +26,65 @@ function initLoad(){
 
     for(let i = 0; i < sideBarItems.length; i++){
         if(sideBarItems[i].children.length > 1){
-            sideBarItems[i].onmousemove = ()=>{
-                if(showSideBar){
-                    const popUp = sideBarItems[i].children[1];
-                    if(popUp.style.display !== "block"){
-                        popUp.style.display = "block";
-                        popUp.style.animation = "none";
-                        popUp.style.animation = "popup-in ease-in-out 0.1s";
-                        popUp.onanimationend = ()=>{
+            if(android === true || ios === true){
+                sideBarItems[i].children[0].onclick = (e)=>{
+                    e.preventDefault();
+                    if(showSideBar){
+                        for(let j = 0; j < sideBarItems.length; j++){
+                            if(sideBarItems[j].children.length > 1){
+                                const currPopUp = sideBarItems[j].children[1];
+                                if(currPopUp.style.display !== "none"){
+                                    currPopUp.style.animation = "none";
+                                    currPopUp.style.animation = "popup-out ease-in-out 0.1s";
+                                    currPopUp.onanimationend = ()=>{
+                                        currPopUp.style.animation = "none";
+                                        currPopUp.style.display = "none";
+                                        currPopUp.onanimationend = null;
+                                    }
+                                }
+                            }
+                        }
+
+                        const popUp = sideBarItems[i].children[1];
+                        currSelected = popUp;
+                        if(popUp.style.display !== "block"){
+                            popUp.style.display = "block";
                             popUp.style.animation = "none";
-                            popUp.onanimationend = null;
+                            popUp.style.animation = "popup-in ease-in-out 0.1s";
+                            popUp.onanimationend = ()=>{
+                                popUp.style.animation = "none";
+                                popUp.onanimationend = null;
+                            }
                         }
                     }
                 }
             }
-            sideBarItems[i].onmouseleave = ()=>{
-                if(showSideBar){
-                    const popUp = sideBarItems[i].children[1];
-                    if(popUp.style.display !== "none"){
-                        popUp.style.animation = "none";
-                        popUp.style.animation = "popup-out ease-in-out 0.1s";
-                        popUp.onanimationend = ()=>{
+            else{
+                sideBarItems[i].onmousemove = ()=>{
+                    if(showSideBar){
+                        const popUp = sideBarItems[i].children[1];
+                        if(popUp.style.display !== "block"){
+                            popUp.style.display = "block";
                             popUp.style.animation = "none";
-                            popUp.style.display = "none";
-                            popUp.onanimationend = null;
+                            popUp.style.animation = "popup-in ease-in-out 0.1s";
+                            popUp.onanimationend = ()=>{
+                                popUp.style.animation = "none";
+                                popUp.onanimationend = null;
+                            }
+                        }
+                    }
+                }
+                sideBarItems[i].onmouseleave = ()=>{
+                    if(showSideBar){
+                        const popUp = sideBarItems[i].children[1];
+                        if(popUp.style.display !== "none"){
+                            popUp.style.animation = "none";
+                            popUp.style.animation = "popup-out ease-in-out 0.1s";
+                            popUp.onanimationend = ()=>{
+                                popUp.style.animation = "none";
+                                popUp.style.display = "none";
+                                popUp.onanimationend = null;
+                            }
                         }
                     }
                 }
@@ -60,14 +95,7 @@ function initLoad(){
     let showSide = params.getAll("side")[0];
     if(showSide) showSide = parseInt(showSide);
     let showSideBar = true;
-    if(android === true || ios === true){
-        showSide = 0;
-        /*const sideBarLinks = sideBarItemHolder.querySelectorAll(".side-bar-item-elements");
-        for(let i = 0; i < sideBarLinks.length; i++){
-            sideBarLinks[i].target = "_blank";
-            sideBarLinks[i].href = "#";
-        }*/
-    }
+    if(android === true || ios === true) showSide = 0;
     if(showSide !== undefined){
         if(showSide === 0){
             try{document.querySelector(".path-holder").style.display = "block"}
@@ -260,7 +288,7 @@ function initLoad(){
     }
 
     client.on("all-product-data", (data)=>{
-        console.log("all product data:", data);
+        //console.log("all product data:", data);
         function inputSearch(){
             let searchQuery = removeDiacritics(searchBar.value.toLowerCase());
             if(searchQuery.length <= 1) searchAnimUp();
@@ -295,7 +323,7 @@ function initLoad(){
                 searchResults = searchResults.filter((o, index, arr) =>
                     arr.findIndex(item => JSON.stringify(item) === JSON.stringify(o)) === index
                 );
-                console.log("search result head:", searchResults);
+                //console.log("search result head:", searchResults);
                 generateSearchResult(searchResults, searchQuery);
                 if(searchDropDown.style.display !== "block"){
                     if(searchResults.length > 0) searchAnimDown();
@@ -308,6 +336,7 @@ function initLoad(){
         document.querySelector(".search-button").onclick = inputSearch;
     });
 
+    sendUsLogic(client);
     setTimeout(()=>{
         const loadingScreen = document.querySelector(".loading-screen");
         loadingScreen.style.animation = "fade-out ease-in-out 0.2s";
@@ -327,4 +356,89 @@ function removeDiacritics(str){
         str = str.replace(defaultDiacriticsRemovalMap[i].letters, defaultDiacriticsRemovalMap[i].base);
     }
     return str;
+}
+function isEmailValid(email){
+    const emailRegex = /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
+    if(!email) return false;
+    if(email.length > 254) return false;
+
+    let valid = emailRegex.test(email);
+    if(!valid) return false;
+
+    let parts = email.split("@");
+    if(parts[0].length > 64) return false;
+
+    let domainParts = parts[1].split(".");
+    if(domainParts.some((part)=>{return part.length > 63})) return false;
+
+    return true;
+}
+function sendUsLogic(client){
+    try{
+        const sendMask = document.querySelector(".send-mask");
+        const sendUsName  = document.getElementById("send-us-name");  sendUsName.value = "";
+        const sendUsEmail = document.getElementById("send-us-email"); sendUsEmail.value = "";
+        const sendUsTitle = document.getElementById("send-us-title"); sendUsTitle.value = "";
+        const sendUsText  = document.getElementById("send-us-text");  sendUsText.value = "";
+        const confirmSend  = document.getElementById("confirm-send-captcha");
+        const cancelSend  = document.getElementById("cancel-send-captcha");
+        const sendUsBttn  = document.getElementById("send-us-message");
+    
+        sendUsBttn.onclick = ()=>{
+            if(sendUsName.value === "" || sendUsEmail.value === "" || sendUsTitle.value === "" || sendUsText.value === ""){
+                alert("Popunite sva polja");
+                return;
+            }
+            if(!isEmailValid(sendUsEmail.value)){
+                alert("neispravan email");
+                return;
+            }
+            client.emit("get-captcha", 0);
+        }
+        cancelSend.onclick = ()=>{
+            sendMask.style.animation = "fade-out ease-in-out 0.2s";
+            sendMask.onanimationend = ()=>{
+                sendMask.style.animation = "none";
+                sendMask.style.display = "none";
+                sendMask.onanimationend = null;
+            }
+        }
+        client.on("receive-captcha", (captchaData, type)=>{
+            if(type === 0){
+                document.querySelector("#confirm-captcha-input").value = "";
+                confirmSend.disabled = false;
+                sendMask.style.animation = "fade-in ease-in-out 0.2s";
+                sendMask.style.display = "block";
+                sendMask.onanimationend = ()=>{
+                    sendMask.style.animation = "none";
+                    sendMask.onanimationend = null;
+                }
+                document.querySelector(".send-captcha").innerHTML = captchaData.data;
+
+                confirmSend.onclick = ()=>{
+                    if(captchaData.text !== document.querySelector("#confirm-captcha-input").value){
+                        alert("Unesite simbole sa slike");
+                        return;
+                    }
+                    let sendUsData = {
+                        name:sendUsName.value,
+                        email:sendUsEmail.value,
+                        title:sendUsTitle.value,
+                        text:sendUsText.value,
+                    }
+                    client.emit("send-us-email", sendUsData);
+                    confirmSend.disabled = true;
+                }
+            }
+        });
+        client.on("send-mail-success", ()=>{
+            alert("Poruka uspešno poslata");
+            sendUsName.value = "";
+            sendUsEmail.value = "";
+            sendUsTitle.value = "";
+            sendUsText.value = "";
+            cancelSend.click();
+        });
+    }
+    catch{}
 }

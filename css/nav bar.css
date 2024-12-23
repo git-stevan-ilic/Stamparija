@@ -101,13 +101,13 @@
     overflow:hidden;
     display:flex;
 
-    font-size:1.25vh;
+    font-size:2vh;
     height:100%;
     width:100%;
 }
 
 .category-white{
-    width:calc(var(--side-bar-width) + 1px);
+    width:calc(var(--side-bar-width) * 0.65 + 1px);
     margin-left:var(--side-bar-left);
     color:rgb(50, 50, 50);
     font-size:2vh;

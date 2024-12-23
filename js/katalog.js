@@ -49,7 +49,7 @@ window.onload = ()=>{
         flipbook.appendChild(div);
     }
     if(currKatalogData.lastPage) flipbook.appendChild(document.createElement("div"));
-    console.log(currKatalogData)
+    //console.log(currKatalogData)
 
     $(".flipbook").turn();
     document.querySelector("#first-page").onclick = ()=>{$(".flipbook").turn("page", 1)}
