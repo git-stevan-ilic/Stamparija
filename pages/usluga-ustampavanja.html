@@ -10,14 +10,11 @@
     <link rel="stylesheet" type="text/css" href="../css/side bar.css">
     <link rel="stylesheet" type="text/css" href="../css/content.css">
     <link rel="stylesheet" type="text/css" href="../css/nav bar.css">
-    <link rel="stylesheet" type="text/css" href="../css/studio.css">
     <link rel="stylesheet" type="text/css" href="../css/index.css">
 
     <script type="text/javascript" src="../js/socket.io.min.js"></script>
-    <script type="text/javascript" src="../js/fabric.js"></script>
-    <script type="text/javascript" src="../js/studio.js"></script>
     <script type="text/javascript" src="../js/index.js"></script>
-    <title>Prikaz Štampe</title>
+    <title>Štamparija Bleki</title>
     <script>
         !function(f,b,e,v,n,t,s)
         {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -59,7 +56,7 @@
             </div>
         </div>
         <div class="page-body-main">
-            <div class="path-holder"></div>
+            <div class="path-holder"><a class="path-link" target="_self" href="../">Početna ></a> O Nama</div>
             <div class="side-bar">
                 <div class="side-bar-item-holder">
                     <div class="side-bar-item">
@@ -233,87 +230,11 @@
                     </div>
                 </div>
             </div>
-            <div class="page-body-content" id="studio-background">
-                <input type="file" class="file-input" accept="image/png, image/jpeg">
-                <div class="content-page" id="back">
-                    <div class="studio-canvas-holder">
-                        <canvas id="canvas-main"></canvas>
-                        <canvas id="canvas-added"></canvas>
-                    </div>
-                </div>
-                <div class="content-page" id="front">
-                    <div class="studio-color-holder"></div>
-                    <div class="studio-image-holder"></div>
-                    <div class="zoom-window">
-                        <div class="zoom-button minus" title="zoom out"></div>
-                        <div class="zoom-display">
-                            <div class="zoom-text">Zoom</div>
-                            <div class="zoom-text" id="zoom-value">100%</div>
-                        </div>
-                        <div class="zoom-button plus" title="zoom in"></div>
-                    </div>
-                    <button id="download" class="studio-button">Preuzmite sliku</button>
-                    <button id="send" class="studio-button">Pošaljite nam sliku</button>
-                    <div class="studio-input" id="input-image">
-                        <div class="studio-input-img" id="input-image-img"></div>
-                        <div class="studio-input-text">Slika</div>
-                    </div>
-                    <div class="studio-input" id="input-text">
-                        <div class="studio-input-img" id="input-text-img"></div>
-                        <div class="studio-input-text">Tekst</div>
-                    </div>
-                    <div class="side-button-holder" data-index="">
-                        <div class="side-button" id="duplicate" title="napravite duplikat"></div>
-                        <div class="side-button" id="bringFront" title="gurnite na vrh"></div>
-                        <div class="side-button" id="flipH" title="obrnite horizontalno"></div>
-                        <div class="side-button" id="flipV" title="obrnite vertikalno"></div>
-                        <div class="side-button" id="delete" title="obrisite"></div>
-                    </div>
-                    <div class="text-holder">
-                        <div class="text-item-holder">
-                            <div class="text-item-text">Unutrašnjost</div>
-                            <input type="color" id="back-color">
-                        </div>
-                        <div class="text-item-holder">
-                            <div class="text-item-text">Ivica</div>
-                            <input type="color" id="text-color">
-                        </div>
-                        <div class="text-item-holder">
-                            <div class="text-item-text">Veličina ivice</div>
-                            <input type="range" id="outline-range">
-                        </div>
-                        <div class="text-item-holder">
-                            <div class="text-item-text">Veličina teksta</div>
-                            <input type="range" id="font-size-range">
-                        </div>
-                        <div class="text-item-holder">
-                            <div class="text-item-text">Font</div>
-                            <div class="text-item-font">Arial</div>
-                        </div>
-                    </div>
+            <div class="page-body-content">
+                <div class="text-page">
+                    <h1>Usluga Uštampavanja</h1>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="mask" id="captcha-mask">
-        <div class="captcha-window">
-            <div class="captcha-email-text">Unesite vaš email na koji želite da odgovorimo</div>
-            <input type="email" id="input-email">
-            <div class="captcha"></div>
-            <input type="text" id="captcha-input">
-            <div class="captcha-buttons">
-                <button id="captcha-confirm">Potvrdi</button>
-                <button id="captcha-cancel">Otkaži</button>
-            </div>
-        </div>
-    </div>
-    <div class="mask" id="font-mask">
-        <div class="font-window">
-            <div class="font-window-head">
-                Izaberite font
-                <div class="font-window-close"></div>
-            </div>
-            <div class="font-window-body"></div>
         </div>
     </div>
     <div class="page-foot">

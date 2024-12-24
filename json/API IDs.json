@@ -661,5 +661,51 @@
                 "Description":"U našoj proizvodnji izrađujemo priveske za ključeve koji su ekonomični i laki za brendiranje. Koriste se za promocije, malih i velikih preduzeća i njihovih usluga-proizvoda. Mogućnost izrade u malim i velikim tiražima. U ponudi izdvajamo privezak gurtna, privezak sunđer, privezak traka i guma privezak."
             }
         ]
+    },
+    {
+        "Category":"17",
+        "SubCategory":"17-1",
+        "SubCategoryName":"Papirne Nalepnice",
+        "CategoryName":"Nalepnice",
+        "IDs":[],
+        "OurData":[
+            {
+                "ID":"0170101",
+                "ColorImage":"https://apiv2.promosolution.services/content/Shade/863e891f-0143-43af-bc6b-b9568e8aa703.png",
+                "Images":[
+                    {"Image":"../assets/proizvodi/Nalepnice/01a-nalepnice.jpg"},
+                    {"Image":"../assets/proizvodi/Nalepnice/02-ploter.jpg"}
+                ],
+                "Img":"../assets/proizvodi/Nalepnice/01a-nalepnice.jpg",
+                "Model":"Papirne Nalepnice",
+                "Name":"Papirne Nalepnice",
+                "Price":0,
+                "Sizes":[],
+                "Description":""
+            }
+        ]
+    },
+    {
+        "Category":"17",
+        "SubCategory":"17-2",
+        "SubCategoryName":"PVC Nalepnice",
+        "CategoryName":"Nalepnice",
+        "IDs":[],
+        "OurData":[
+            {
+                "ID":"0170201",
+                "ColorImage":"https://apiv2.promosolution.services/content/Shade/863e891f-0143-43af-bc6b-b9568e8aa703.png",
+                "Images":[
+                    {"Image":"../assets/proizvodi/Nalepnice/01a-nalepnice.jpg"},
+                    {"Image":"../assets/proizvodi/Nalepnice/02-ploter.jpg"}
+                ],
+                "Img":"../assets/proizvodi/Nalepnice/01a-nalepnice.jpg",
+                "Model":"PVC Nalepnice",
+                "Name":"PVC Nalepnice",
+                "Price":0,
+                "Sizes":[],
+                "Description":""
+            }
+        ]
     }
 ]
