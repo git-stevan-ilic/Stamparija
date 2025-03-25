@@ -203,7 +203,7 @@ img{
 /*--Mobile-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 @media only screen and (max-width: 600px) and (orientation:portrait){
     input[type=text]{
-        font-size:1.25vh;
+        font-size:2vh;
         width:7em;
     }
     .catalog-head-button{
@@ -217,5 +217,38 @@ img{
     }
     .logo{
         display:none;
+    }
+}
+@media only screen and (max-width: 768px) and (orientation:landscape){
+    .page-head{
+        height:10vh;
+    }
+    .page-body{
+        height:90vh;
+        top:10vh;
+    }
+    input[type=text]{
+        font-size:4vh;
+    }
+    .catalog-head-button{
+        height:10vh;
+        width:10vh;
+    }
+    #full-screen{
+        position:absolute;
+        left:calc(50% + 5em + 10vh + 2em + 10vh);
+    }
+    .logo{
+        height:8vh;
+        width:24vh;
+    }
+    .catalog-button{
+        height:12vh;
+        width:12vh;
+        top:40%;
+    }
+    .flipbook-holder{
+        transform:translate(-50%);
+        top:2vh;
     }
 }

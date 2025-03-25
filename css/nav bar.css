@@ -55,7 +55,6 @@
     background-repeat:no-repeat;
     background-size:100%;
 
-
     margin-left:var(--side-bar-left);
     width:var(--category-width);
     color:rgb(50, 50, 50);
@@ -104,6 +103,9 @@
     font-size:2vh;
     height:100%;
     width:100%;
+}
+.portrait-category{
+    display:none;
 }
 
 .category-white{

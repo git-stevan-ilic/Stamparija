@@ -123,11 +123,33 @@ function initLoad(){
             sideBarAnim("in")
         }
     }
+
+    if((ios === true || android === true) && (window.screen.height > window.screen.width)){
+        const portraitCategoryClose = document.querySelector(".portrait-category-close");
+        const portraitCategory = document.querySelector(".portrait-category");
+        const pageNavBar = document.querySelector(".page-nav-bar");
+        const categoryMask = document.createElement("div");
+       
+        portraitCategoryClose.onclick = ()=>{
+            categoryMask.className = "category-mask";
+            pageNavBar.appendChild(categoryMask);
+            showSideBar = false;
+            sideBarAnim("out");
+        }
+        portraitCategory.onclick = ()=>{
+            categoryMask.className = "category-mask";
+            pageNavBar.appendChild(categoryMask);
+            showSideBar = true;
+            sideBarAnim("in");
+        }
+    }
+
     expandSideBar.onclick = ()=>{
         expandSideBar.style.display = "none";
         sideBarItemHolder.style.animation = "extension-down ease-in-out 0.25s";
         sideBarItemHolder.onanimationend = ()=>{
             sideBarItemHolder.style.height = style.getPropertyValue("--side-bar-extension-height");
+            if(ios || android) sideBarItemHolder.style.overflowY = "scroll";
             sideBarItemHolder.style.animation = "none";
             sideBarItemHolder.onanimationend = null;
         }
@@ -136,6 +158,10 @@ function initLoad(){
         sideBarItemHolder.style.animation = "extension-up ease-in-out 0.25s";
         sideBarItemHolder.onanimationend = ()=>{
             sideBarItemHolder.style.height = style.getPropertyValue("--side-bar-compression-height");
+            if(ios || android){
+                sideBarItemHolder.style.overflowY = "hidden";
+                sideBarItemHolder.scrollTop = "0";
+            }
             sideBarItemHolder.style.animation = "none";
             sideBarItemHolder.onanimationend = null;
             expandSideBar.style.display = "flex";

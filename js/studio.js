@@ -132,6 +132,18 @@ function generateStudio(client, data){
         const delta = -Math.sign(event.deltaY);
         zoomFunc(delta);
     });
+
+    let browser, android, ios, prefix = (Array.prototype.slice
+        .call(window.getComputedStyle(document.documentElement, ""))
+        .join("") 
+        .match(/-(moz|webkit|ms)-/))[1];
+            
+        let userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        if(/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) ios = true;
+        if(/android/i.test(userAgent)) android = true;
+        if(prefix === "webkit") browser = 0;
+        else browser = 1;
+
     function zoomFunc(inc){
         zoom += inc;
         if(zoom < 1) zoom = 1;
@@ -142,6 +154,7 @@ function generateStudio(client, data){
         studioCanvasHolder.style.height = newSize+"vh";
 
         let left = "50%", top = "50%", translateX = "-50%", translateY = "-50%";
+        if((ios || android) && (window.screen.height > window.screen.width)) left = "calc(50% + 4vh)";
         if(window.innerHeight * newSize / 100 > back.getBoundingClientRect().width){
             translateX = "0%";
             left = "0px";
@@ -623,6 +636,21 @@ function getAllFonts(){
     ];
 }
 function openTextSettings(imageData, index){
+    let browser, android, ios, prefix = (Array.prototype.slice
+        .call(window.getComputedStyle(document.documentElement, ""))
+        .join("") 
+        .match(/-(moz|webkit|ms)-/))[1];
+                
+        let userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        if(/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) ios = true;
+        if(/android/i.test(userAgent)) android = true;
+        if(prefix === "webkit") browser = 0;
+        else browser = 1;
+
+    if((ios || android) && (window.screen.height > window.screen.width)){
+        document.querySelector(".portrait-category").style.display = "none";
+    }
+
     const textItemFont = document.querySelector(".text-item-font");
     const textSizeRange = document.querySelector("#font-size-range");
     const outlineRange = document.querySelector("#outline-range");
@@ -703,6 +731,21 @@ function openTextSettings(imageData, index){
     }
 }
 function closeTextSettings(){
+    let browser, android, ios, prefix = (Array.prototype.slice
+        .call(window.getComputedStyle(document.documentElement, ""))
+        .join("") 
+        .match(/-(moz|webkit|ms)-/))[1];
+                
+        let userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        if(/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) ios = true;
+        if(/android/i.test(userAgent)) android = true;
+        if(prefix === "webkit") browser = 0;
+        else browser = 1;
+
+    if((ios || android) && (window.screen.height > window.screen.width)){
+        document.querySelector(".portrait-category").style.display = "block";
+    }
+
     const textHolder = document.querySelector(".text-holder");
     textHolder.style.animation = "fade-out ease-in-out 0.1s";
     textHolder.onanimationend = ()=>{

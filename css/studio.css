@@ -58,21 +58,23 @@
 
 /*--Colors-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 .studio-color-holder{
-    height:calc(4vh + 2px);
+    max-width:calc(100% - 12em);
+    width:100%;
     bottom:2vh;
     left:1vh;
 
-    justify-content:flex-end;
+    justify-content:flex-start;
+    align-items:flex-end;
     pointer-events:all;
-    align-items:center;
     position:absolute;
-    width:min-content;
+    flex-wrap:wrap-reverse;
     display:flex;
 }
 .studio-color{
     box-shadow:0px 0px 1vh rgba(0, 0, 0, 0.05);
     border:1px solid rgb(0, 0, 0);
     margin-right:1vh;
+    margin-top:1vh;
     cursor:pointer;
     flex-shrink:0;
     display:block;

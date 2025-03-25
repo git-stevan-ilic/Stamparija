@@ -1,6 +1,16 @@
 window.addEventListener("load", loadProductLogic);
 function loadProductLogic(){
     const client = io();
+    let browser, android, ios, prefix = (Array.prototype.slice
+    .call(window.getComputedStyle(document.documentElement, ""))
+    .join("") 
+    .match(/-(moz|webkit|ms)-/))[1];
+            
+    let userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    if(/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) ios = true;
+    if(/android/i.test(userAgent)) android = true;
+    if(prefix === "webkit") browser = 0;
+    else browser = 1;
 
     const pageBodyContent = document.querySelector(".page-body-content");
     const params = new URLSearchParams(location.search);
@@ -85,6 +95,7 @@ function loadProductLogic(){
                 }
                 if(rowSize === 1) rowSize = 5;
                 allImagesHolder.style.width = Math.round(rowSize/5*100)+"%";
+                if(android || ios) allImagesHolder.style.width = Math.round(rowSize / 4 * 100)+"%";
             }
 
             for(let i = 0; i < currVersion.Images.length; i++){
